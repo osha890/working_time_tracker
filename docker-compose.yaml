@@ -11,6 +11,12 @@ services:
     ports:
       - "5433:5432"
 
+  redis:
+    image: redis:8-alpine
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+
   backend:
     build: .
     container_name: tracker_container
