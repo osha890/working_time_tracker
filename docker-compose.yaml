@@ -3,9 +3,9 @@ services:
     image: postgres:16.8-alpine
     container_name: postgres_container
     environment:
-      POSTGRES_DB: time_tracker_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
