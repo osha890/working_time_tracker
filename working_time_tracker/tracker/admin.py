@@ -1,7 +1,7 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, register
 from .models import TestExample
 
 
-@admin.register(TestExample)
-class TestExampleAdmin(admin.ModelAdmin):
+@register(TestExample)
+class TestExampleAdmin(ModelAdmin):
     pass
