@@ -1,5 +1,8 @@
 import os
+import sys
 import django
+
+sys.path.append("/app/working_time_tracker")
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "working_time_tracker.settings")
 django.setup()
