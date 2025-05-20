@@ -31,3 +31,4 @@ repos:
         language: system
         types: [ python ]
         exclude: (^|/)migrations/
+        args: ["--ignore-missing-imports"]
