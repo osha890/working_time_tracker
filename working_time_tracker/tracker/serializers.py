@@ -22,13 +22,40 @@ class UserExtensionSerializer(serializers.ModelSerializer):
         fields = ["user", "project"]
 
 
+class UserExtensionDetailedSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    project = ProjectSerializer()
+
+    class Meta:
+        model = UserExtension
+        fields = "__all__"
+
+
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = "__all__"
 
 
+class TaskDetailedSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    project = ProjectSerializer()
+
+    class Meta:
+        model = Task
+        fields = "__all__"
+
+
 class TrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Track
+        fields = "__all__"
+
+
+class TrackDetailedSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    task = TaskDetailedSerializer()
+
     class Meta:
         model = Track
         fields = "__all__"

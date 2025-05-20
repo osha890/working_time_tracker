@@ -39,4 +39,4 @@ class Track(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="tracks")  # type: ignore
     is_in_progress = models.BooleanField()  # type: ignore
     time_from = models.DateTimeField()  # type: ignore
-    time_to = models.DateTimeField()  # type: ignore
+    time_to = models.DateTimeField(null=True, blank=True)  # type: ignore
