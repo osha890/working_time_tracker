@@ -17,11 +17,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserExtensionSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-
     class Meta:
         model = UserExtension
-        fields = "__all__"
+        fields = ["user", "project"]
 
 
 class TaskSerializer(serializers.ModelSerializer):

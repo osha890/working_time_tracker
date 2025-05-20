@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Project, Task, Track, UserExtension
@@ -6,12 +7,18 @@ from .serializers import (
     TaskSerializer,
     TrackSerializer,
     UserExtensionSerializer,
+    UserSerializer,
 )
 
 
 class ProjectViewSet(ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+
+class UserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class UserExtensionViewSet(ModelViewSet):
