@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -30,6 +31,12 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        if self.user:
+            user_extension = self.user.userextension
+            if user_extension.project != self.project_id:
+                raise ValidationError("User can only be assigned to tasks from his project")
 
 
 class Track(models.Model):

@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError as DjValidationError
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from .models import Project, Task, Track, UserExtension
 
@@ -19,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserExtensionSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserExtension
-        fields = ["user", "project"]
+        fields = "__all__"
 
 
 class UserExtensionDetailedSerializer(serializers.ModelSerializer):
@@ -35,6 +37,17 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = "__all__"
+
+    def validate(self, data):
+        data = super().validate(data)
+        instance = Task(**data)
+
+        try:
+            instance.clean()
+        except DjValidationError as e:
+            raise DRFValidationError(e.messages)
+
+        return data
 
 
 class TaskDetailedSerializer(serializers.ModelSerializer):
