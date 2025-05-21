@@ -1,4 +1,4 @@
-from django.contrib.admin import ModelAdmin, register
+from django.contrib.admin import ModelAdmin, display, register
 
 from .models import Project, Task, Track, UserExtension
 
@@ -10,14 +10,18 @@ class ProjectAdmin(ModelAdmin):
 
 @register(UserExtension)
 class UserExtensionAdmin(ModelAdmin):
-    pass
+    list_display = ["user", "project"]
 
 
 @register(Task)
 class TaskAdmin(ModelAdmin):
-    pass
+    list_display = ["title", "project", "user"]
 
 
 @register(Track)
 class TrackAdmin(ModelAdmin):
-    pass
+    list_display = ["id_with_label", "user", "task"]
+
+    @display(description="ID")
+    def id_with_label(self, obj):
+        return f"Track object({obj.id})"
