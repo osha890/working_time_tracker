@@ -45,3 +45,6 @@ class Track(models.Model):
     is_in_progress = models.BooleanField()
     time_from = models.DateTimeField()
     time_to = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Track object({self.pk})"
