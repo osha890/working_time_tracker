@@ -35,7 +35,7 @@ class Task(models.Model):
     def clean(self):
         if self.user:
             user_extension = self.user.userextension
-            if user_extension.project != self.project_id:
+            if user_extension.project_id != self.project_id:
                 raise ValidationError("User can only be assigned to tasks from his project")
 
 
