@@ -4,7 +4,12 @@ function ProjectList(props) {
     return (
         <React.Fragment>
             {props.projects.map(project => {
-                return <h3 key={project.id}>{project.title}</h3>
+                return (
+                    <div className="projectDiv" key={project.id}>
+                        <h3>{project.title}</h3>
+                        <p>{project.description}</p>
+                    </div>
+                )
             })}
         </React.Fragment>
     )

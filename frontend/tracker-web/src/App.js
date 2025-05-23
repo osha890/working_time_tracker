@@ -18,8 +18,19 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>Working Time Tracker</h1>
-        <ProjectList projects={this.state.projects} />
+        <header>
+          <div className="adminPanel">
+            <h2>Projects</h2>
+            <h2>Tasks</h2>
+            <h2>Users</h2>
+            <h2>Tracks</h2>
+          </div>
+        </header>
+        <main>
+          <ProjectList projects={this.state.projects} />
+        </main>
+        <footer></footer>
+
       </div>
     );
   }
