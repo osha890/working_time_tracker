@@ -3,21 +3,22 @@ import React from "react";
 
 function UserList(props) {
     return (
-        <React.Fragment>
+        <div className="userList">
             {props.users.map(user => {
                 return (
-                    <div className="userDiv" key={user.id}>
-                        <h4>{user.username}</h4>
+                    <div className="userElement" key={user.id}>
+                        <p className="id">ID: {user.id}</p>
+                        <p className="username">{user.username}</p>
 
                         {user.extension && user.extension.project ? (
-                            <p><strong>Project:</strong> {user.extension.project.title}</p>
+                            <p>Project: {user.extension.project.title}</p>
                         ) : (
-                            <p><strong>Project:</strong> None</p>
+                            <p>Project: None</p>
                         )}
                     </div>
                 )
             })}
-        </React.Fragment>
+        </div>
     );
 }
 
