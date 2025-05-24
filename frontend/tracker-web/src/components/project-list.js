@@ -3,7 +3,7 @@ import React from "react";
 function ProjectList(props) {
     return (
         <div>
-            <div className="addProjectButton" onClick={props.onAddClick}>Add project</div>
+            <div className="addButton">Add project</div>
             <div className="projectList">
                 {props.projects.map(project => {
                     return (

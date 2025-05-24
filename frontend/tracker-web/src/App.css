@@ -218,7 +218,7 @@ main {
 }
 
 
-.addProjectButton {
+.addButton {
   display: block;
   width: max-content;
   margin: 0 auto 15px auto;
@@ -233,6 +233,6 @@ main {
   transition: background-color 0.3s ease;
 }
 
-.addProjectButton:hover {
+.addButton:hover {
   background-color: #37723a;
 }
