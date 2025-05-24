@@ -2,12 +2,10 @@ from django.contrib.auth.models import User
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Project, Task, Track, UserExtension
-from .serializers import (
-    ProjectSerializer,
-    TaskDetailedSerializer,
-    TaskSerializer,
-    TrackDetailedSerializer,
-    TrackSerializer,
+from .serializers.project_serializers import ProjectSerializer
+from .serializers.task_serializers import TaskDetailedSerializer, TaskSerializer
+from .serializers.track_serializers import TrackDetailedSerializer, TrackSerializer
+from .serializers.user_serializers import (
     UserExtensionDetailedSerializer,
     UserExtensionSerializer,
     UserSerializer,
