@@ -10,8 +10,12 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectSimpleSerializer(serializers.ModelSerializer):
-    """Is used in UserExtensionNestedSerializer"""
-
     class Meta:
         model = Project
-        fields = ["id", "title"]
+        fields = "__all__"
+
+
+class ProjectDetailedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = "__all__"

@@ -1,11 +1,17 @@
 from rest_framework import serializers
 
 from ..models import Track
-from .task_serializers import TaskSimpleSerializer
-from .user_serializers import UserSerializer, UserSimpleSerializer
+from .task_serializers import TaskDetailedSerializer, TaskSimpleSerializer
+from .user_serializers import UserDetailedSerializer, UserSimpleSerializer
 
 
 class TrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Track
+        fields = "__all__"
+
+
+class TrackSimpleSerializer(serializers.ModelSerializer):
     user = UserSimpleSerializer()
     task = TaskSimpleSerializer()
 
@@ -15,10 +21,8 @@ class TrackSerializer(serializers.ModelSerializer):
 
 
 class TrackDetailedSerializer(serializers.ModelSerializer):
-    """For retrieving"""
-
-    user = UserSerializer()
-    task = serializers.SerializerMethodField()
+    user = UserDetailedSerializer()
+    task = TaskDetailedSerializer()
 
     class Meta:
         model = Track

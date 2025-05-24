@@ -3,13 +3,11 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from ..models import Task
-from .project_serializers import ProjectSimpleSerializer
-from .user_serializers import UserSerializer, UserSimpleSerializer
+from .project_serializers import ProjectDetailedSerializer, ProjectSimpleSerializer
+from .user_serializers import UserDetailedSerializer, UserSimpleSerializer
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    user = UserSimpleSerializer(read_only=True)
-
     class Meta:
         model = Task
         fields = "__all__"
@@ -26,10 +24,8 @@ class TaskSerializer(serializers.ModelSerializer):
         return data
 
 
-class TaskDetailedSerializer(serializers.ModelSerializer):
-    """For retrieving"""
-
-    user = UserSerializer()
+class TaskSimpleSerializer(serializers.ModelSerializer):
+    user = UserSimpleSerializer()
     project = ProjectSimpleSerializer()
 
     class Meta:
@@ -37,19 +33,10 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TaskSimpleSerializer(serializers.ModelSerializer):
-    """Is used in TrackSerializer"""
+class TaskDetailedSerializer(serializers.ModelSerializer):
+    user = UserDetailedSerializer()
+    project = ProjectDetailedSerializer()
 
     class Meta:
         model = Task
-        fields = ["id", "title"]
-
-
-class TaskSerializerWSimpleUser(serializers.ModelSerializer):
-    """Is used in TTrackDetailedSerializer"""
-
-    user = UserSimpleSerializer()
-
-    class Meta:
-        model = Task
-        fields = ["id", "title"]
+        fields = "__all__"

@@ -2,48 +2,48 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from ..models import UserExtension
-from .project_serializers import ProjectSimpleSerializer
+from .project_serializers import ProjectDetailedSerializer, ProjectSimpleSerializer
 
 
 class UserExtensionSerializer(serializers.ModelSerializer):
-    """For retrieving"""
-
     class Meta:
         model = UserExtension
         fields = "__all__"
+
+
+class UserExtensionSimpleSerializer(serializers.ModelSerializer):
+    project = ProjectSimpleSerializer()
+
+    class Meta:
+        model = UserExtension
+        fields = ["id", "user", "project"]
 
 
 class UserExtensionDetailedSerializer(serializers.ModelSerializer):
-    """For retrieving"""
-
-    project = ProjectSimpleSerializer()
+    project = ProjectDetailedSerializer()
 
     class Meta:
         model = UserExtension
         fields = "__all__"
 
 
-class UserExtensionNestedSerializer(serializers.ModelSerializer):
-    """Is used in UserSerializer"""
-
-    project = ProjectSimpleSerializer()
-
-    class Meta:
-        model = UserExtension
-        fields = ["id", "project"]
-
-
 class UserSerializer(serializers.ModelSerializer):
-    extension = UserExtensionNestedSerializer(source="userextension", read_only=True)
+    class Meta:
+        model = User
+        fields = ["id", "username"]
+
+
+class UserSimpleSerializer(serializers.ModelSerializer):
+    extension = UserExtensionSimpleSerializer(source="userextension")
 
     class Meta:
         model = User
         fields = ["id", "username", "extension"]
 
 
-class UserSimpleSerializer(serializers.ModelSerializer):
-    """Is used in TrackSerializer"""
+class UserDetailedSerializer(serializers.ModelSerializer):
+    extension = UserExtensionDetailedSerializer(source="userextension")
 
     class Meta:
         model = User
-        fields = ["id", "username"]
+        fields = ["id", "username", "extension"]
