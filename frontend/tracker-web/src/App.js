@@ -11,7 +11,7 @@ class App extends Component {
     tasks: [],
     users: [],
     tracks: [],
-    activeSection: 'Projects',
+    currentSection: 'Projects',
   }
 
   componentDidMount() {
@@ -22,7 +22,7 @@ class App extends Component {
   }
 
   handleSectionChange = (section) => {
-    this.setState({ activeSection: section });
+    this.setState({ currentSection: section });
 
     if (section === 'Projects' && this.state.projects.kength === 0) {
       fetch("http://127.0.0.1:8000/api/projects/")
@@ -31,11 +31,13 @@ class App extends Component {
         .catch(error => console.log(error));
     }
 
+
     if (section === 'Tasks' && this.state.tasks.length === 0) {
       fetch("http://127.0.0.1:8000/api/tasks/")
         .then(resp => resp.json())
         .then(data => this.setState({ tasks: data }))
         .catch(error => console.log(error));
+      this.setState({ currentSection: 'Tasks' });
     }
 
     if (section === 'Users' && this.state.users.length === 0) {
@@ -54,9 +56,9 @@ class App extends Component {
   }
 
   renderSection() {
-    const { activeSection, projects, tasks, users, tracks } = this.state;
+    const { currentSection, projects, tasks, users, tracks } = this.state;
 
-    switch (activeSection) {
+    switch (currentSection) {
       case 'Projects':
         return <ProjectList projects={projects} />;
       case 'Tasks':
@@ -75,10 +77,10 @@ class App extends Component {
       <div className="App">
         <header>
           <div className="adminPanel">
-            <h2 onClick={() => this.handleSectionChange('Projects')}>Projects</h2>
-            <h2 onClick={() => this.handleSectionChange('Tasks')}>Tasks</h2>
-            <h2 onClick={() => this.handleSectionChange('Users')}>Users</h2>
-            <h2 onClick={() => this.handleSectionChange('Tracks')}>Tracks</h2>
+            <div className={this.state.currentSection === 'Projects' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Projects')}>Projects</div>
+            <div className={this.state.currentSection === 'Tasks' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Tasks')}>Tasks</div>
+            <div className={this.state.currentSection === 'Users' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Users')}>Users</div>
+            <div className={this.state.currentSection === 'Tracks' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Tracks')}>Tracks</div>
           </div>
         </header>
         <main>

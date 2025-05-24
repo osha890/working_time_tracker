@@ -2,22 +2,32 @@ import React from "react";
 
 function TaskList(props) {
     return (
-        <React.Fragment>
+        <div className="taskList">
             {props.tasks.map(task => {
                 return (
-                    <div className="taskDiv" key={task.id}>
-                        <h4>{task.title}</h4>
-                        <p>{task.description || "No description provided."}</p>
-                        <p>In progress {task.is_in_progress ? "Yes" : "No"}</p>
-                        <p>Completed: {task.is_completed ? "Yes" : "No"}</p>
+                    <div className="taskCard" key={task.id}>
+                        <div>
+                            <div className="taskHedaer">
+                                <h4>{task.title}</h4>
+                                {task.is_completed ? (
+                                    <div className="completed">Completed</div>
+                                ) : task.is_in_progress ? (
+                                    <div className="inProgress">In progress</div>
+                                ) : null}
+                            </div>
+                            <p>{task.description || "No description provided."}</p>
+                            <p><b>Project: {task.project.title}</b></p>
+                        </div>
+
                         {task.user && (
-                            <p>Assigned to: {task.user.username}</p>
+                            <div>
+                                <p>Assigned to: {task.user.username}</p>
+                            </div>
                         )}
-                        <p>Project ID: {task.project}</p>
                     </div>
                 )
             })}
-        </React.Fragment>
+        </div>
     );
 }
 

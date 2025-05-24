@@ -17,18 +17,133 @@ header {
   background-color: white;
   color: #333;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  justify-content: center;
 }
 
 header .adminPanel {
   padding: 20px;
   display: flex;
+  gap: 15px;
 }
 
-header .adminPanel h2 {
-  margin-right: 20px;
+header .adminPanel .menuItem {
+  min-width: 100px;
+  text-align: center;
+  padding: 10px 15px;
+  border: 2px solid #333;
+  border-radius: 6px;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.4s, box-shadow 0.2s;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+header .adminPanel .menuItem:hover {
+  background-color: #e6e6e6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+header .adminPanel .menuItem.active {
+  background-color: #333;
+  color: white;
 }
 
 main {
   flex: 1;
+  display: flex;
+  justify-content: center;
   padding: 20px;
+}
+
+.projectList {
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+}
+
+.projectCard {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.projectCard h3 {
+  margin: 0 0 10px;
+  font-size: 30px;
+  color: #2c3e50;
+}
+
+.projectCard p {
+  margin: 0;
+  font-size: 18px;
+  color: #555;
+}
+
+
+
+
+.taskList {
+  max-width: 1400px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.taskCard {
+  background: white;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.taskHedaer {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.taskHedaer h4 {
+  font-size: 28px;
+}
+
+.completed {
+  background-color: #28a745;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.inProgress {
+  background-color: #ffc107;
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.inProgress,
+.completed {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.taskCard p {
+  margin: 4px 0;
+  font-size: 18px;
+  color: #333;
 }
