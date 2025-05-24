@@ -63,7 +63,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 20px;
 }
 
 .projectCard {
@@ -216,4 +215,24 @@ main {
   background-color: #e8f0fe;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+
+.addProjectButton {
+  display: block;
+  width: max-content;
+  margin: 0 auto 15px auto;
+  padding: 10px 20px;
+  background-color: #60a552;
+  color: white;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.addProjectButton:hover {
+  background-color: #37723a;
 }
