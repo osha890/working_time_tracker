@@ -59,7 +59,7 @@ main {
 }
 
 .projectList {
-  max-width: 1200px;
+  width: 1200px;
   display: flex;
   flex-direction: column;
   gap: 16px;

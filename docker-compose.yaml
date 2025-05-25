@@ -19,7 +19,7 @@ services:
 
   backend:
     build: .
-    container_name: tracker_container
+    container_name: tracker_backend_container
     command: >
       sh -c "cd working_time_tracker &&
              python manage.py migrate &&
@@ -33,6 +33,16 @@ services:
       - .env
     depends_on:
       - db
+
+  frontend:
+    build:
+      context: ./frontend/tracker-web
+      dockerfile: Dockerfile
+    container_name: tracker_frontend_container
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:

@@ -6,6 +6,8 @@ import UserList from './components/user-list';
 import TrackList from './components/track-list';
 
 class App extends Component {
+  BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
   state = {
     projects: [],
     tasks: [],
@@ -15,7 +17,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:8000/api/projects/")
+    fetch(`${this.BASE_URL}/api/projects/`)
       .then(resp => resp.json())
       .then(data => this.setState({ projects: data }))
       .catch(error => console.log(error));
@@ -24,31 +26,29 @@ class App extends Component {
   handleSectionChange = (section) => {
     this.setState({ currentSection: section });
 
-    if (section === 'Projects' && this.state.projects.kength === 0) {
-      fetch("http://127.0.0.1:8000/api/projects/")
+    if (section === 'Projects' && this.state.projects.length === 0) {
+      fetch(`${this.BASE_URL}/api/projects/`)
         .then(resp => resp.json())
         .then(data => this.setState({ projects: data }))
         .catch(error => console.log(error));
     }
 
-
     if (section === 'Tasks' && this.state.tasks.length === 0) {
-      fetch("http://127.0.0.1:8000/api/tasks/")
+      fetch(`${this.BASE_URL}/api/tasks/`)
         .then(resp => resp.json())
         .then(data => this.setState({ tasks: data }))
         .catch(error => console.log(error));
-      this.setState({ currentSection: 'Tasks' });
     }
 
     if (section === 'Users' && this.state.users.length === 0) {
-      fetch("http://127.0.0.1:8000/api/users/")
+      fetch(`${this.BASE_URL}/api/users/`)
         .then(resp => resp.json())
         .then(data => this.setState({ users: data }))
         .catch(error => console.log(error));
     }
 
     if (section === 'Tracks' && this.state.tracks.length === 0) {
-      fetch("http://127.0.0.1:8000/api/tracks/")
+      fetch(`${this.BASE_URL}/api/tracks/`)
         .then(resp => resp.json())
         .then(data => this.setState({ tracks: data }))
         .catch(error => console.log(error));
