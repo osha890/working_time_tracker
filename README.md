@@ -1,4 +1,29 @@
-# working_time_tracker
+# Working Time Tracker
+
+### How to run
+
+- Create .env file in the root with:
+```text
+...
+DB_HOST=db
+...
+```
+- Create .env file in frontend/tracker-web with:
+```text
+...
+REACT_APP_API_BASE_URL=http://127.0.0.1:8000
+...
+```
+- Run the following command:
+```commandline
+docker compose up --build
+```
+Backend: http://127.0.0.1:8000
+
+Frontend: http://127.0.0.1:3000
+
+---
+### Development
 
 Before making any commits, run the following command to set up the pre-commit hooks:
 
