@@ -23,7 +23,8 @@ class UserExtension(models.Model):
 
 class Task(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="tasks")
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks")
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reported_tasks")
+    assignee = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_tasks")
     title = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
     is_in_progress = models.BooleanField(default=False)
@@ -33,8 +34,8 @@ class Task(models.Model):
         return self.title
 
     def clean(self):
-        if self.user:
-            user_extension = self.user.userextension
+        if self.assignee:
+            user_extension = self.assignee.userextension
             if user_extension.project_id != self.project_id:
                 raise ValidationError("User can only be assigned to tasks from his project")
 

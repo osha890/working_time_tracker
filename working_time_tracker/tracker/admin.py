@@ -15,7 +15,7 @@ class UserExtensionAdmin(ModelAdmin):
 
 @register(Task)
 class TaskAdmin(ModelAdmin):
-    list_display = ["title", "project", "user"]
+    list_display = ["title", "project", "assignee"]
 
 
 @register(Track)
