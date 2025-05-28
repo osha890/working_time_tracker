@@ -30,7 +30,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskListSerializer(serializers.ModelSerializer):
-    user = UserListSerializer()
+    assignee = UserListSerializer()
+    reporter = UserListSerializer()
     project = ProjectListSerializer()
 
     class Meta:
@@ -39,7 +40,8 @@ class TaskListSerializer(serializers.ModelSerializer):
 
 
 class TaskDetailedSerializer(serializers.ModelSerializer):
-    user = UserDetailedSerializer()
+    assignee = UserDetailedSerializer()
+    reporter = UserDetailedSerializer()
     project = ProjectDetailedSerializer()
 
     class Meta:
