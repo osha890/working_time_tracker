@@ -132,6 +132,16 @@ main {
   color: #333;
 }
 
+.taskCard .status {
+  justify-self: center;
+  margin-top: 30px;
+}
+
+.taskCard .status p {
+  font-size: 14px;
+  font-weight: bold;
+}
+
 
 
 .userList {
