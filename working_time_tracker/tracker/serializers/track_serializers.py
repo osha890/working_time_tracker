@@ -2,11 +2,11 @@ from rest_framework import serializers
 from tracker.models import Track
 from tracker.serializers.task_serializers import (
     TaskDetailedSerializer,
-    TaskSimpleSerializer,
+    TaskListSerializer,
 )
 from tracker.serializers.user_serializers import (
     UserDetailedSerializer,
-    UserSimpleSerializer,
+    UserListSerializer,
 )
 
 
@@ -16,9 +16,9 @@ class TrackSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TrackSimpleSerializer(serializers.ModelSerializer):
-    user = UserSimpleSerializer()
-    task = TaskSimpleSerializer()
+class TrackListSerializer(serializers.ModelSerializer):
+    user = UserListSerializer()
+    task = TaskListSerializer()
 
     class Meta:
         model = Track

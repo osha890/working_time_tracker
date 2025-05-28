@@ -4,26 +4,26 @@ from rest_framework.viewsets import ModelViewSet
 from .models import Project, Task, Track, UserExtension
 from .serializers.project_serializers import (
     ProjectDetailedSerializer,
+    ProjectListSerializer,
     ProjectSerializer,
-    ProjectSimpleSerializer,
 )
 from .serializers.task_serializers import (
     TaskDetailedSerializer,
+    TaskListSerializer,
     TaskSerializer,
-    TaskSimpleSerializer,
 )
 from .serializers.track_serializers import (
     TrackDetailedSerializer,
+    TrackListSerializer,
     TrackSerializer,
-    TrackSimpleSerializer,
 )
 from .serializers.user_serializers import (
     UserDetailedSerializer,
     UserExtensionDetailedSerializer,
     UserExtensionSerializer,
     UserExtensionSimpleSerializer,
+    UserListSerializer,
     UserSerializer,
-    UserSimpleSerializer,
 )
 
 
@@ -34,7 +34,7 @@ class ProjectViewSet(ModelViewSet):
         if self.action == "retrieve":
             return ProjectDetailedSerializer
         elif self.action == "list":
-            return ProjectSimpleSerializer
+            return ProjectListSerializer
         return ProjectSerializer
 
 
@@ -45,7 +45,7 @@ class UserViewSet(ModelViewSet):
         if self.action == "retrieve":
             return UserDetailedSerializer
         elif self.action == "list":
-            return UserSimpleSerializer
+            return UserListSerializer
         return UserSerializer
 
 
@@ -67,7 +67,7 @@ class TaskViewSet(ModelViewSet):
         if self.action == "retrieve":
             return TaskDetailedSerializer
         elif self.action == "list":
-            return TaskSimpleSerializer
+            return TaskListSerializer
         return TaskSerializer
 
 
@@ -78,5 +78,5 @@ class TrackViewSet(ModelViewSet):
         if self.action == "retrieve":
             return TrackDetailedSerializer
         elif self.action == "list":
-            return TrackSimpleSerializer
+            return TrackListSerializer
         return TrackSerializer

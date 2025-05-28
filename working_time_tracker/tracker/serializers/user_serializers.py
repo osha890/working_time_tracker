@@ -3,7 +3,7 @@ from rest_framework import serializers
 from tracker.models import UserExtension
 from tracker.serializers.project_serializers import (
     ProjectDetailedSerializer,
-    ProjectSimpleSerializer,
+    ProjectListSerializer,
 )
 
 
@@ -14,7 +14,7 @@ class UserExtensionSerializer(serializers.ModelSerializer):
 
 
 class UserExtensionSimpleSerializer(serializers.ModelSerializer):
-    project = ProjectSimpleSerializer()
+    project = ProjectListSerializer()
 
     class Meta:
         model = UserExtension
@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id", "username"]
 
 
-class UserSimpleSerializer(serializers.ModelSerializer):
+class UserListSerializer(serializers.ModelSerializer):
     extension = UserExtensionSimpleSerializer(source="userextension")
 
     class Meta:
