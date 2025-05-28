@@ -1,6 +1,5 @@
 from rest_framework import serializers
-
-from ..models import Project
+from tracker.models import Project
 
 
 class ProjectSerializer(serializers.ModelSerializer):

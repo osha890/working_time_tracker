@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-
-from ..models import UserExtension
-from .project_serializers import ProjectDetailedSerializer, ProjectSimpleSerializer
+from tracker.models import UserExtension
+from tracker.serializers.project_serializers import (
+    ProjectDetailedSerializer,
+    ProjectSimpleSerializer,
+)
 
 
 class UserExtensionSerializer(serializers.ModelSerializer):
