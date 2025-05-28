@@ -1,8 +1,13 @@
 from rest_framework import serializers
 from tracker.models import Track
-
-from .task_serializers import TaskDetailedSerializer, TaskSimpleSerializer
-from .user_serializers import UserDetailedSerializer, UserSimpleSerializer
+from tracker.serializers.task_serializers import (
+    TaskDetailedSerializer,
+    TaskSimpleSerializer,
+)
+from tracker.serializers.user_serializers import (
+    UserDetailedSerializer,
+    UserSimpleSerializer,
+)
 
 
 class TrackSerializer(serializers.ModelSerializer):

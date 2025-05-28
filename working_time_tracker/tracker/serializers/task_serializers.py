@@ -2,9 +2,14 @@ from django.core.exceptions import ValidationError as DjValidationError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from tracker.models import Task
-
-from .project_serializers import ProjectDetailedSerializer, ProjectSimpleSerializer
-from .user_serializers import UserDetailedSerializer, UserSimpleSerializer
+from tracker.serializers.project_serializers import (
+    ProjectDetailedSerializer,
+    ProjectSimpleSerializer,
+)
+from tracker.serializers.user_serializers import (
+    UserDetailedSerializer,
+    UserSimpleSerializer,
+)
 
 
 class TaskSerializer(serializers.ModelSerializer):
