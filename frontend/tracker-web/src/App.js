@@ -14,14 +14,15 @@ class App extends Component {
     users: [],
     tracks: [],
     currentSection: 'Projects',
+    isAuthenticated: false,
   }
 
   fetchData = (endpoint, stateKey) => {
-  fetch(`${this.BASE_URL}/api/${endpoint}/`)
-    .then(resp => resp.json())
-    .then(data => this.setState({ [stateKey]: data }))
-    .catch(error => console.log(error));
-}
+    fetch(`${this.BASE_URL}/api/${endpoint}/`)
+      .then(resp => resp.json())
+      .then(data => this.setState({ [stateKey]: data }))
+      .catch(error => console.log(error));
+  }
 
   componentDidMount() {
     this.fetchData('projects', 'projects');
@@ -64,7 +65,15 @@ class App extends Component {
     }
   }
 
+  handleLogin = () => {
+    this.setState({ isAuthenticated: true, showLogin: false });
+  }
+
   render() {
+    if (!this.state.isAuthenticated) {
+      return <LoginForm onSubmit={this.handleLogin} />;
+    }
+
     return (
       <div className="App">
         <header>
