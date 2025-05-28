@@ -16,42 +16,34 @@ class App extends Component {
     currentSection: 'Projects',
   }
 
+  fetchData = (endpoint, stateKey) => {
+  fetch(`${this.BASE_URL}/api/${endpoint}/`)
+    .then(resp => resp.json())
+    .then(data => this.setState({ [stateKey]: data }))
+    .catch(error => console.log(error));
+}
+
   componentDidMount() {
-    fetch(`${this.BASE_URL}/api/projects/`)
-      .then(resp => resp.json())
-      .then(data => this.setState({ projects: data }))
-      .catch(error => console.log(error));
+    this.fetchData('projects', 'projects');
   }
 
   handleSectionChange = (section) => {
     this.setState({ currentSection: section });
 
     if (section === 'Projects' && this.state.projects.length === 0) {
-      fetch(`${this.BASE_URL}/api/projects/`)
-        .then(resp => resp.json())
-        .then(data => this.setState({ projects: data }))
-        .catch(error => console.log(error));
+      this.fetchData('projects', 'projects');
     }
 
     if (section === 'Tasks' && this.state.tasks.length === 0) {
-      fetch(`${this.BASE_URL}/api/tasks/`)
-        .then(resp => resp.json())
-        .then(data => this.setState({ tasks: data }))
-        .catch(error => console.log(error));
+      this.fetchData('tasks', 'tasks');
     }
 
     if (section === 'Users' && this.state.users.length === 0) {
-      fetch(`${this.BASE_URL}/api/users/`)
-        .then(resp => resp.json())
-        .then(data => this.setState({ users: data }))
-        .catch(error => console.log(error));
+      this.fetchData('users', 'users');
     }
 
     if (section === 'Tracks' && this.state.tracks.length === 0) {
-      fetch(`${this.BASE_URL}/api/tracks/`)
-        .then(resp => resp.json())
-        .then(data => this.setState({ tracks: data }))
-        .catch(error => console.log(error));
+      this.fetchData('tracks', 'tracks');
     }
   }
 
