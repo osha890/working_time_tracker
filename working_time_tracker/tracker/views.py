@@ -1,4 +1,7 @@
+from typing import Optional
+
 from django.contrib.auth.models import User
+from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Project, Task, Track, UserExtension
@@ -20,63 +23,67 @@ from .serializers.track_serializers import (
 from .serializers.user_serializers import (
     UserDetailedSerializer,
     UserExtensionDetailedSerializer,
+    UserExtensionListSerializer,
     UserExtensionSerializer,
-    UserExtensionSimpleSerializer,
     UserListSerializer,
     UserSerializer,
 )
 
 
-class ProjectViewSet(ModelViewSet):
+class BaseModelViewSet(ModelViewSet):
+    serializer_classes: dict[str, Optional[ModelSerializer]] = {
+        "default": None,
+        "list": None,
+        "retrieve": None,
+    }
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_classes.get(self.action)
+        if serializer_class is None:
+            serializer_class = self.serializer_classes.get("default")
+        return serializer_class
+
+
+class ProjectViewSet(BaseModelViewSet):
     queryset = Project.objects.all()
-
-    def get_serializer_class(self):
-        if self.action == "retrieve":
-            return ProjectDetailedSerializer
-        elif self.action == "list":
-            return ProjectListSerializer
-        return ProjectSerializer
+    serializer_classes = {
+        "default": ProjectSerializer,
+        "list": ProjectListSerializer,
+        "retrieve": ProjectDetailedSerializer,
+    }
 
 
-class UserViewSet(ModelViewSet):
+class UserViewSet(BaseModelViewSet):
     queryset = User.objects.all()
-
-    def get_serializer_class(self):
-        if self.action == "retrieve":
-            return UserDetailedSerializer
-        elif self.action == "list":
-            return UserListSerializer
-        return UserSerializer
+    serializer_classes = {
+        "default": UserSerializer,
+        "list": UserListSerializer,
+        "retrieve": UserDetailedSerializer,
+    }
 
 
-class UserExtensionViewSet(ModelViewSet):
+class UserExtensionViewSet(BaseModelViewSet):
     queryset = UserExtension.objects.all()
-
-    def get_serializer_class(self):
-        if self.action == "retrieve":
-            return UserExtensionDetailedSerializer
-        elif self.action == "list":
-            return UserExtensionSimpleSerializer
-        return UserExtensionSerializer
+    serializer_classes = {
+        "default": UserExtensionSerializer,
+        "list": UserExtensionListSerializer,
+        "retrieve": UserExtensionDetailedSerializer,
+    }
 
 
-class TaskViewSet(ModelViewSet):
+class TaskViewSet(BaseModelViewSet):
     queryset = Task.objects.all()
-
-    def get_serializer_class(self):
-        if self.action == "retrieve":
-            return TaskDetailedSerializer
-        elif self.action == "list":
-            return TaskListSerializer
-        return TaskSerializer
+    serializer_classes = {
+        "default": TaskSerializer,
+        "list": TaskListSerializer,
+        "retrieve": TaskDetailedSerializer,
+    }
 
 
-class TrackViewSet(ModelViewSet):
+class TrackViewSet(BaseModelViewSet):
     queryset = Track.objects.all()
-
-    def get_serializer_class(self):
-        if self.action == "retrieve":
-            return TrackDetailedSerializer
-        elif self.action == "list":
-            return TrackListSerializer
-        return TrackSerializer
+    serializer_classes = {
+        "default": TrackSerializer,
+        "list": TrackListSerializer,
+        "retrieve": TrackDetailedSerializer,
+    }

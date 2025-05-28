@@ -13,7 +13,7 @@ class UserExtensionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class UserExtensionSimpleSerializer(serializers.ModelSerializer):
+class UserExtensionListSerializer(serializers.ModelSerializer):
     project = ProjectListSerializer()
 
     class Meta:
@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserListSerializer(serializers.ModelSerializer):
-    extension = UserExtensionSimpleSerializer(source="userextension")
+    extension = UserExtensionListSerializer(source="userextension")
 
     class Meta:
         model = User
