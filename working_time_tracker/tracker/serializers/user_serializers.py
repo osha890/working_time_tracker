@@ -10,6 +10,7 @@ class UserExtensionSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserExtension
         fields = "__all__"
+        read_only_fields = ["id", "user"]
 
 
 class UserExtensionDetailedSerializer(serializers.ModelSerializer):
@@ -18,12 +19,14 @@ class UserExtensionDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserExtension
         fields = "__all__"
+        read_only_fields = ["id", "user"]
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username"]
+        read_only_fields = ["id"]
 
 
 class UserListSerializer(serializers.ModelSerializer):
@@ -32,6 +35,7 @@ class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "extension"]
+        read_only_fields = ["id", "extension"]
 
 
 class UserDetailedSerializer(serializers.ModelSerializer):
@@ -40,3 +44,4 @@ class UserDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "extension"]
+        read_only_fields = ["id", "extension"]
