@@ -1,9 +1,20 @@
 import React, { Component } from 'react';
+<<<<<<< HEAD
 import 'style/App.css';
 import ProjectList from 'components/project-list';
 import TaskList from 'components/task-list';
 import UserList from 'components/user-list';
 import TrackList from 'components/track-list';
+=======
+import './App.css';
+import ProjectList from './components/project-list';
+import TaskList from './components/task-list';
+import UserList from './components/user-list';
+import TrackList from './components/track-list';
+import LoginForm from './components/login-form';
+import { fetchWithAuth, clearTokens, getAccessToken } from './utils/auth';
+
+>>>>>>> 3577b94 (Added token refreshing)
 
 class App extends Component {
   BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -18,38 +29,53 @@ class App extends Component {
   }
 
   fetchData = (endpoint, stateKey) => {
-    fetch(`${this.BASE_URL}/api/${endpoint}/`)
-      .then(resp => resp.json())
+    fetchWithAuth(`${this.BASE_URL}/api/${endpoint}/`)
+      .then(resp => {
+        if (!resp.ok) throw new Error('Error fetching data');
+        return resp.json();
+      })
       .then(data => this.setState({ [stateKey]: data }))
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.log(error);
+        this.handleLogout();
+      });
   }
 
   componentDidMount() {
-    const token = localStorage.getItem('accessToken');
+    const token = getAccessToken();
     if (token) {
-      this.setState({ isAuthenticated: true });
-      // this.fetchData('projects', 'projects');
+      fetchWithAuth(`${this.BASE_URL}/api/projects/`)
+        .then(resp => {
+          if (resp.ok) {
+            this.setState({ isAuthenticated: true });
+            return resp.json();
+          } else {
+            throw new Error('Invalid token');
+          }
+        })
+        .then(data => this.setState({ projects: data }))
+        .catch(() => this.handleLogout());
     }
   }
 
   handleSectionChange = (section) => {
     this.setState({ currentSection: section });
 
-    // if (section === 'Projects' && this.state.projects.length === 0) {
-    //   this.fetchData('projects', 'projects');
-    // }
+    if (section === 'Projects' && this.state.projects.length === 0) {
+      this.fetchData('projects', 'projects');
+    }
 
-    // if (section === 'Tasks' && this.state.tasks.length === 0) {
-    //   this.fetchData('tasks', 'tasks');
-    // }
+    if (section === 'Tasks' && this.state.tasks.length === 0) {
+      this.fetchData('tasks', 'tasks');
+    }
 
-    // if (section === 'Users' && this.state.users.length === 0) {
-    //   this.fetchData('users', 'users');
-    // }
+    if (section === 'Users' && this.state.users.length === 0) {
+      this.fetchData('users', 'users');
+    }
 
-    // if (section === 'Tracks' && this.state.tracks.length === 0) {
-    //   this.fetchData('tracks', 'tracks');
-    // }
+    if (section === 'Tracks' && this.state.tracks.length === 0) {
+      this.fetchData('tracks', 'tracks');
+    }
   }
 
   renderSection() {
@@ -69,9 +95,17 @@ class App extends Component {
     }
   }
 
-  handleLogin = () => {
-    this.setState({ isAuthenticated: true, showLogin: false });
+  handleLogout = () => {
+    clearTokens();
+    this.setState({
+      isAuthenticated: false,
+      projects: [],
+      tasks: [],
+      users: [],
+      tracks: []
+    });
   }
+
 
   render() {
     if (!this.state.isAuthenticated) {
@@ -86,11 +120,7 @@ class App extends Component {
             <div className={this.state.currentSection === 'Tasks' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Tasks')}>Tasks</div>
             <div className={this.state.currentSection === 'Users' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Users')}>Users</div>
             <div className={this.state.currentSection === 'Tracks' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Tracks')}>Tracks</div>
-            <div className="logOut" onClick={() => {
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('refreshToken');
-              this.setState({ isAuthenticated: false });
-            }}>Log out</div>
+            <div className="logOut" onClick={this.handleLogout}>Log out</div>
           </div>
         </header>
         <main>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { saveTokens } from '../utils/auth';  // путь может отличаться, проверь структуру проекта
 
 const LoginForm = ({ onLoginSuccess }) => {
     const [username, setUsername] = useState('');
@@ -16,8 +17,7 @@ const LoginForm = ({ onLoginSuccess }) => {
                 return res.json();
             })
             .then(data => {
-                localStorage.setItem('accessToken', data.access);
-                localStorage.setItem('refreshToken', data.refresh);;
+                saveTokens({ access: data.access, refresh: data.refresh });
                 onLoginSuccess();
             })
             .catch(err => alert('Error: ' + err.message));
