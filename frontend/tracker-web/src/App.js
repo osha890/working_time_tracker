@@ -25,27 +25,31 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.fetchData('projects', 'projects');
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      this.setState({ isAuthenticated: true });
+      // this.fetchData('projects', 'projects');
+    }
   }
 
   handleSectionChange = (section) => {
     this.setState({ currentSection: section });
 
-    if (section === 'Projects' && this.state.projects.length === 0) {
-      this.fetchData('projects', 'projects');
-    }
+    // if (section === 'Projects' && this.state.projects.length === 0) {
+    //   this.fetchData('projects', 'projects');
+    // }
 
-    if (section === 'Tasks' && this.state.tasks.length === 0) {
-      this.fetchData('tasks', 'tasks');
-    }
+    // if (section === 'Tasks' && this.state.tasks.length === 0) {
+    //   this.fetchData('tasks', 'tasks');
+    // }
 
-    if (section === 'Users' && this.state.users.length === 0) {
-      this.fetchData('users', 'users');
-    }
+    // if (section === 'Users' && this.state.users.length === 0) {
+    //   this.fetchData('users', 'users');
+    // }
 
-    if (section === 'Tracks' && this.state.tracks.length === 0) {
-      this.fetchData('tracks', 'tracks');
-    }
+    // if (section === 'Tracks' && this.state.tracks.length === 0) {
+    //   this.fetchData('tracks', 'tracks');
+    // }
   }
 
   renderSection() {
@@ -71,7 +75,7 @@ class App extends Component {
 
   render() {
     if (!this.state.isAuthenticated) {
-      return <LoginForm onSubmit={this.handleLogin} />;
+      return <LoginForm onLoginSuccess={() => this.setState({ isAuthenticated: true })} />;
     }
 
     return (
@@ -82,6 +86,11 @@ class App extends Component {
             <div className={this.state.currentSection === 'Tasks' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Tasks')}>Tasks</div>
             <div className={this.state.currentSection === 'Users' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Users')}>Users</div>
             <div className={this.state.currentSection === 'Tracks' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Tracks')}>Tracks</div>
+            <div className="logOut" onClick={() => {
+              localStorage.removeItem('accessToken');
+              localStorage.removeItem('refreshToken');
+              this.setState({ isAuthenticated: false });
+            }}>Log out</div>
           </div>
         </header>
         <main>
