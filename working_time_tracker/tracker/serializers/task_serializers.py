@@ -3,8 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from tracker.models import Task
 from tracker.serializers.project_serializers import (
-    ProjectDetailedSerializer,
-    ProjectListSerializer,
+    ProjectSerializer,
 )
 from tracker.serializers.user_serializers import (
     UserDetailedSerializer,
@@ -32,7 +31,7 @@ class TaskSerializer(serializers.ModelSerializer):
 class TaskListSerializer(serializers.ModelSerializer):
     assignee = UserListSerializer()
     reporter = UserListSerializer()
-    project = ProjectListSerializer()
+    project = ProjectSerializer()
 
     class Meta:
         model = Task
@@ -42,7 +41,7 @@ class TaskListSerializer(serializers.ModelSerializer):
 class TaskDetailedSerializer(serializers.ModelSerializer):
     assignee = UserDetailedSerializer()
     reporter = UserDetailedSerializer()
-    project = ProjectDetailedSerializer()
+    project = ProjectSerializer()
 
     class Meta:
         model = Task

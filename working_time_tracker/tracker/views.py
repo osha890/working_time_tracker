@@ -17,15 +17,12 @@ from tracker.serializers.track_serializers import (
 from tracker.serializers.user_serializers import (
     UserDetailedSerializer,
     UserExtensionDetailedSerializer,
-    UserExtensionListSerializer,
     UserExtensionSerializer,
     UserListSerializer,
     UserSerializer,
 )
 
 from .serializers.project_serializers import (
-    ProjectDetailedSerializer,
-    ProjectListSerializer,
     ProjectSerializer,
 )
 
@@ -48,8 +45,8 @@ class ProjectViewSet(BaseModelViewSet):
     queryset = Project.objects.all()
     serializer_classes = {
         "default": ProjectSerializer,
-        "list": ProjectListSerializer,
-        "retrieve": ProjectDetailedSerializer,
+        "list": ProjectSerializer,
+        "retrieve": ProjectSerializer,
     }
 
 
@@ -66,7 +63,7 @@ class UserExtensionViewSet(BaseModelViewSet):
     queryset = UserExtension.objects.all()
     serializer_classes = {
         "default": UserExtensionSerializer,
-        "list": UserExtensionListSerializer,
+        "list": UserExtensionSerializer,
         "retrieve": UserExtensionDetailedSerializer,
     }
 

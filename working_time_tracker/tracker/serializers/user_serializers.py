@@ -2,8 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from tracker.models import UserExtension
 from tracker.serializers.project_serializers import (
-    ProjectDetailedSerializer,
-    ProjectListSerializer,
+    ProjectSerializer,
 )
 
 
@@ -13,16 +12,8 @@ class UserExtensionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class UserExtensionListSerializer(serializers.ModelSerializer):
-    project = ProjectListSerializer()
-
-    class Meta:
-        model = UserExtension
-        fields = ["id", "user", "project"]
-
-
 class UserExtensionDetailedSerializer(serializers.ModelSerializer):
-    project = ProjectDetailedSerializer()
+    project = ProjectSerializer()
 
     class Meta:
         model = UserExtension
@@ -36,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserListSerializer(serializers.ModelSerializer):
-    extension = UserExtensionListSerializer(source="userextension")
+    extension = UserExtensionSerializer(source="userextension")
 
     class Meta:
         model = User
