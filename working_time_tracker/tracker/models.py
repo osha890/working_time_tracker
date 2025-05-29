@@ -21,14 +21,26 @@ class UserExtension(models.Model):
         return self.user.username
 
 
+class TaskStatus(models.TextChoices):
+    TO_DO = "TO_DO", "To Do"
+    IN_PROGRESS = "IN_PROGRESS", "In Progress"
+    IN_REVIEW = "IN_REVIEW", "In Review"
+    IN_QA = "IN_QA", "In QA"
+    REJECTED = "REJECTED", "Rejected"
+    COMPLETED = "COMPLETED", "Completed"
+
+
 class Task(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="tasks")
     reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reported_tasks")
     assignee = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_tasks")
     title = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
-    is_in_progress = models.BooleanField(default=False)
-    is_completed = models.BooleanField(default=False)
+    status = models.CharField(
+        max_length=20,
+        choices=TaskStatus.choices,
+        default=TaskStatus.TO_DO,
+    )
 
     def __str__(self):
         return self.title
