@@ -3,30 +3,30 @@ from typing import Optional
 from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
-
-from .models import Project, Task, Track, UserExtension
-from .serializers.project_serializers import (
-    ProjectDetailedSerializer,
-    ProjectListSerializer,
-    ProjectSerializer,
-)
-from .serializers.task_serializers import (
+from tracker.models import Project, Task, Track, UserExtension
+from tracker.serializers.task_serializers import (
     TaskDetailedSerializer,
     TaskListSerializer,
     TaskSerializer,
 )
-from .serializers.track_serializers import (
+from tracker.serializers.track_serializers import (
     TrackDetailedSerializer,
     TrackListSerializer,
     TrackSerializer,
 )
-from .serializers.user_serializers import (
+from tracker.serializers.user_serializers import (
     UserDetailedSerializer,
     UserExtensionDetailedSerializer,
     UserExtensionListSerializer,
     UserExtensionSerializer,
     UserListSerializer,
     UserSerializer,
+)
+
+from .serializers.project_serializers import (
+    ProjectDetailedSerializer,
+    ProjectListSerializer,
+    ProjectSerializer,
 )
 
 
