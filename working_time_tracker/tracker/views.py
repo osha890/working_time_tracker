@@ -3,6 +3,7 @@ from typing import Optional
 from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
+
 from tracker.models import Project, Task, Track, UserExtension
 from tracker.serializers.task_serializers import (
     TaskDetailedSerializer,

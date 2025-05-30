@@ -1,4 +1,5 @@
 from django.contrib.admin import ModelAdmin, display, register
+
 from tracker.models import Project, Task, Track, UserExtension
 
 
