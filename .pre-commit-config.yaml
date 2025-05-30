@@ -7,7 +7,7 @@ repos:
         language: system
         types: [python]
         exclude: (^|/)migrations/
-        args: ['--line-length=120']
+        args: ["--line-length=120"]
 
       - id: isort
         name: isort
@@ -15,7 +15,6 @@ repos:
         language: system
         types: [python]
         exclude: (^|/)migrations/
-        args: ['--profile', 'black']
 
       - id: flake8
         name: flake8
@@ -23,7 +22,7 @@ repos:
         language: system
         types: [ python ]
         exclude: (^|/)migrations/
-        args: ['--max-line-length=120', '--extend-ignore=D104,D100,B008,W503,VNE001']
+        args: ["--max-line-length=120", "--extend-ignore=D104,D100,B008,W503,VNE001"]
 
       - id: mypy
         name: mypy
@@ -31,3 +30,4 @@ repos:
         language: system
         types: [ python ]
         exclude: (^|/)migrations/
+        args: ["--config-file=pyproject.toml"]
