@@ -1,6 +1,6 @@
 from tracker.models import Project
 from tracker.serializers.project_serializers import ProjectSerializer
-from tracker.views.base_views import BaseModelViewSet
+from tracker.views.base import BaseModelViewSet
 
 
 class ProjectViewSet(BaseModelViewSet):

@@ -4,7 +4,7 @@ from tracker.serializers.track_serializers import (
     TrackListSerializer,
     TrackSerializer,
 )
-from tracker.views.base_views import BaseModelViewSet
+from tracker.views.base import BaseModelViewSet
 
 
 class TrackViewSet(BaseModelViewSet):

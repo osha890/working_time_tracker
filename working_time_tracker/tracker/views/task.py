@@ -4,7 +4,7 @@ from tracker.serializers.task_serializers import (
     TaskListSerializer,
     TaskSerializer,
 )
-from tracker.views.base_views import BaseModelViewSet
+from tracker.views.base import BaseModelViewSet
 
 
 class TaskViewSet(BaseModelViewSet):

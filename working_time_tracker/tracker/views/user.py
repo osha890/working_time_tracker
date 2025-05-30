@@ -8,7 +8,7 @@ from tracker.serializers.user_serializers import (
     UserListSerializer,
     UserSerializer,
 )
-from tracker.views.base_views import BaseModelViewSet
+from tracker.views.base import BaseModelViewSet
 
 
 class UserViewSet(BaseModelViewSet):
