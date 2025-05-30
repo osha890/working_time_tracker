@@ -5,6 +5,9 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
 
 from tracker.models import Project, Task, Track, UserExtension
+from tracker.serializers.project_serializers import (
+    ProjectSerializer,
+)
 from tracker.serializers.task_serializers import (
     TaskDetailedSerializer,
     TaskListSerializer,
@@ -21,10 +24,6 @@ from tracker.serializers.user_serializers import (
     UserExtensionSerializer,
     UserListSerializer,
     UserSerializer,
-)
-
-from .serializers.project_serializers import (
-    ProjectSerializer,
 )
 
 
