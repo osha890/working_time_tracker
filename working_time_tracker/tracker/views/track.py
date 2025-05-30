@@ -1,5 +1,5 @@
 from tracker.models import Track
-from tracker.serializers.track_serializers import (
+from tracker.serializers.track import (
     TrackDetailedSerializer,
     TrackListSerializer,
     TrackSerializer,

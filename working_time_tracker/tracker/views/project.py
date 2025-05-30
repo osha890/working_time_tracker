@@ -1,5 +1,5 @@
 from tracker.models import Project
-from tracker.serializers.project_serializers import ProjectSerializer
+from tracker.serializers.project import ProjectSerializer
 from tracker.views.base import BaseModelViewSet
 
 

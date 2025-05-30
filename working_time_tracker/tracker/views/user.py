@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 
 from tracker.models import UserExtension
-from tracker.serializers.user_serializers import (
+from tracker.serializers.user import (
     UserDetailedSerializer,
     UserExtensionDetailedSerializer,
     UserExtensionSerializer,

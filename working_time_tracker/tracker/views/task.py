@@ -1,5 +1,5 @@
 from tracker.models import Task
-from tracker.serializers.task_serializers import (
+from tracker.serializers.task import (
     TaskDetailedSerializer,
     TaskListSerializer,
     TaskSerializer,
