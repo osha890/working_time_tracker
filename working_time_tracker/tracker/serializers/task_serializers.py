@@ -15,7 +15,9 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = "__all__"
-        read_only_fields = ["id"]
+        read_only_fields = [
+            "id",
+        ]
 
     def validate(self, data):
         data = super().validate(data)
@@ -37,7 +39,9 @@ class TaskListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = "__all__"
-        read_only_fields = ["id"]
+        read_only_fields = [
+            "id",
+        ]
 
 
 class TaskDetailedSerializer(serializers.ModelSerializer):
@@ -48,4 +52,6 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = "__all__"
-        read_only_fields = ["id"]
+        read_only_fields = [
+            "id",
+        ]
