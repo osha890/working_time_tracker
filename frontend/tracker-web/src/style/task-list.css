@@ -6,48 +6,44 @@
 }
 
 .taskCard {
-  background-color: white;
-  border: 1px solid #ddd;
-  border-left: 4px solid #dbdbdb;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.completed {
-  border-left: 4px solid #42da63;
-}
-
-.inProgress {
-  border-left: 4px solid #f8b31e;
-}
-
-.taskHedaer {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
+.taskHeader {
   margin-bottom: 8px;
 }
 
-.taskHedaer h4 {
-  font-size: 28px;
-}
-
-.taskCard p {
-  margin: 4px 0;
-  font-size: 18px;
+.taskTitle {
+  font-size: 22px;
+  font-weight: 600;
   color: #333;
 }
 
-.taskCard .status {
-  justify-self: center;
-  margin-top: 30px;
+.taskStatus {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+  margin-top: 4px;
 }
 
-.taskCard .status p {
-  font-size: 14px;
-  font-weight: bold;
+.taskDescription {
+  font-size: 18px;
+  color: #444;
+  margin-bottom: 12px;
+}
+
+.taskMeta {
+  font-size: 17px;
+  color: #888;
+}
+
+.taskMeta span {
+  display: block;
+  margin-bottom: 4px;
 }

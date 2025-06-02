@@ -1,43 +1,26 @@
 import React from "react";
 import 'style/task-list.css';
 
-function TaskList(props) {
+
+function TaskList({ tasks }) {
     return (
-        <div>
-            {/* <div className="addButton">Add task</div> */}
-            <div className="taskList">
-                {props.tasks.map(task => {
-                    return (
-                        <div className={`taskCard ${task.is_completed ? 'completed' :
-                            task.is_in_progress ? 'inProgress' :
-                                'pending'
-                            }`} key={task.id}>
-                            <div>
-                                <div className="taskHedaer">
-                                    <h4>{task.title}</h4>
-                                </div>
-                                <p>{task.description || "No description provided."}</p>
-                                <p><b>Project: {task.project.title}</b></p>
-                            </div>
-                            <div>
-                                <p>Reported by: {task.reporter.username}</p>
-                                {task.assignee && (
-                                    <React.Fragment>
-                                        <p>Assigned to: {task.assignee.username}</p>
-                                        <div className="status">
-                                        {task.is_completed ? (
-                                            <p>Completed</p>
-                                        ) : task.is_in_progress ? (
-                                            <p>In progress</p>
-                                        ) : null}
-                                        </div>
-                                    </React.Fragment>
-                                )}
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
+        <div className="taskList">
+            {tasks.map((task) => (
+                <div key={task.id} className="taskCard">
+                    <div className="taskHeader">
+                        <div className="taskTitle">{task.id}: {task.title}</div>
+                        <div className="taskStatus">Status: {task.status_display}</div>
+                    </div>
+                    {task.description && (
+                        <div className="taskDescription">{task.description}</div>
+                    )}
+                    <div className="taskMeta">
+                        <span>Project: {task.project.title}</span>
+                        <span>Reporter: {task.reporter.username}</span>
+                        <span>Assignee: {task.assignee ? task.assignee.username : "Unassigned"}</span>
+                    </div>
+                </div>
+            ))}
         </div>
     );
 }
