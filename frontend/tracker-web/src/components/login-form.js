@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { saveTokens } from '../utils/auth';  // путь может отличаться, проверь структуру проекта
+import { saveTokens } from 'utils/auth';
+import 'style/login-form.css';
 
 const LoginForm = ({ onLoginSuccess }) => {
     const [username, setUsername] = useState('');
