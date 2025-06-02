@@ -1,8 +1,9 @@
-from datetime import timedelta
 import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+
+from working_time_tracker.config import CONFIG
 
 load_dotenv()
 
@@ -131,17 +132,4 @@ REST_FRAMEWORK = {
 }
 
 # Simple JWT settings
-
-ACCESS_VALUE = int(os.getenv("ACCESS_TOKEN_LIFETIME_VALUE", 10))
-ACCESS_UNIT = os.getenv("ACCESS_TOKEN_LIFETIME_UNIT", "minutes").lower()
-
-REFRESH_VALUE = int(os.getenv("REFRESH_TOKEN_LIFETIME_VALUE", 7))
-REFRESH_UNIT = os.getenv("REFRESH_TOKEN_LIFETIME_UNIT", "days").lower()
-
-access_token_kwargs = {ACCESS_UNIT: ACCESS_VALUE}
-refresh_token_kwargs = {REFRESH_UNIT: REFRESH_VALUE}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(**access_token_kwargs),
-    "REFRESH_TOKEN_LIFETIME": timedelta(**refresh_token_kwargs),
-}
+SIMPLE_JWT = CONFIG.AUTH_CONFIG.SIMPLE_JWT
