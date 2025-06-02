@@ -1,5 +1,5 @@
-
 import React from "react";
+import 'style/user-list.css';
 
 function UserList(props) {
     return (

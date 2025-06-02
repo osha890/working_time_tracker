@@ -1,4 +1,5 @@
 import React from "react";
+import 'style/track-list.css';
 
 function TrackList(props) {
     return (

@@ -1,0 +1,48 @@
+.trackList {
+  display: table;
+  width: 1000px;
+  max-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  color: #333;
+  margin: 20px auto;
+}
+
+.trackHeader,
+.trackElement {
+  display: table-row;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+}
+
+.trackHeader {
+  box-shadow: none;
+}
+
+.trackHeader p,
+.trackElement p {
+  display: table-cell;
+  padding: 14px 20px;
+  vertical-align: middle;
+  text-align: left;
+  border: none;
+  font-size: 20px;
+}
+
+.trackHeader p {
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.trackElement:nth-child(even) {
+  background-color: #fefefe;
+}
+
+.trackElement:hover {
+  background-color: #e8f0fe;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}

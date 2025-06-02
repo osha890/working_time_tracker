@@ -1,0 +1,53 @@
+.taskList {
+  max-width: 1400px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.taskCard {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-left: 4px solid #dbdbdb;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.completed {
+  border-left: 4px solid #42da63;
+}
+
+.inProgress {
+  border-left: 4px solid #f8b31e;
+}
+
+.taskHedaer {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.taskHedaer h4 {
+  font-size: 28px;
+}
+
+.taskCard p {
+  margin: 4px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.taskCard .status {
+  justify-self: center;
+  margin-top: 30px;
+}
+
+.taskCard .status p {
+  font-size: 14px;
+  font-weight: bold;
+}

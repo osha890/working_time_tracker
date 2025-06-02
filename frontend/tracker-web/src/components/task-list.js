@@ -1,9 +1,10 @@
 import React from "react";
+import 'style/task-list.css';
 
 function TaskList(props) {
     return (
         <div>
-            <div className="addButton">Add task</div>
+            {/* <div className="addButton">Add task</div> */}
             <div className="taskList">
                 {props.tasks.map(task => {
                     return (

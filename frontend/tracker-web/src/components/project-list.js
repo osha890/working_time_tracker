@@ -1,9 +1,10 @@
 import React from "react";
+import 'style/project-list.css';
 
 function ProjectList(props) {
     return (
         <div>
-            <div className="addButton">Add project</div>
+            {/* <div className="addButton">Add project</div> */}
             <div className="projectList">
                 {props.projects.map(project => {
                     return (

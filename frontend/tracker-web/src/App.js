@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
-import ProjectList from './components/project-list';
-import TaskList from './components/task-list';
-import UserList from './components/user-list';
-import TrackList from './components/track-list';
+import 'style/App.css';
+import ProjectList from 'components/project-list';
+import TaskList from 'components/task-list';
+import UserList from 'components/user-list';
+import TrackList from 'components/track-list';
 
 class App extends Component {
   BASE_URL = process.env.REACT_APP_API_BASE_URL;
