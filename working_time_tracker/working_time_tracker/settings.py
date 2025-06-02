@@ -1,5 +1,5 @@
-import os
 from datetime import timedelta
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -130,7 +130,18 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
 }
 
+# Simple JWT settings
+
+ACCESS_VALUE = int(os.getenv("ACCESS_TOKEN_LIFETIME_VALUE", 10))
+ACCESS_UNIT = os.getenv("ACCESS_TOKEN_LIFETIME_UNIT", "minutes").lower()
+
+REFRESH_VALUE = int(os.getenv("REFRESH_TOKEN_LIFETIME_VALUE", 7))
+REFRESH_UNIT = os.getenv("REFRESH_TOKEN_LIFETIME_UNIT", "days").lower()
+
+access_token_kwargs = {ACCESS_UNIT: ACCESS_VALUE}
+refresh_token_kwargs = {REFRESH_UNIT: REFRESH_VALUE}
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(**access_token_kwargs),
+    "REFRESH_TOKEN_LIFETIME": timedelta(**refresh_token_kwargs),
 }
