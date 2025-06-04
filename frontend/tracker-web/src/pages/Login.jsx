@@ -8,14 +8,17 @@ import {
   Paper,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { loginUser } from '../utils/auth';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -25,7 +28,13 @@ function LoginPage() {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      alert(`Logging in with username: ${username}, password: ${password}`);
+      const result = await loginUser(username, password);
+
+      if (result.success) {
+        navigate('/');
+      } else {
+        alert(result.message);
+      }
     }
   };
 

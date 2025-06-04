@@ -6,23 +6,45 @@ import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import PrivateRoute from './components/PrivateRoute';
 
 
 function AppWrapper() {
   const location = useLocation();
 
-  const noHeaderPaths = ['/login', '/register'];
-  const showHeader = !noHeaderPaths.includes(location.pathname);
+  const hideHeader = ['/login', '/register'].includes(location.pathname);
 
   return (
     <>
-      {showHeader && <Header />}
+      {!hideHeader && <Header />}
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/tasks" element={<Tasks />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <PrivateRoute>
+              <Projects />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/tasks"
+          element={
+            <PrivateRoute>
+              <Tasks />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </>
   );
