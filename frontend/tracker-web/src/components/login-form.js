@@ -7,42 +7,39 @@ const LoginForm = ({ onLoginSuccess }) => {
     const [password, setPassword] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const url = isRegistering
-            ? `${process.env.REACT_APP_API_BASE_URL}/auth/register/`
-            : `${process.env.REACT_APP_API_BASE_URL}/auth/token/`;
-
-        fetch(url, {
+    const register = async () => {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/register/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
-        })
-            .then(res => {
-                if (!res.ok) throw new Error('Error');
-                return res.json();
-            })
-            .then(data => {
-                if (isRegistering) {
-                    fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/token/`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, password })
-                    })
-                        .then(res => {
-                            if (!res.ok) throw new Error('Login error');
-                            return res.json();
-                        })
-                        .then(data => {
-                            saveTokens({ access: data.access, refresh: data.refresh });
-                            onLoginSuccess();
-                        });
-                } else {
-                    saveTokens({ access: data.access, refresh: data.refresh });
-                    onLoginSuccess();
-                }
-            })
-            .catch(err => alert('Error: ' + err.message));
+        });
+        if (!res.ok) throw new Error('Registration error');
+        return res.json();
+    };
+
+    const login = async () => {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/token/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        if (!res.ok) throw new Error('Login error');
+        const data = await res.json();
+        saveTokens({ access: data.access, refresh: data.refresh });
+        onLoginSuccess();
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            if (isRegistering) {
+                await register();
+            }
+            await login();
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
     };
 
     return (
