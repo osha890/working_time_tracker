@@ -28,7 +28,7 @@ class App extends Component {
       })
       .then(data => this.setState({ [stateKey]: data }))
       .catch(error => {
-        console.log(error);
+        console.error(error);
         this.handleLogout();
       });
   }
@@ -36,17 +36,7 @@ class App extends Component {
   componentDidMount() {
     const token = getAccessToken();
     if (token) {
-      fetchWithAuth(`${this.BASE_URL}/api/projects/`)
-        .then(resp => {
-          if (resp.ok) {
-            this.setState({ isAuthenticated: true });
-            return resp.json();
-          } else {
-            throw new Error('Invalid token');
-          }
-        })
-        .then(data => this.setState({ projects: data }))
-        .catch(() => this.handleLogout());
+      this.fetchData('projects', 'projects');
     }
   }
 
