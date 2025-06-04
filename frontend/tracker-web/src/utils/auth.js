@@ -25,15 +25,37 @@ export const loginUser = async (username, password) => {
     }
 };
 
+const refreshAccessToken = async () => {
+    const refresh = localStorage.getItem('refresh_token');
+    if (!refresh) return false;
 
-export const isAuthenticated = () => {
+    try {
+        const response = await axios.post(`${BASE_URL}/auth/token/refresh/`, { refresh });
+        const { access } = response.data;
+        localStorage.setItem('access_token', access);
+        console.log("refreshed")
+        return true;
+    } catch (error) {
+        logout();
+        console.log("not refreshed")
+        return false;
+    }
+};
+
+
+export const isAuthenticated = async () => {
     const token = localStorage.getItem('access_token');
     if (!token) return false;
+    console.log("isAuth");
 
     try {
         const { exp } = jwtDecode(token);
         const now = Date.now() / 1000;
-        return exp > now;
+        if (exp > now) {
+            return true;
+        } else {
+            return await refreshAccessToken();
+        }
     } catch (error) {
         return false;
     }
