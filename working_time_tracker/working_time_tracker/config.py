@@ -11,6 +11,7 @@ class JWTConfig:
         return {
             "ACCESS_TOKEN_LIFETIME": timedelta(seconds=self.ACCESS_TOKEN_LIFETIME_SECONDS_VALUE),
             "REFRESH_TOKEN_LIFETIME": timedelta(seconds=self.REFRESH_TOKEN_LIFETIME_SECONDS_VALUE),
+            "TOKEN_BLACKLIST_ENABLED": True,
         }
 
 

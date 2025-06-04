@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "tracker.apps.TrackerConfig",
     "custom_auth.apps.CustomAuthConfig",
     "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
 ]
 
