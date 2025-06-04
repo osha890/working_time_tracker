@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'style/App.css';
 import ProjectList from 'components/project-list';
 import TaskList from 'components/task-list';
@@ -7,59 +7,55 @@ import TrackList from 'components/track-list';
 import LoginForm from 'components/login-form';
 import { fetchWithAuth, clearTokens, getAccessToken } from './utils/auth';
 
+const App = () => {
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-class App extends Component {
-  BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const [projects, setProjects] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [tracks, setTracks] = useState([]);
+  const [currentSection, setCurrentSection] = useState('Projects');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  state = {
-    projects: [],
-    tasks: [],
-    users: [],
-    tracks: [],
-    currentSection: 'Projects',
-    isAuthenticated: false,
-  }
-
-  fetchData = (endpoint, stateKey) => {
-    fetchWithAuth(`${this.BASE_URL}/api/${endpoint}/`)
+  const fetchData = (endpoint, setter) => {
+    fetchWithAuth(`${BASE_URL}/api/${endpoint}/`)
       .then(resp => {
         if (!resp.ok) throw new Error('Error fetching data');
         return resp.json();
       })
-      .then(data => this.setState({ [stateKey]: data }))
+      .then(data => setter(data))
       .catch(error => {
         console.error(error);
-        this.handleLogout();
+        handleLogout();
       });
-  }
+  };
 
-  componentDidMount() {
+  useEffect(() => {
     const token = getAccessToken();
     if (token) {
-      this.fetchData('projects', 'projects');
+      setIsAuthenticated(true);
+      fetchData('projects', setProjects);
     }
-  }
+  }, []);
 
-  handleSectionChange = (section) => {
-    this.setState({ currentSection: section });
+  const handleSectionChange = (section) => {
+    setCurrentSection(section);
 
     const sectionMap = {
-      Projects: 'projects',
-      Tasks: 'tasks',
-      Users: 'users',
-      Tracks: 'tracks',
+      Projects: { data: projects, setter: setProjects },
+      Tasks: { data: tasks, setter: setTasks },
+      Users: { data: users, setter: setUsers },
+      Tracks: { data: tracks, setter: setTracks },
     };
 
-    const stateKey = sectionMap[section];
+    const { data, setter } = sectionMap[section];
 
-    if (stateKey && this.state[stateKey].length === 0) {
-      this.fetchData(stateKey, stateKey);
+    if (data.length === 0) {
+      fetchData(section.toLowerCase(), setter);
     }
-  }
+  };
 
-  renderSection() {
-    const { currentSection, projects, tasks, users, tracks } = this.state;
-
+  const renderSection = () => {
     switch (currentSection) {
       case 'Projects':
         return <ProjectList projects={projects} />;
@@ -72,43 +68,38 @@ class App extends Component {
       default:
         return <p>Section not found</p>;
     }
-  }
+  };
 
-  handleLogout = () => {
+  const handleLogout = () => {
     clearTokens();
-    this.setState({
-      isAuthenticated: false,
-      projects: [],
-      tasks: [],
-      users: [],
-      tracks: []
-    });
+    setIsAuthenticated(false);
+    setProjects([]);
+    setTasks([]);
+    setUsers([]);
+    setTracks([]);
+  };
+
+  if (!isAuthenticated) {
+    return <LoginForm onLoginSuccess={() => setIsAuthenticated(true)} />;
   }
 
-
-  render() {
-    if (!this.state.isAuthenticated) {
-      return <LoginForm onLoginSuccess={() => this.setState({ isAuthenticated: true })} />;
-    }
-
-    return (
-      <div className="App">
-        <header>
-          <div className="adminPanel">
-            <div className={this.state.currentSection === 'Projects' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Projects')}>Projects</div>
-            <div className={this.state.currentSection === 'Tasks' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Tasks')}>Tasks</div>
-            <div className={this.state.currentSection === 'Users' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Users')}>Users</div>
-            <div className={this.state.currentSection === 'Tracks' ? 'menuItem active' : 'menuItem'} onClick={() => this.handleSectionChange('Tracks')}>Tracks</div>
-            <div className="logOut" onClick={this.handleLogout}>Log out</div>
-          </div>
-        </header>
-        <main>
-          {this.renderSection()}
-        </main>
-        <footer></footer>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="App">
+      <header>
+        <div className="adminPanel">
+          <div className={currentSection === 'Projects' ? 'menuItem active' : 'menuItem'} onClick={() => handleSectionChange('Projects')}>Projects</div>
+          <div className={currentSection === 'Tasks' ? 'menuItem active' : 'menuItem'} onClick={() => handleSectionChange('Tasks')}>Tasks</div>
+          <div className={currentSection === 'Users' ? 'menuItem active' : 'menuItem'} onClick={() => handleSectionChange('Users')}>Users</div>
+          <div className={currentSection === 'Tracks' ? 'menuItem active' : 'menuItem'} onClick={() => handleSectionChange('Tracks')}>Tracks</div>
+          <div className="logOut" onClick={handleLogout}>Log out</div>
+        </div>
+      </header>
+      <main>
+        {renderSection()}
+      </main>
+      <footer></footer>
+    </div>
+  );
+};
 
 export default App;
