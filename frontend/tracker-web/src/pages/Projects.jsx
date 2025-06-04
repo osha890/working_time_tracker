@@ -13,6 +13,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { TextField } from '@mui/material';
 
 const sampleProjects = [
     { id: 1, title: 'Проект 1', created_at: '2025-06-01', description: 'Описание проекта 1' },
@@ -26,6 +27,7 @@ const sampleProjects = [
 function Projects() {
     const [sortField, setSortField] = useState('title');
     const [sortOrder, setSortOrder] = useState('asc');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const toggleSortOrder = (field) => {
         if (sortField === field) {
@@ -36,16 +38,17 @@ function Projects() {
         }
     };
 
-    const sortedProjects = [...sampleProjects].sort((a, b) => {
+    const filteredProjects = sampleProjects.filter(project =>
+        project.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const sortedProjects = [...filteredProjects].sort((a, b) => {
         let valA = a[sortField];
         let valB = b[sortField];
 
         if (sortField === 'created_at') {
             valA = new Date(valA);
             valB = new Date(valB);
-        } else {
-            valA = typeof valA === 'string' ? valA.toLowerCase() : valA;
-            valB = typeof valB === 'string' ? valB.toLowerCase() : valB;
         }
 
         if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
@@ -89,13 +92,14 @@ function Projects() {
                         ID {arrow('id')}
                     </Button>
 
-                    <Button
-                        onClick={() => toggleSortOrder('title')}
+                    <TextField
+                        label="Search by title"
+                        variant="outlined"
                         size="small"
-                        sx={{ minWidth: 350, textTransform: 'none', fontSize: '1.2rem' }}
-                    >
-                        Title {arrow('title')}
-                    </Button>
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        sx={{ minWidth: 350 }}
+                    />
 
                     <Button
                         onClick={() => toggleSortOrder('created_at')}
