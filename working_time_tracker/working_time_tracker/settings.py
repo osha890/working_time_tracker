@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tracker.apps.TrackerConfig",
-    "users.apps.UsersConfig",
+    "custom_auth.apps.CustomAuthConfig",
     "rest_framework",
     "corsheaders",
 ]
