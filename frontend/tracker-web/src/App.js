@@ -43,20 +43,17 @@ class App extends Component {
   handleSectionChange = (section) => {
     this.setState({ currentSection: section });
 
-    if (section === 'Projects' && this.state.projects.length === 0) {
-      this.fetchData('projects', 'projects');
-    }
+    const sectionMap = {
+      Projects: 'projects',
+      Tasks: 'tasks',
+      Users: 'users',
+      Tracks: 'tracks',
+    };
 
-    if (section === 'Tasks' && this.state.tasks.length === 0) {
-      this.fetchData('tasks', 'tasks');
-    }
+    const stateKey = sectionMap[section];
 
-    if (section === 'Users' && this.state.users.length === 0) {
-      this.fetchData('users', 'users');
-    }
-
-    if (section === 'Tracks' && this.state.tracks.length === 0) {
-      this.fetchData('tracks', 'tracks');
+    if (stateKey && this.state[stateKey].length === 0) {
+      this.fetchData(stateKey, stateKey);
     }
   }
 
