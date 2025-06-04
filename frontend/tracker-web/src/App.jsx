@@ -3,6 +3,7 @@ import './App.css';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
+import Tasks from './pages/Tasks'
 
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/tasks" element={<Tasks />} />
       </Routes>
     </BrowserRouter>
   );

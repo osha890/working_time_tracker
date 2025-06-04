@@ -18,7 +18,7 @@ export default function Sidebar({ open, onClose }) {
         <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
             <List>
                 <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton component={Link} to="/tasks">
                         <ListItemIcon><TaskIcon /></ListItemIcon>
                         <ListItemText primary="Tasks" />
                     </ListItemButton>
