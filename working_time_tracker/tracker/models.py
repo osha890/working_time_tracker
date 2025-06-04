@@ -24,11 +24,19 @@ class UserExtension(models.Model):
 
 class TaskStatus(models.TextChoices):
     TO_DO = "TO_DO", "To Do"
+    REJECTED = "REJECTED", "Rejected"
+    COMPLETED = "COMPLETED", "Completed"
+    ON_HOLD = "IN_HOLD", "On Hold"
     IN_PROGRESS = "IN_PROGRESS", "In Progress"
     IN_REVIEW = "IN_REVIEW", "In Review"
     IN_QA = "IN_QA", "In QA"
-    REJECTED = "REJECTED", "Rejected"
-    COMPLETED = "COMPLETED", "Completed"
+
+
+ACTIVE_STATUSES = {
+    TaskStatus.IN_PROGRESS,
+    TaskStatus.IN_REVIEW,
+    TaskStatus.IN_QA,
+}
 
 
 class Task(models.Model):
@@ -57,7 +65,11 @@ class Task(models.Model):
 class Track(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tracks")
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="tracks")
-    is_in_progress = models.BooleanField()
+    status = models.CharField(
+        max_length=20,
+        choices=TaskStatus.choices,
+        default=TaskStatus.ON_HOLD,
+    )
     time_from = models.DateTimeField()
     time_to = models.DateTimeField(null=True, blank=True)
 
