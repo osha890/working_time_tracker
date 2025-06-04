@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
     Container,
     Box,
@@ -16,7 +17,7 @@ function Register() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         setError('');
 
         if (!username || !password || !confirmPassword) {
@@ -29,8 +30,19 @@ function Register() {
             return;
         }
 
-        alert('Registration successful! Please login.');
-        navigate('/login');
+        try {
+            await axios.post('http://127.0.0.1:8000/auth/register/', { username, password });
+
+            const response = await axios.post('http://127.0.0.1:8000/auth/token/', { username, password });
+
+            const { access, refresh } = response.data;
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
+
+            navigate('/');
+        } catch (err) {
+            setError('Registration failed. Please try again.');
+        }
     };
 
     return (
