@@ -3,19 +3,14 @@ import os
 
 
 class JWTConfig:
-    ACCESS_TOKEN_LIFETIME_VALUE = int(os.getenv("ACCESS_TOKEN_LIFETIME_VALUE", 10))
-    ACCESS_TOKEN_LIFETIME_UNIT = os.getenv("ACCESS_TOKEN_LIFETIME_UNIT", "minutes").lower()
-
-    REFRESH_TOKEN_LIFETIME_VALUE = int(os.getenv("REFRESH_TOKEN_LIFETIME_VALUE", 7))
-    REFRESH_TOKEN_LIFETIME_UNIT = os.getenv("REFRESH_TOKEN_LIFETIME_UNIT", "days").lower()
+    ACCESS_TOKEN_LIFETIME_SECONDS_VALUE = int(os.getenv("ACCESS_TOKEN_LIFETIME_SECONDS_VALUE", 600))  # 10 minutes
+    REFRESH_TOKEN_LIFETIME_SECONDS_VALUE = int(os.getenv("REFRESH_TOKEN_LIFETIME_SECONDS_VALUE", 604700))  # 7 days
 
     @property
     def SIMPLE_JWT(self):
-        access_token_kwargs = {self.ACCESS_TOKEN_LIFETIME_UNIT: self.ACCESS_TOKEN_LIFETIME_VALUE}
-        refresh_token_kwargs = {self.REFRESH_TOKEN_LIFETIME_UNIT: self.REFRESH_TOKEN_LIFETIME_VALUE}
         return {
-            "ACCESS_TOKEN_LIFETIME": timedelta(**access_token_kwargs),
-            "REFRESH_TOKEN_LIFETIME": timedelta(**refresh_token_kwargs),
+            "ACCESS_TOKEN_LIFETIME": timedelta(seconds=self.ACCESS_TOKEN_LIFETIME_SECONDS_VALUE),
+            "REFRESH_TOKEN_LIFETIME": timedelta(seconds=self.REFRESH_TOKEN_LIFETIME_SECONDS_VALUE),
         }
 
 
