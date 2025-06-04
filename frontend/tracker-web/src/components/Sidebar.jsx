@@ -11,6 +11,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import TaskIcon from '@mui/icons-material/Task';
 import TimerIcon from '@mui/icons-material/Timer';
 import GroupIcon from '@mui/icons-material/Group';
+import { Link } from 'react-router-dom';
 
 export default function Sidebar({ open, onClose }) {
     const DrawerList = (
@@ -32,7 +33,7 @@ export default function Sidebar({ open, onClose }) {
             <Divider />
             <List>
                 <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton component={Link} to="/projects">
                         <ListItemIcon><ListAltIcon /></ListItemIcon>
                         <ListItemText primary="Projects" />
                     </ListItemButton>
