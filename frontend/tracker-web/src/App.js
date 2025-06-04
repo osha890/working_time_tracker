@@ -5,7 +5,7 @@ import TaskList from 'components/task-list';
 import UserList from 'components/user-list';
 import TrackList from 'components/track-list';
 import LoginForm from 'components/login-form';
-import { fetchWithAuth, clearTokens, getAccessToken } from './utils/auth';
+import { fetchWithAuth, clearTokens, getAccessToken, getRefreshToken } from './utils/auth';
 
 const App = () => {
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -70,13 +70,34 @@ const App = () => {
     }
   };
 
-  const handleLogout = () => {
-    clearTokens();
-    setIsAuthenticated(false);
-    setProjects([]);
-    setTasks([]);
-    setUsers([]);
-    setTracks([]);
+  const handleLogout = async () => {
+    try {
+      const refreshToken = getRefreshToken();
+
+      if (refreshToken) {
+        const response = await fetch(`${BASE_URL}/auth/logout/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAccessToken()}`,
+          },
+          body: JSON.stringify({ refresh: refreshToken }),
+        });
+
+        if (!response.ok) {
+          console.warn('Logout request failed');
+        }
+      }
+
+      clearTokens();
+      setIsAuthenticated(false);
+      setProjects([]);
+      setTasks([]);
+      setUsers([]);
+      setTracks([]);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   if (!isAuthenticated) {
