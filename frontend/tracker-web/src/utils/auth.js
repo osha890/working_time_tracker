@@ -38,3 +38,8 @@ export const isAuthenticated = () => {
         return false;
     }
 };
+
+export const logout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+};

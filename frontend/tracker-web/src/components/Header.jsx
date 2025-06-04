@@ -3,9 +3,12 @@ import { Logout } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
 import Sidebar from "./Sidebar";
+import { logout } from "../utils/auth";
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -15,6 +18,11 @@ function Header() {
       return;
     }
     setDrawerOpen(open);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -27,7 +35,7 @@ function Header() {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-            onClick={toggleDrawer(true)} // При клике откроем Drawer
+            onClick={toggleDrawer(true)}
           >
             <MenuIcon />
           </IconButton>
@@ -35,12 +43,11 @@ function Header() {
             Working Time Tracker
           </Typography>
           <IconButton color="inherit">
-            <Logout />
+            <Logout onClick={handleLogout} />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      {/* Передаем состояние и колбек в Sidebar */}
       <Sidebar open={drawerOpen} onClose={toggleDrawer(false)} />
     </>
   );
