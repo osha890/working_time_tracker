@@ -17,6 +17,9 @@ class TaskViewSet(BaseModelViewSet):
         "default": TaskSerializer,
         "list": TaskListSerializer,
         "retrieve": TaskDetailedSerializer,
+        "take": TaskSerializer,
+        "accessible": TaskListSerializer,
+        "my": TaskListSerializer,
     }
 
     @action(detail=True, methods=["post"])
