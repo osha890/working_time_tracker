@@ -8,6 +8,7 @@ import Users from './pages/Users';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import PrivateRoute from './components/PrivateRoute';
+import ProjectTasks from './pages/ProjectTasks';
 
 
 function AppWrapper() {
@@ -51,6 +52,14 @@ function AppWrapper() {
           element={
             <PrivateRoute>
               <Users />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/project_tasks"
+          element={
+            <PrivateRoute>
+              <ProjectTasks />
             </PrivateRoute>
           }
         />

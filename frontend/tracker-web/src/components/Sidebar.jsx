@@ -20,7 +20,7 @@ export default function Sidebar({ open, onClose }) {
         <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
             <List subheader={<ListSubheader>User navigation</ListSubheader>}>
                 <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton component={Link} to="/project_tasks">
                         <ListItemIcon><TaskIcon /></ListItemIcon>
                         <ListItemText primary="Project tasks" />
                     </ListItemButton>

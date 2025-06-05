@@ -19,3 +19,4 @@ const fetchData = async (endpoint) => {
 export const fetchProjects = () => fetchData('projects');
 export const fetchTasks = () => fetchData('tasks');
 export const fetchUsers = () => fetchData('users');
+export const fetchAccessibleTasks = () => fetchData('tasks/accessible');
