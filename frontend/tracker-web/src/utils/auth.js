@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = 'http://127.0.0.1:8000/auth';
 
 export const loginUser = async (username, password) => {
     try {
-        const response = await axios.post(`${BASE_URL}/auth/token/`, {
+        const response = await axios.post(`${BASE_URL}/token/`, {
             username,
             password,
         });
@@ -30,7 +30,7 @@ const refreshAccessToken = async () => {
     if (!refresh) return false;
 
     try {
-        const response = await axios.post(`${BASE_URL}/auth/token/refresh/`, { refresh });
+        const response = await axios.post(`${BASE_URL}/token/refresh/`, { refresh });
         const { access } = response.data;
         localStorage.setItem('access_token', access);
         console.log("refreshed")
@@ -68,7 +68,7 @@ export const logout = async () => {
     if (refresh) {
         try {
             await axios.post(
-                `${BASE_URL}/auth/logout/`,
+                `${BASE_URL}/logout/`,
                 { refresh },
                 {
                     headers: {

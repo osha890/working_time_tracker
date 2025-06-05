@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Container,
     Typography,
@@ -14,8 +14,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { TextField } from '@mui/material';
+import { fetchProjects } from '../utils/api';
 
-const sampleProjects = [
+const projects_sample = [
     { id: 1, title: 'Проект 1', created_at: '2025-06-01', description: 'Описание проекта 1' },
     { id: 2, title: 'Проект 2', created_at: '2025-06-02', description: 'Описание проекта 2' },
     { id: 3, title: 'Альфа', created_at: '2024-12-15', description: 'Описание Альфа' },
@@ -28,6 +29,25 @@ function Projects() {
     const [sortField, setSortField] = useState('title');
     const [sortOrder, setSortOrder] = useState('asc');
     const [searchQuery, setSearchQuery] = useState('');
+    const [projects, setProjects] = useState([]);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadProjects = async () => {
+            try {
+                const data = await fetchProjects();
+                setProjects(data);
+            } catch (err) {
+                console.error(err);
+                setError('Failed to load projects');
+            }
+        };
+
+        loadProjects();
+    }, []);
+
+
+    if (error) return <div>{error}</div>;
 
     const toggleSortOrder = (field) => {
         if (sortField === field) {
@@ -38,7 +58,7 @@ function Projects() {
         }
     };
 
-    const filteredProjects = sampleProjects.filter(project =>
+    const filteredProjects = projects.filter(project =>
         project.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -138,7 +158,15 @@ function Projects() {
                             >
                                 <Typography sx={{ minWidth: 100, textAlign: 'left' }}>{project.id}</Typography>
                                 <Typography sx={{ minWidth: 350, textAlign: 'left' }}>{project.title}</Typography>
-                                <Typography sx={{ minWidth: 180, textAlign: 'left' }}>{project.created_at}</Typography>
+                                <Typography sx={{ minWidth: 180, textAlign: 'left' }}>
+                                    {new Date(project.created_at).toLocaleString('en-GB', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })}
+                                </Typography>
                             </Box>
                             <Stack direction="row" spacing={1} sx={{ ml: 2, width: 100, justifyContent: 'flex-end' }}>
                                 <IconButton onClick={(e) => e.stopPropagation()} size="small">
