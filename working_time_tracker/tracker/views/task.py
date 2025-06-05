@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from tracker.models import Task, UserExtension
+from tracker.models import Task, TaskStatus, UserExtension
 from tracker.serializers.task import (
     TaskDetailedSerializer,
     TaskListSerializer,
@@ -52,3 +52,8 @@ class TaskViewSet(BaseModelViewSet):
         tasks = Task.objects.filter(assignee=request.user)
         serializer = self.get_serializer(tasks, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def statuses(self, request):
+        statuses = [{"key": choice[0], "label": choice[1]} for choice in TaskStatus.choices]
+        return Response(statuses)
