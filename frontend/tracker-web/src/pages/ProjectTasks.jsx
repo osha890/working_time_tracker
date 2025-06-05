@@ -103,16 +103,6 @@ function ProjectTasks() {
 
     const projectTitle = sortedTasks.length > 0 ? sortedTasks[0].project?.title || 'Project' : 'Project';
 
-    if (sortedTasks.length === 0) {
-        return (
-            <Container>
-                <Typography variant="body1" align="center" color="textSecondary" sx={{ mt: 4 }}>
-                    You are not assigned to any project or project has no tasks yet.
-                </Typography>
-            </Container>
-        );
-    }
-
     return (
         <Container>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>

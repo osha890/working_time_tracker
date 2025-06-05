@@ -26,7 +26,7 @@ export default function Sidebar({ open, onClose }) {
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton component={Link} to="/my_tasks">
                         <ListItemIcon><TimerIcon /></ListItemIcon>
                         <ListItemText primary="My tasks" />
                     </ListItemButton>
