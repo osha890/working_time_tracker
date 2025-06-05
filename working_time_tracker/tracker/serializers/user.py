@@ -9,10 +9,17 @@ from tracker.serializers.project import (
 
 
 class UserExtensionSerializer(serializers.ModelSerializer):
+    project_title = serializers.SerializerMethodField()
+
     class Meta:
         model = UserExtension
         fields = "__all__"
-        read_only_fields = ["id", "user"]
+        read_only_fields = ["id", "user", "project_title"]
+
+    def get_project_title(self, obj):
+        if obj.project:
+            return obj.project.title
+        return None
 
 
 class UserExtensionDetailedSerializer(serializers.ModelSerializer):
