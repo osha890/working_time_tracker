@@ -38,7 +38,7 @@ class TaskViewSet(BaseModelViewSet):
         user_extension = UserExtension.objects.get(user=request.user)
 
         if not user_extension.project:
-            return Response({"detail": "You are not assigned to any project"}, status=status.HTTP_403_FORBIDDEN)
+            return Response([], status=status.HTTP_200_OK)
 
         tasks = Task.objects.filter(project=user_extension.project)
         serializer = self.get_serializer(tasks, many=True)
