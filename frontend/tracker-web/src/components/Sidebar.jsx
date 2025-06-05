@@ -12,39 +12,52 @@ import TaskIcon from '@mui/icons-material/Task';
 import TimerIcon from '@mui/icons-material/Timer';
 import GroupIcon from '@mui/icons-material/Group';
 import { Link } from 'react-router-dom';
+import ListSubheader from '@mui/material/ListSubheader';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 export default function Sidebar({ open, onClose }) {
     const DrawerList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
-            <List>
+            <List subheader={<ListSubheader>User navigation</ListSubheader>}>
                 <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/tasks">
+                    <ListItemButton>
                         <ListItemIcon><TaskIcon /></ListItemIcon>
-                        <ListItemText primary="Tasks" />
+                        <ListItemText primary="Project tasks" />
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemIcon><TimerIcon /></ListItemIcon>
-                        <ListItemText primary="Tracks" />
+                        <ListItemText primary="My tasks" />
                     </ListItemButton>
                 </ListItem>
             </List>
+
             <Divider />
-            <List>
+
+            <List subheader={<ListSubheader>Admin navigation</ListSubheader>}>
                 <ListItem disablePadding>
                     <ListItemButton component={Link} to="/projects">
                         <ListItemIcon><ListAltIcon /></ListItemIcon>
                         <ListItemText primary="Projects" />
                     </ListItemButton>
                 </ListItem>
-            </List>
-            <Divider />
-            <List>
+                <ListItem disablePadding>
+                    <ListItemButton component={Link} to="/tasks">
+                        <ListItemIcon><TaskIcon /></ListItemIcon>
+                        <ListItemText primary="All tasks" />
+                    </ListItemButton>
+                </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemIcon><GroupIcon /></ListItemIcon>
                         <ListItemText primary="Users" />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon><AssessmentIcon /></ListItemIcon>
+                        <ListItemText primary="Reports" />
                     </ListItemButton>
                 </ListItem>
             </List>
