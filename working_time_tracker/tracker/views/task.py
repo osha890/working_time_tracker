@@ -43,3 +43,9 @@ class TaskViewSet(BaseModelViewSet):
         tasks = Task.objects.filter(project=user_extension.project)
         serializer = self.get_serializer(tasks, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def my(self, request):
+        tasks = Task.objects.filter(assignee=request.user)
+        serializer = self.get_serializer(tasks, many=True)
+        return Response(serializer.data)
