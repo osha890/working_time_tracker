@@ -50,6 +50,19 @@ function Tasks() {
         loadTasks();
     }, []);
 
+    const getUniqueStatusPairs = (tasks) => {
+        const pairs = tasks
+            .filter(task => task.status && task.status_display)
+            .map(task => ({ value: task.status, label: task.status_display }));
+
+        const seen = new Set();
+        return pairs.filter(pair => {
+            if (seen.has(pair.value)) return false;
+            seen.add(pair.value);
+            return true;
+        });
+    };
+
 
     const toggleSortOrder = (field) => {
         if (sortField === field) {
@@ -127,8 +140,8 @@ function Tasks() {
                         onChange={(e) => setStatusFilter(e.target.value)}
                     >
                         <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(tasks, 'status').map(status => (
-                            <MenuItem key={status} value={status}>{status}</MenuItem>
+                        {getUniqueStatusPairs(tasks).map(({ value, label }) => (
+                            <MenuItem key={value} value={value}>{label}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
