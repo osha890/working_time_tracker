@@ -15,3 +15,8 @@ export const fetchProjects = async () => {
     const response = await axios.get(`${BASE_URL}/projects/`, getAuthHeaders());
     return response.data;
 };
+
+export const fetchTasks = async () => {
+    const response = await axios.get(`${BASE_URL}/tasks/`, getAuthHeaders());
+    return response.data;
+};

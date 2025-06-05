@@ -16,15 +16,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { TextField } from '@mui/material';
 import { fetchProjects } from '../utils/api';
 
-const projects_sample = [
-    { id: 1, title: 'Проект 1', created_at: '2025-06-01', description: 'Описание проекта 1' },
-    { id: 2, title: 'Проект 2', created_at: '2025-06-02', description: 'Описание проекта 2' },
-    { id: 3, title: 'Альфа', created_at: '2024-12-15', description: 'Описание Альфа' },
-    { id: 5, title: 'Бета', created_at: '2022-06-01', description: 'Описание йцуйцуйцу' },
-    { id: 6, title: 'Ява', created_at: '2024-06-02', description: 'Описание пвыаываываываы' },
-    { id: 7, title: 'Гога', created_at: '2004-12-15', description: 'Описание цн456апрапр' },
-];
-
 function Projects() {
     const [sortField, setSortField] = useState('title');
     const [sortOrder, setSortOrder] = useState('asc');

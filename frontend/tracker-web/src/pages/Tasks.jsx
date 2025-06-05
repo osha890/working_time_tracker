@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Container,
     Typography,
@@ -17,42 +17,15 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { fetchTasks } from '../utils/api';
 
-const sampleTasks = [
-    {
-        id: 1,
-        title: 'Fix login bug',
-        project: 'Website Redesign',
-        status: 'Open',
-        created_at: '2025-06-01',
-        description: 'Login button does not work on mobile devices.',
-        reporter: 'Alice',
-        assignee: 'Bob'
-    },
-    {
-        id: 2,
-        title: 'Add dark mode',
-        project: 'Website Redesign',
-        status: 'In Progress',
-        created_at: '2025-06-02',
-        description: 'Implement dark mode using Material UI theming.',
-        reporter: 'Bob',
-        assignee: 'Charlie'
-    },
-    {
-        id: 3,
-        title: 'Update dependencies',
-        project: 'Admin Panel',
-        status: 'Done',
-        created_at: '2025-05-30',
-        description: 'Upgrade all npm packages to latest stable versions.',
-        reporter: 'Charlie',
-        assignee: 'Alice'
-    },
-];
-
-const getUniqueValues = (tasks, field) => {
-    return [...new Set(tasks.map((task) => task[field]))];
+const getUniqueValues = (tasks, field, nestedField = null) => {
+    const values = tasks.map(task => {
+        if (!nestedField) return task[field];
+        if (task[field]) return task[field][nestedField];
+        return null;
+    });
+    return [...new Set(values.filter(Boolean))];
 };
 
 function TaskList() {
@@ -62,6 +35,25 @@ function TaskList() {
     const [statusFilter, setStatusFilter] = useState('');
     const [reporterFilter, setReporterFilter] = useState('');
     const [assigneeFilter, setAssigneeFilter] = useState('');
+    const [tasks, setTasks] = useState([]);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadTasks = async () => {
+            try {
+                const data = await fetchTasks();
+                console.log(data);
+                setTasks(data);
+            } catch (err) {
+                console.error(err);
+                setError('Failed to load tasks');
+            }
+        };
+
+        loadTasks();
+    }, []);
+
+    if (error) return <div>{error}</div>;
 
     const toggleSortOrder = (field) => {
         if (sortField === field) {
@@ -77,12 +69,12 @@ function TaskList() {
         return sortOrder === 'asc' ? '↑' : '↓';
     };
 
-    const filteredTasks = sampleTasks.filter(task => {
+    const filteredTasks = tasks.filter(task => {
         return (
-            (!projectFilter || task.project === projectFilter) &&
+            (!projectFilter || (task.project && task.project.title === projectFilter)) &&
             (!statusFilter || task.status === statusFilter) &&
-            (!reporterFilter || task.reporter === reporterFilter) &&
-            (!assigneeFilter || task.assignee === assigneeFilter)
+            (!reporterFilter || (task.reporter && task.reporter.username === reporterFilter)) &&
+            (!assigneeFilter || (task.assignee && task.assignee.username === assigneeFilter))
         );
     });
 
@@ -125,8 +117,8 @@ function TaskList() {
                         onChange={(e) => setProjectFilter(e.target.value)}
                     >
                         <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(sampleTasks, 'project').map(project => (
-                            <MenuItem key={project} value={project}>{project}</MenuItem>
+                        {getUniqueValues(tasks, 'project', 'title').map(title => (
+                            <MenuItem key={title} value={title}>{title}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -139,7 +131,7 @@ function TaskList() {
                         onChange={(e) => setStatusFilter(e.target.value)}
                     >
                         <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(sampleTasks, 'status').map(status => (
+                        {getUniqueValues(tasks, 'status').map(status => (
                             <MenuItem key={status} value={status}>{status}</MenuItem>
                         ))}
                     </Select>
@@ -153,8 +145,8 @@ function TaskList() {
                         onChange={(e) => setReporterFilter(e.target.value)}
                     >
                         <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(sampleTasks, 'reporter').map(reporter => (
-                            <MenuItem key={reporter} value={reporter}>{reporter}</MenuItem>
+                        {getUniqueValues(tasks, 'reporter', 'username').map(username => (
+                            <MenuItem key={username} value={username}>{username}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -167,8 +159,8 @@ function TaskList() {
                         onChange={(e) => setAssigneeFilter(e.target.value)}
                     >
                         <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(sampleTasks, 'assignee').map(assignee => (
-                            <MenuItem key={assignee} value={assignee}>{assignee}</MenuItem>
+                        {getUniqueValues(tasks, 'assignee', 'username').map(username => (
+                            <MenuItem key={username} value={username}>{username}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -213,9 +205,17 @@ function TaskList() {
                         <Box display="flex" alignItems="center" width="100%">
                             <Typography sx={columnStyles.id}>{task.id}</Typography>
                             <Typography sx={columnStyles.title} title={task.title}>{task.title}</Typography>
-                            <Typography sx={columnStyles.project} title={task.project}>{task.project}</Typography>
-                            <Typography sx={columnStyles.status}>{task.status}</Typography>
-                            <Typography sx={columnStyles.created_at}>{task.created_at}</Typography>
+                            <Typography sx={columnStyles.project} title={task.project?.title}>{task.project?.title}</Typography>
+                            <Typography sx={columnStyles.status}>{task.status_display}</Typography>
+                            <Typography sx={columnStyles.created_at}>
+                                {new Date(task.created_at).toLocaleString('en-GB', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </Typography>
                             <Stack direction="row" spacing={1} sx={{ ml: 'auto', ...columnStyles.actions }}>
                                 <IconButton onClick={(e) => e.stopPropagation()} size="small">
                                     <EditIcon fontSize="small" />
@@ -228,8 +228,8 @@ function TaskList() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography><strong>Description:</strong> {task.description}</Typography>
-                        <Typography><strong>Reporter:</strong> {task.reporter}</Typography>
-                        <Typography><strong>Assignee:</strong> {task.assignee}</Typography>
+                        <Typography><strong>Reporter:</strong> {task.reporter?.username || '—'}</Typography>
+                        <Typography><strong>Assignee:</strong> {task.assignee?.username || '—'}</Typography>
                     </AccordionDetails>
                 </Accordion>
             ))}
