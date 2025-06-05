@@ -21,11 +21,4 @@ export const fetchTasks = () => fetchData('tasks');
 export const fetchUsers = () => fetchData('users');
 export const fetchAccessibleTasks = () => fetchData('tasks/accessible');
 export const fetchMyTasks = () => fetchData('tasks/my');
-
-export async function fetchStatuses() {
-    return [
-        { value: 'todo', label: 'To Do' },
-        { value: 'in_progress', label: 'In Progress' },
-        { value: 'done', label: 'Done' },
-    ];
-}
+export const fetchStatuses = () => fetchData('tasks/statuses');

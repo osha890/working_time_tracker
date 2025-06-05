@@ -38,7 +38,7 @@ function MyTasks() {
         const loadStatuses = async () => {
             try {
                 const data = await fetchStatuses();
-                setStatuses(data); // ожидается массив объектов { value: string, label: string }
+                setStatuses(data); // ожидается массив объектов { key: string, label: string }
             } catch (error) {
                 console.error('Failed to load statuses:', error);
             }
@@ -49,7 +49,12 @@ function MyTasks() {
     // Заглушки: изменения статуса и untake task не функциональны
     const handleStatusChange = (taskId, newStatus) => {
         console.log(`Change status requested for task ${taskId} to ${newStatus} (не функционально)`);
-        // ничего не делаем
+
+        setTasks(prevTasks =>
+            prevTasks.map(task =>
+                task.id === taskId ? { ...task, status: newStatus } : task
+            )
+        );
     };
 
     const handleUntakeTask = (taskId) => {
@@ -89,8 +94,8 @@ function MyTasks() {
                         onChange={(e) => setStatusFilter(e.target.value)}
                     >
                         <MenuItem value="">All</MenuItem>
-                        {statuses.map(({ value, label }) => (
-                            <MenuItem key={value} value={value}>{label}</MenuItem>
+                        {statuses.map(({ key, label }) => (
+                            <MenuItem key={key} value={key}>{label}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -137,9 +142,10 @@ function MyTasks() {
                                 <Select
                                     value={task.status}
                                     onChange={(e) => handleStatusChange(task.id, e.target.value)}
+                                    onClick={(e) => e.stopPropagation()} // Остановка всплытия клика
                                 >
-                                    {statuses.map(({ value, label }) => (
-                                        <MenuItem key={value} value={value}>{label}</MenuItem>
+                                    {statuses.map(({ key, label }) => (
+                                        <MenuItem key={key} value={key}>{label}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
