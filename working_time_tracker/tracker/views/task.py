@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from tracker.models import Task
+from tracker.models import Task, UserExtension
 from tracker.serializers.task import (
     TaskDetailedSerializer,
     TaskListSerializer,
@@ -32,3 +32,14 @@ class TaskViewSet(BaseModelViewSet):
         task.save()
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"])
+    def accessible(self, request):
+        user_extension = UserExtension.objects.get(user=request.user)
+
+        if not user_extension.project:
+            return Response({"detail": "You are not assigned to any project"}, status=status.HTTP_403_FORBIDDEN)
+
+        tasks = Task.objects.filter(project=user_extension.project)
+        serializer = self.get_serializer(tasks, many=True)
+        return Response(serializer.data)
