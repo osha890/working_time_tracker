@@ -21,16 +21,14 @@ function Projects() {
     const [sortOrder, setSortOrder] = useState('asc');
     const [searchQuery, setSearchQuery] = useState('');
     const [projects, setProjects] = useState([]);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadProjects = async () => {
             try {
                 const data = await fetchProjects();
                 setProjects(data);
-            } catch (err) {
-                console.error(err);
-                setError('Failed to load projects');
+            } catch (error) {
+                console.error('Failed to load projects', error);
             }
         };
 
@@ -38,7 +36,6 @@ function Projects() {
     }, []);
 
 
-    if (error) return <div>{error}</div>;
 
     const toggleSortOrder = (field) => {
         if (sortField === field) {

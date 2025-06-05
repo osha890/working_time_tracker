@@ -28,7 +28,7 @@ const getUniqueValues = (tasks, field, nestedField = null) => {
     return [...new Set(values.filter(Boolean))];
 };
 
-function TaskList() {
+function Tasks() {
     const [sortField, setSortField] = useState('id');
     const [sortOrder, setSortOrder] = useState('asc');
     const [projectFilter, setProjectFilter] = useState('');
@@ -36,24 +36,20 @@ function TaskList() {
     const [reporterFilter, setReporterFilter] = useState('');
     const [assigneeFilter, setAssigneeFilter] = useState('');
     const [tasks, setTasks] = useState([]);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadTasks = async () => {
             try {
                 const data = await fetchTasks();
-                console.log(data);
                 setTasks(data);
-            } catch (err) {
-                console.error(err);
-                setError('Failed to load tasks');
+            } catch (error) {
+                console.error('Failed to load tasks:', error);
             }
         };
 
         loadTasks();
     }, []);
 
-    if (error) return <div>{error}</div>;
 
     const toggleSortOrder = (field) => {
         if (sortField === field) {
@@ -237,4 +233,4 @@ function TaskList() {
     );
 }
 
-export default TaskList;
+export default Tasks;

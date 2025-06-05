@@ -11,12 +11,11 @@ const getAuthHeaders = () => {
     };
 };
 
-export const fetchProjects = async () => {
-    const response = await axios.get(`${BASE_URL}/projects/`, getAuthHeaders());
+const fetchData = async (endpoint) => {
+    const response = await axios.get(`${BASE_URL}/${endpoint}/`, getAuthHeaders());
     return response.data;
 };
 
-export const fetchTasks = async () => {
-    const response = await axios.get(`${BASE_URL}/tasks/`, getAuthHeaders());
-    return response.data;
-};
+export const fetchProjects = () => fetchData('projects');
+export const fetchTasks = () => fetchData('tasks');
+export const fetchUsers = () => fetchData('users');

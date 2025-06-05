@@ -49,7 +49,7 @@ export default function Sidebar({ open, onClose }) {
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton component={Link} to="/users">
                         <ListItemIcon><GroupIcon /></ListItemIcon>
                         <ListItemText primary="Users" />
                     </ListItemButton>
