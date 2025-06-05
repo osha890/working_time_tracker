@@ -14,7 +14,7 @@ import {
     Select,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchTasks } from '../utils/api';
+import { fetchAccessibleTasks } from '../utils/api';
 
 const getUniqueValues = (tasks, field, nestedField = null) => {
     const values = tasks.map(task => {
@@ -35,7 +35,7 @@ function ProjectTasks() {
     useEffect(() => {
         const loadTasks = async () => {
             try {
-                const data = await fetchTasks();
+                const data = await fetchAccessibleTasks();
                 setTasks(data);
             } catch (error) {
                 console.error('Failed to load tasks:', error);
@@ -102,6 +102,16 @@ function ProjectTasks() {
     };
 
     const projectTitle = sortedTasks.length > 0 ? sortedTasks[0].project?.title || 'Project' : 'Project';
+
+    if (sortedTasks.length === 0) {
+        return (
+            <Container>
+                <Typography variant="body1" align="center" color="textSecondary" sx={{ mt: 4 }}>
+                    You are not assigned to any project or project has no tasks yet.
+                </Typography>
+            </Container>
+        );
+    }
 
     return (
         <Container>
