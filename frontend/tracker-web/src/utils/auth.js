@@ -61,7 +61,26 @@ export const isAuthenticated = async () => {
     }
 };
 
-export const logout = () => {
+export const logout = async () => {
+    const refresh = localStorage.getItem('refresh_token');
+    const access = localStorage.getItem('access_token');
+
+    if (refresh) {
+        try {
+            await axios.post(
+                `${BASE_URL}/auth/logout/`,
+                { refresh },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${access}`,
+                    },
+                }
+            );
+        } catch (error) {
+            console.error('Logout error:', error.response?.data || error.message);
+        }
+    }
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
 };
