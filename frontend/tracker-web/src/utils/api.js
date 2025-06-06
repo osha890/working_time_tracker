@@ -36,3 +36,17 @@ const postData = async (url, data = {}, config = {}) => {
 export const postProjects = (projectData) => {
     return postData(`${BASE_URL}/projects/`, projectData, getAuthHeaders());
 };
+
+const putData = async (url, data = {}, config = {}) => {
+    try {
+        const response = await axios.put(url, data, config);
+        return response.data;
+    } catch (error) {
+        console.error('PUT request error:', error);
+        throw error;
+    }
+};
+
+export const updateProject = (id, projectData) => {
+    return putData(`${BASE_URL}/projects/${id}/`, projectData, getAuthHeaders());
+};

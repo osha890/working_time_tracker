@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Button,
     Dialog,
@@ -7,24 +7,35 @@ import {
     DialogActions,
     TextField
 } from '@mui/material';
-import { postProjects } from '../utils/api';
+import { postProjects, updateProject } from '../utils/api';
 
-function AddProjectButton({ onProjectAdded }) {
-    const [open, setOpen] = useState(false);
+function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
-    const handleClickOpen = () => setOpen(true);
+    useEffect(() => {
+        if (open && editingProject) {
+            setTitle(editingProject.title || '');
+            setDescription(editingProject.description || '');
+        } else if (open) {
+            setTitle('');
+            setDescription('');
+        }
+    }, [open, editingProject]);
+
     const handleClose = () => setOpen(false);
 
     const handleSubmit = async () => {
         try {
             const data = { title, description };
-            const result = await postProjects(data);
+            let result;
+            if (editingProject) {
+                result = await updateProject(editingProject.id, data);
+            } else {
+                result = await postProjects(data);
+            }
             if (onProjectAdded) onProjectAdded(result);
             handleClose();
-            setTitle('');
-            setDescription('');
         } catch (error) {
             console.error(error);
         }
@@ -32,16 +43,18 @@ function AddProjectButton({ onProjectAdded }) {
 
     return (
         <>
-            <Button variant="contained" color="primary" onClick={handleClickOpen}>
+            {/* Кнопка Add project всегда видна */}
+            <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
                 Add project
             </Button>
+
             <Dialog
                 open={open}
                 onClose={handleClose}
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>Add New Project</DialogTitle>
+                <DialogTitle>{editingProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
@@ -63,7 +76,9 @@ function AddProjectButton({ onProjectAdded }) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit} variant="contained">Submit</Button>
+                    <Button onClick={handleSubmit} variant="contained">
+                        {editingProject ? 'Save' : 'Submit'}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

@@ -9,11 +9,11 @@ import {
     IconButton,
     Stack,
     Button,
+    TextField,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { TextField } from '@mui/material';
 import { fetchProjects } from '../utils/api';
 import AddProjectButton from '../components/AddProjectButton';
 
@@ -22,6 +22,10 @@ function Projects() {
     const [sortOrder, setSortOrder] = useState('asc');
     const [searchQuery, setSearchQuery] = useState('');
     const [projects, setProjects] = useState([]);
+
+    // Для управления диалогом и проектом для редактирования
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [editingProject, setEditingProject] = useState(null);
 
     useEffect(() => {
         const loadProjects = async () => {
@@ -36,8 +40,18 @@ function Projects() {
         loadProjects();
     }, []);
 
+    // Обновление списка при добавлении или редактировании
     const handleProjectAdded = (newProject) => {
-        setProjects((prevProjects) => [...prevProjects, newProject]);
+        if (editingProject) {
+            // Обновляем существующий проект в списке
+            setProjects((prevProjects) =>
+                prevProjects.map((p) => (p.id === newProject.id ? newProject : p))
+            );
+        } else {
+            // Добавляем новый проект в список
+            setProjects((prevProjects) => [...prevProjects, newProject]);
+        }
+        setEditingProject(null);
     };
 
     const toggleSortOrder = (field) => {
@@ -49,7 +63,7 @@ function Projects() {
         }
     };
 
-    const filteredProjects = projects.filter(project =>
+    const filteredProjects = projects.filter((project) =>
         project.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -72,11 +86,24 @@ function Projects() {
         return sortOrder === 'asc' ? '↑' : '↓';
     };
 
+    // Открываем диалог редактирования с выбранным проектом
+    const handleEditClick = (project) => {
+        setEditingProject(project);
+        setDialogOpen(true);
+    };
+
     return (
         <Container>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h4">Projects</Typography>
-                <AddProjectButton onProjectAdded={handleProjectAdded} />
+                {/* Передаем управление диалогом и проект для редактирования */}
+                <AddProjectButton
+                    open={dialogOpen}
+                    setOpen={setDialogOpen}
+                    editingProject={editingProject}
+                    setEditingProject={setEditingProject}
+                    onProjectAdded={handleProjectAdded}
+                />
             </Box>
 
             <Box
@@ -155,12 +182,18 @@ function Projects() {
                                         month: 'short',
                                         day: 'numeric',
                                         hour: '2-digit',
-                                        minute: '2-digit'
+                                        minute: '2-digit',
                                     })}
                                 </Typography>
                             </Box>
                             <Stack direction="row" spacing={1} sx={{ ml: 2, width: 100, justifyContent: 'flex-end' }}>
-                                <IconButton onClick={(e) => e.stopPropagation()} size="small">
+                                <IconButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditClick(project);
+                                    }}
+                                    size="small"
+                                >
                                     <EditIcon fontSize="small" />
                                 </IconButton>
                                 <IconButton color="error" onClick={(e) => e.stopPropagation()} size="small">
