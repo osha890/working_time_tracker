@@ -50,3 +50,17 @@ const putData = async (url, data = {}, config = {}) => {
 export const updateProject = (id, projectData) => {
     return putData(`${BASE_URL}/projects/${id}/`, projectData, getAuthHeaders());
 };
+
+const deleteData = async (url, config = {}) => {
+    try {
+        const response = await axios.delete(url, config);
+        return response.data;
+    } catch (error) {
+        console.error('DELETE request error:', error);
+        throw error;
+    }
+};
+
+export const deleteProject = (id) => {
+    return deleteData(`${BASE_URL}/projects/${id}/`, getAuthHeaders());
+};

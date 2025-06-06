@@ -43,7 +43,6 @@ function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
 
     return (
         <>
-            {/* Кнопка Add project всегда видна */}
             <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
                 Add project
             </Button>

@@ -14,7 +14,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchProjects } from '../utils/api';
+import { fetchProjects, deleteProject } from '../utils/api';
 import AddProjectButton from '../components/AddProjectButton';
 
 function Projects() {
@@ -23,7 +23,6 @@ function Projects() {
     const [searchQuery, setSearchQuery] = useState('');
     const [projects, setProjects] = useState([]);
 
-    // Для управления диалогом и проектом для редактирования
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingProject, setEditingProject] = useState(null);
 
@@ -40,15 +39,12 @@ function Projects() {
         loadProjects();
     }, []);
 
-    // Обновление списка при добавлении или редактировании
     const handleProjectAdded = (newProject) => {
         if (editingProject) {
-            // Обновляем существующий проект в списке
             setProjects((prevProjects) =>
                 prevProjects.map((p) => (p.id === newProject.id ? newProject : p))
             );
         } else {
-            // Добавляем новый проект в список
             setProjects((prevProjects) => [...prevProjects, newProject]);
         }
         setEditingProject(null);
@@ -86,7 +82,6 @@ function Projects() {
         return sortOrder === 'asc' ? '↑' : '↓';
     };
 
-    // Открываем диалог редактирования с выбранным проектом
     const handleEditClick = (project) => {
         setEditingProject(project);
         setDialogOpen(true);
@@ -96,7 +91,6 @@ function Projects() {
         <Container>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h4">Projects</Typography>
-                {/* Передаем управление диалогом и проект для редактирования */}
                 <AddProjectButton
                     open={dialogOpen}
                     setOpen={setDialogOpen}
@@ -196,7 +190,22 @@ function Projects() {
                                 >
                                     <EditIcon fontSize="small" />
                                 </IconButton>
-                                <IconButton color="error" onClick={(e) => e.stopPropagation()} size="small">
+                                <IconButton
+                                    color="error"
+                                    size="small"
+                                    onClick={async (e) => {
+                                        e.stopPropagation();
+                                        if (window.confirm('Are you sure you want to delete this project?')) {
+                                            try {
+                                                await deleteProject(project.id);
+                                                // Обновляем список, удаляя удалённый проект из состояния
+                                                setProjects((prev) => prev.filter((p) => p.id !== project.id));
+                                            } catch (error) {
+                                                console.error('Failed to delete project', error);
+                                            }
+                                        }
+                                    }}
+                                >
                                     <DeleteIcon fontSize="small" />
                                 </IconButton>
                             </Stack>
