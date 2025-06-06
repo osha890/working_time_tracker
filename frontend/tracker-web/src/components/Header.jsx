@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { Logout } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, IconButton, Toolbar, Typography, Box } from "@mui/material";
 import Sidebar from "./Sidebar";
 import { logout } from "../utils/auth";
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../UserContext';
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useUser();
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -42,8 +44,17 @@ function Header() {
           <Typography variant="h6" component="span" sx={{ flexGrow: 1 }}>
             Working Time Tracker
           </Typography>
-          <IconButton color="inherit">
-            <Logout onClick={handleLogout} />
+
+          {user && (
+            <Box sx={{ mr: 2 }}>
+              <Typography variant="h6" component="span">
+                Hello, {user.username}
+              </Typography>
+            </Box>
+          )}
+
+          <IconButton color="inherit" onClick={handleLogout}>
+            <Logout />
           </IconButton>
         </Toolbar>
       </AppBar>

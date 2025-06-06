@@ -9,7 +9,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import TaskIcon from '@mui/icons-material/Task';
-import TimerIcon from '@mui/icons-material/Timer';
 import GroupIcon from '@mui/icons-material/Group';
 import { Link } from 'react-router-dom';
 import ListSubheader from '@mui/material/ListSubheader';

@@ -11,6 +11,7 @@ import PrivateRoute from './components/PrivateRoute';
 import ProjectTasks from './pages/ProjectTasks';
 import MyTasks from './pages/MyTasks';
 import Tracks from './pages/Tracks';
+import { UserProvider } from './UserContext';
 
 
 function AppWrapper() {
@@ -89,7 +90,9 @@ function AppWrapper() {
 function App() {
   return (
     <BrowserRouter>
-      <AppWrapper />
+      <UserProvider>
+        <AppWrapper />
+      </UserProvider>
     </BrowserRouter>
   );
 }

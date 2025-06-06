@@ -10,6 +10,7 @@ import {
 import { Link } from 'react-router-dom';
 import { loginUser } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../UserContext';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -17,6 +18,8 @@ function LoginPage() {
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  const { setUser } = useUser();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +34,7 @@ function LoginPage() {
       const result = await loginUser(username, password);
 
       if (result.success) {
+        setUser(result.user);
         navigate('/');
       } else {
         alert(result.message);

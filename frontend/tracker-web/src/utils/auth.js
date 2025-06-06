@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-const BASE_URL = 'http://127.0.0.1:8000/auth';
+const BASE_URL = 'http://127.0.0.1:8000';
+const AUTH_URL = `${BASE_URL}/auth`;
 
 export const loginUser = async (username, password) => {
     try {
-        const response = await axios.post(`${BASE_URL}/token/`, {
+        const response = await axios.post(`${AUTH_URL}/token/`, {
             username,
             password,
         });
@@ -15,7 +16,16 @@ export const loginUser = async (username, password) => {
         localStorage.setItem('access_token', access);
         localStorage.setItem('refresh_token', refresh);
 
-        return { success: true };
+        const userRes = await axios.get(`${BASE_URL}/api/users/me/`, {
+            headers: {
+                Authorization: `Bearer ${access}`,
+            },
+        });
+
+        return {
+            success: true,
+            user: userRes.data,
+        };
     } catch (error) {
         return {
             success: false,
@@ -30,7 +40,7 @@ const refreshAccessToken = async () => {
     if (!refresh) return false;
 
     try {
-        const response = await axios.post(`${BASE_URL}/token/refresh/`, { refresh });
+        const response = await axios.post(`${AUTH_URL}/token/refresh/`, { refresh });
         const { access } = response.data;
         localStorage.setItem('access_token', access);
         console.log("refreshed")
@@ -68,7 +78,7 @@ export const logout = async () => {
     if (refresh) {
         try {
             await axios.post(
-                `${BASE_URL}/logout/`,
+                `${AUTH_URL}/logout/`,
                 { refresh },
                 {
                     headers: {
