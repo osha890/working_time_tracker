@@ -37,6 +37,18 @@ class TaskViewSet(BaseModelViewSet):
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=["post"])
+    def refuse(self, request, pk=None):
+        task = self.get_object()
+
+        if task.assignee is not request.user:
+            return Response({"detail": "You can not access this task"}, status=status.HTTP_403_FORBIDDEN)
+
+        task.assignee = None
+        task.save()
+        serializer = self.get_serializer(task)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=["get"])
     def accessible(self, request):
         user_extension = UserExtension.objects.get(user=request.user)
