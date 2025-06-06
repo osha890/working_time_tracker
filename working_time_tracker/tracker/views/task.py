@@ -32,6 +32,7 @@ class TaskViewSet(BaseModelViewSet):
             )
 
         task.assignee = request.user
+        task.status = TaskStatus.ON_HOLD
         task.save()
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
