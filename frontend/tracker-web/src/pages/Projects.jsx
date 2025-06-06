@@ -15,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { TextField } from '@mui/material';
 import { fetchProjects } from '../utils/api';
+import AddProjectButton from '../components/AddProjectButton';
 
 function Projects() {
     const [sortField, setSortField] = useState('title');
@@ -35,7 +36,9 @@ function Projects() {
         loadProjects();
     }, []);
 
-
+    const handleProjectAdded = (newProject) => {
+        setProjects((prevProjects) => [...prevProjects, newProject]);
+    };
 
     const toggleSortOrder = (field) => {
         if (sortField === field) {
@@ -73,7 +76,7 @@ function Projects() {
         <Container>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h4">Projects</Typography>
-                <Button variant="contained" color="primary">Add project</Button>
+                <AddProjectButton onProjectAdded={handleProjectAdded} />
             </Box>
 
             <Box
