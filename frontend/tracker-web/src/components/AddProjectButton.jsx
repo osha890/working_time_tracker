@@ -5,13 +5,17 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    TextField
+    TextField,
+    Box,
+    Alert
 } from '@mui/material';
 import { postProjects, updateProject } from '../utils/api';
 
 function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [generalError, setGeneralError] = useState('');
 
     useEffect(() => {
         if (open && editingProject) {
@@ -21,9 +25,15 @@ function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
             setTitle('');
             setDescription('');
         }
+        setFieldErrors({});
+        setGeneralError('');
     }, [open, editingProject]);
 
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setFieldErrors({});
+        setGeneralError('');
+        setOpen(false);
+    };
 
     const handleSubmit = async () => {
         try {
@@ -37,6 +47,22 @@ function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
             if (onProjectAdded) onProjectAdded(result);
             handleClose();
         } catch (error) {
+            if (error.response && error.response.data) {
+                const data = error.response.data;
+                const errors = {};
+                Object.keys(data).forEach(key => {
+                    if (Array.isArray(data[key])) {
+                        errors[key] = data[key].join(' ');
+                    }
+                });
+                setFieldErrors(errors);
+
+                if (typeof data.detail === 'string') {
+                    setGeneralError(data.detail);
+                }
+            } else {
+                setGeneralError(error.message || 'Failed to save project');
+            }
             console.error(error);
         }
     };
@@ -44,7 +70,7 @@ function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
     return (
         <>
             <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
-                Add project
+                {editingProject ? 'Edit project' : 'Add project'}
             </Button>
 
             <Dialog
@@ -55,6 +81,12 @@ function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
             >
                 <DialogTitle>{editingProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
                 <DialogContent>
+                    {generalError && (
+                        <Box mb={2}>
+                            <Alert severity="error">{generalError}</Alert>
+                        </Box>
+                    )}
+
                     <TextField
                         autoFocus
                         margin="dense"
@@ -62,6 +94,8 @@ function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
                         fullWidth
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
+                        error={!!fieldErrors.title}
+                        helperText={fieldErrors.title}
                     />
                     <TextField
                         margin="dense"
@@ -71,6 +105,8 @@ function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
                         rows={12}
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
+                        error={!!fieldErrors.description}
+                        helperText={fieldErrors.description}
                     />
                 </DialogContent>
                 <DialogActions>
