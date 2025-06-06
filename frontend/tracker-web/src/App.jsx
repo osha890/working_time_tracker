@@ -35,30 +35,6 @@ function AppWrapper() {
           }
         />
         <Route
-          path="/projects"
-          element={
-            <PrivateRoute>
-              <Projects />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/tasks"
-          element={
-            <PrivateRoute>
-              <Tasks />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/users"
-          element={
-            <PrivateRoute>
-              <Users />
-            </PrivateRoute>
-          }
-        />
-        <Route
           path="/project_tasks"
           element={
             <PrivateRoute>
@@ -74,10 +50,35 @@ function AppWrapper() {
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="/projects"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <Projects />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/tasks"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <Tasks />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <Users />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/tracks"
           element={
-            <PrivateRoute>
+            <PrivateRoute adminOnly={true}>
               <Tracks />
             </PrivateRoute>
           }

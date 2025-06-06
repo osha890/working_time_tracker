@@ -16,7 +16,11 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import ViewStreamIcon from '@mui/icons-material/ViewStream';
 
+import { useUser } from '../UserContext';  // <-- импорт хука
+
 export default function Sidebar({ open, onClose }) {
+    const { user } = useUser();  // Получаем пользователя
+
     const DrawerList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
             <List subheader={<ListSubheader>User navigation</ListSubheader>}>
@@ -34,40 +38,45 @@ export default function Sidebar({ open, onClose }) {
                 </ListItem>
             </List>
 
-            <Divider />
 
-            <List subheader={<ListSubheader>Admin navigation</ListSubheader>}>
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/projects">
-                        <ListItemIcon><ViewStreamIcon /></ListItemIcon>
-                        <ListItemText primary="Projects" />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/tasks">
-                        <ListItemIcon><TaskIcon /></ListItemIcon>
-                        <ListItemText primary="All tasks" />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/users">
-                        <ListItemIcon><GroupIcon /></ListItemIcon>
-                        <ListItemText primary="Users" />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/tracks">
-                        <ListItemIcon><TimelineIcon /></ListItemIcon>
-                        <ListItemText primary="Tracks" />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon><AssessmentIcon /></ListItemIcon>
-                        <ListItemText primary="Reports" />
-                    </ListItemButton>
-                </ListItem>
-            </List>
+
+            {user?.is_staff && (
+                <>
+                    <Divider />
+                    <List subheader={<ListSubheader>Admin navigation</ListSubheader>}>
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/projects">
+                                <ListItemIcon><ViewStreamIcon /></ListItemIcon>
+                                <ListItemText primary="Projects" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/tasks">
+                                <ListItemIcon><TaskIcon /></ListItemIcon>
+                                <ListItemText primary="All tasks" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/users">
+                                <ListItemIcon><GroupIcon /></ListItemIcon>
+                                <ListItemText primary="Users" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/tracks">
+                                <ListItemIcon><TimelineIcon /></ListItemIcon>
+                                <ListItemText primary="Tracks" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon><AssessmentIcon /></ListItemIcon>
+                                <ListItemText primary="Reports" />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </>
+            )}
         </Box>
     );
 

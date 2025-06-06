@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { isAuthenticated } from '../utils/auth';
+import { useUser } from '../UserContext';
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, adminOnly = false }) => {
   const [auth, setAuth] = useState(null);
+  const { user } = useUser();
 
   useEffect(() => {
     async function checkAuth() {
@@ -14,10 +16,19 @@ const PrivateRoute = ({ children }) => {
   }, []);
 
   if (auth === null) {
-    return <div></div>;
+    return <div>Loading...</div>;
   }
 
-  return auth ? children : <Navigate to="/login" replace />;
+  if (!auth) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (adminOnly && (!user || !user.is_staff)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;
+
