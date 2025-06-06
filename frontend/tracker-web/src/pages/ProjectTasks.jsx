@@ -14,7 +14,7 @@ import {
     Select,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchAccessibleTasks, takeTask } from '../utils/api'; // Импортируем takeTask
+import { fetchAccessibleTasks, takeTask } from '../utils/api';
 
 const getUniqueValues = (tasks, field, nestedField = null) => {
     const values = tasks.map(task => {
@@ -95,27 +95,39 @@ function ProjectTasks() {
 
     const columnStyles = {
         id: { width: '5%', minWidth: 40, textAlign: 'left' },
-        title: { width: '35%', minWidth: 180, textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+        title: {
+            width: '35%',
+            minWidth: 180,
+            textAlign: 'left',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+        },
         status: { width: '15%', minWidth: 80, textAlign: 'left' },
         created_at: { width: '15%', minWidth: 140, textAlign: 'left' },
-        button: { width: '10%', minWidth: 120, textAlign: 'left', ml: 20 }
+        button: { width: '10%', minWidth: 120, textAlign: 'left', ml: 3 }
     };
 
     const projectTitle = sortedTasks.length > 0 ? sortedTasks[0].project?.title || 'Project' : 'Project';
 
     return (
-        <Container>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h4">{projectTitle}</Typography>
+        <Container sx={{ width: '90%', maxWidth: 1200, mt: 4 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                <Typography variant="h4" fontWeight={700} color="primary.dark">{projectTitle}</Typography>
             </Box>
 
-            <Stack direction="row" spacing={2} mb={2} alignItems="center">
-                <FormControl size="small" sx={{ minWidth: 120 }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={3} alignItems="center">
+                <FormControl size="small" sx={{ minWidth: 140, flex: 1 }}>
                     <InputLabel>Status</InputLabel>
                     <Select
                         value={statusFilter}
                         label="Status"
                         onChange={(e) => setStatusFilter(e.target.value)}
+                        sx={{
+                            borderRadius: 2,
+                            backgroundColor: 'background.paper',
+                            boxShadow: '0 2px 5px rgb(0 0 0 / 0.05)'
+                        }}
                     >
                         <MenuItem value="">All</MenuItem>
                         {getUniqueStatusPairs(tasks).map(({ value, label }) => (
@@ -124,12 +136,17 @@ function ProjectTasks() {
                     </Select>
                 </FormControl>
 
-                <FormControl size="small" sx={{ minWidth: 120 }}>
+                <FormControl size="small" sx={{ minWidth: 140, flex: 1 }}>
                     <InputLabel>Reporter</InputLabel>
                     <Select
                         value={reporterFilter}
                         label="Reporter"
                         onChange={(e) => setReporterFilter(e.target.value)}
+                        sx={{
+                            borderRadius: 2,
+                            backgroundColor: 'background.paper',
+                            boxShadow: '0 2px 5px rgb(0 0 0 / 0.05)'
+                        }}
                     >
                         <MenuItem value="">All</MenuItem>
                         {getUniqueValues(tasks, 'reporter', 'username').map(username => (
@@ -144,38 +161,85 @@ function ProjectTasks() {
                         setStatusFilter('');
                         setReporterFilter('');
                     }}
+                    sx={{
+                        borderRadius: 2,
+                        minWidth: 100,
+                        textTransform: 'none',
+                        color: 'text.secondary',
+                        borderColor: 'divider',
+                        '&:hover': {
+                            borderColor: 'primary.main',
+                            color: 'primary.main'
+                        }
+                    }}
                 >
                     Clear
                 </Button>
             </Stack>
 
-            <Box display="flex" alignItems="center" fontWeight="bold" fontSize="1.1rem" mb={1}>
+            <Box display="flex" alignItems="center" fontWeight="bold" fontSize="1.1rem" px={3} py={1.5} bgcolor="grey.100" borderRadius={2} mb={1}>
                 <Button
                     onClick={() => toggleSortOrder('id')}
                     size="small"
-                    sx={columnStyles.id}
+                    sx={{
+                        ...columnStyles.id,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        '&:hover': { backgroundColor: 'transparent' }
+                    }}
                 >
                     ID {arrow('id')}
                 </Button>
-                <Typography sx={columnStyles.title}>Title</Typography>
-                <Typography sx={columnStyles.status}>Status</Typography>
+                <Typography sx={{ ...columnStyles.title, fontWeight: 600, pr: 1 }}>Title</Typography>
+                <Typography sx={{ ...columnStyles.status, fontWeight: 600 }}>Status</Typography>
                 <Button
                     onClick={() => toggleSortOrder('created_at')}
                     size="small"
-                    sx={columnStyles.created_at}
+                    sx={{
+                        ...columnStyles.created_at,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        '&:hover': { backgroundColor: 'transparent' }
+                    }}
                 >
                     Created At {arrow('created_at')}
                 </Button>
+                <Box sx={{ flexGrow: 1 }} />
             </Box>
 
             {sortedTasks.map(task => (
-                <Accordion key={task.id}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Box display="flex" alignItems="center" width="100%">
-                            <Typography sx={columnStyles.id}>{task.id}</Typography>
-                            <Typography sx={columnStyles.title} title={task.title}>{task.title}</Typography>
-                            <Typography sx={columnStyles.status}>{task.status_display}</Typography>
-                            <Typography sx={columnStyles.created_at}>
+                <Accordion
+                    key={task.id}
+                    sx={{
+                        '&:before': { display: 'none' },
+                        boxShadow: 'none',
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+                        '&.Mui-expanded': { margin: 'auto' }
+                    }}
+                >
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        sx={{
+                            px: 3,
+                            py: 1.5,
+                            '&:hover': { bgcolor: 'action.hover' },
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <Box display="flex" alignItems="center" width="100%" gap={2}>
+                            <Typography sx={columnStyles.id} fontWeight={500}>{task.id}</Typography>
+                            <Typography
+                                sx={columnStyles.title}
+                                title={task.title}
+                                noWrap
+                            >
+                                {task.title}
+                            </Typography>
+                            <Typography sx={columnStyles.status} color="text.secondary" noWrap>{task.status_display}</Typography>
+                            <Typography sx={columnStyles.created_at} color="text.secondary" noWrap>
                                 {new Date(task.created_at).toLocaleString('en-GB', {
                                     year: 'numeric',
                                     month: 'short',
@@ -184,6 +248,7 @@ function ProjectTasks() {
                                     minute: '2-digit'
                                 })}
                             </Typography>
+
                             {task.assignee === null && (
                                 <Box sx={columnStyles.button}>
                                     <Button
@@ -194,7 +259,7 @@ function ProjectTasks() {
                                             try {
                                                 await takeTask(task.id);
                                                 console.log(`Task ${task.id} taken`);
-                                                await loadTasks(); // 🔄 Обновляем список задач
+                                                await loadTasks();
                                             } catch (error) {
                                                 console.error(`Failed to take task ${task.id}`, error);
                                             }
@@ -206,8 +271,8 @@ function ProjectTasks() {
                             )}
                         </Box>
                     </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography><strong>Description:</strong> {task.description}</Typography>
+                    <AccordionDetails sx={{ px: 3, py: 2, bgcolor: 'grey.50', borderTop: '1px solid', borderColor: 'divider', borderRadius: '0 0 12px 12px' }}>
+                        <Typography paragraph><strong>Description:</strong> {task.description || '—'}</Typography>
                         <Typography><strong>Reporter:</strong> {task.reporter?.username || '—'}</Typography>
                         <Typography><strong>Assignee:</strong> {task.assignee?.username || '—'}</Typography>
                     </AccordionDetails>

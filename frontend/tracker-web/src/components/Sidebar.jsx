@@ -16,10 +16,10 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import ViewStreamIcon from '@mui/icons-material/ViewStream';
 
-import { useUser } from '../UserContext';  // <-- импорт хука
+import { useUser } from '../UserContext';
 
 export default function Sidebar({ open, onClose }) {
-    const { user } = useUser();  // Получаем пользователя
+    const { user } = useUser();
 
     const DrawerList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>

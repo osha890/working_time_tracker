@@ -95,55 +95,63 @@ function Tracks() {
     });
 
     const columnStyles = {
-        id: { width: '5%', minWidth: 40 },
-        username: { width: '15%', minWidth: 100 },
-        task: { width: '20%', minWidth: 140 },
-        project: { width: '20%', minWidth: 140 },
-        status: { width: '15%', minWidth: 100 },
-        time: { width: '20%', minWidth: 160 },
+        id: { width: '5%', minWidth: 40, textAlign: 'left' },
+        username: { width: '15%', minWidth: 100, textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+        task: { width: '20%', minWidth: 140, textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+        project: { width: '20%', minWidth: 140, textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+        status: { width: '15%', minWidth: 100, textAlign: 'left', color: 'text.secondary' },
+        timeFrom: { width: '10%', minWidth: 120, textAlign: 'left' },
+        timeTo: { width: '10%', minWidth: 120, textAlign: 'left' },
     };
 
     return (
-        <Container>
-            <Typography variant="h4" gutterBottom>Tracks</Typography>
+        <Container sx={{ width: '90%', maxWidth: '1200px', mt: 4 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                <Typography variant="h4" fontWeight={700} color="primary.dark">Tracks</Typography>
+            </Box>
 
-            <Stack direction="row" spacing={2} mb={2} flexWrap="wrap">
-                <FormControl size="small" sx={{ minWidth: 140 }}>
-                    <InputLabel>User</InputLabel>
-                    <Select value={userFilter} onChange={(e) => setUserFilter(e.target.value)} label="User">
-                        <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(tracks, 'user.username').map(username => (
-                            <MenuItem key={username} value={username}>{username}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl size="small" sx={{ minWidth: 140 }}>
-                    <InputLabel>Task</InputLabel>
-                    <Select value={taskFilter} onChange={(e) => setTaskFilter(e.target.value)} label="Task">
-                        <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(tracks, 'task.title').map(title => (
-                            <MenuItem key={title} value={title}>{title}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl size="small" sx={{ minWidth: 140 }}>
-                    <InputLabel>Project</InputLabel>
-                    <Select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)} label="Project">
-                        <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(tracks, 'task.project.title').map(title => (
-                            <MenuItem key={title} value={title}>{title}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl size="small" sx={{ minWidth: 140 }}>
-                    <InputLabel>Status</InputLabel>
-                    <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} label="Status">
-                        <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(tracks, 'status_display').map(status => (
-                            <MenuItem key={status} value={status}>{status}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={3} alignItems="center" flexWrap="wrap">
+                {[{
+                    label: 'User',
+                    value: userFilter,
+                    onChange: (e) => setUserFilter(e.target.value),
+                    options: getUniqueValues(tracks, 'user.username')
+                }, {
+                    label: 'Task',
+                    value: taskFilter,
+                    onChange: (e) => setTaskFilter(e.target.value),
+                    options: getUniqueValues(tracks, 'task.title')
+                }, {
+                    label: 'Project',
+                    value: projectFilter,
+                    onChange: (e) => setProjectFilter(e.target.value),
+                    options: getUniqueValues(tracks, 'task.project.title')
+                }, {
+                    label: 'Status',
+                    value: statusFilter,
+                    onChange: (e) => setStatusFilter(e.target.value),
+                    options: getUniqueValues(tracks, 'status_display')
+                }].map(({ label, value, onChange, options }) => (
+                    <FormControl key={label} size="small" sx={{ minWidth: 140, flex: 1 }}>
+                        <InputLabel>{label}</InputLabel>
+                        <Select
+                            value={value}
+                            label={label}
+                            onChange={onChange}
+                            sx={{
+                                borderRadius: 2,
+                                backgroundColor: 'background.paper',
+                                boxShadow: '0 2px 5px rgb(0 0 0 / 0.05)'
+                            }}
+                        >
+                            <MenuItem value="">All</MenuItem>
+                            {options.map(option => (
+                                <MenuItem key={option} value={option}>{option}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                ))}
+
                 <Button
                     variant="outlined"
                     onClick={() => {
@@ -152,34 +160,94 @@ function Tracks() {
                         setStatusFilter('');
                         setProjectFilter('');
                     }}
+                    sx={{
+                        borderRadius: 2,
+                        minWidth: 100,
+                        textTransform: 'none',
+                        color: 'text.secondary',
+                        borderColor: 'divider',
+                        '&:hover': {
+                            borderColor: 'primary.main',
+                            color: 'primary.main'
+                        }
+                    }}
                 >
                     Clear
                 </Button>
             </Stack>
 
-            <Box display="flex" fontWeight="bold" mb={1}>
-                <Button onClick={() => toggleSortOrder('id')} size="small" sx={columnStyles.id}>ID {arrow('id')}</Button>
-                <Typography sx={columnStyles.username}>Username</Typography>
-                <Typography sx={columnStyles.task}>Task</Typography>
-                <Typography sx={columnStyles.project}>Project</Typography>
-                <Typography sx={columnStyles.status}>Status</Typography>
-                <Button onClick={() => toggleSortOrder('time_from')} size="small" sx={columnStyles.time}>From {arrow('time_from')}</Button>
-                <Button onClick={() => toggleSortOrder('time_to')} size="small" sx={columnStyles.time}>To {arrow('time_to')}</Button>
+            <Box display="flex" alignItems="center" fontWeight="bold" fontSize="1.1rem" px={3} py={1.5} bgcolor="grey.100" borderRadius={3} mb={1}>
+                <Button
+                    onClick={() => toggleSortOrder('id')}
+                    size="small"
+                    sx={{
+                        ...columnStyles.id,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        '&:hover': { backgroundColor: 'transparent' }
+                    }}
+                >
+                    ID {arrow('id')}
+                </Button>
+                <Typography sx={{ ...columnStyles.username, fontWeight: 600 }}>Username</Typography>
+                <Typography sx={{ ...columnStyles.task, fontWeight: 600 }}>Task</Typography>
+                <Typography sx={{ ...columnStyles.project, fontWeight: 600 }}>Project</Typography>
+                <Typography sx={{ ...columnStyles.status, fontWeight: 600 }}>Status</Typography>
+                <Button
+                    onClick={() => toggleSortOrder('time_from')}
+                    size="small"
+                    sx={{
+                        ...columnStyles.timeFrom,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        '&:hover': { backgroundColor: 'transparent' }
+                    }}
+                >
+                    From {arrow('time_from')}
+                </Button>
+                <Button
+                    onClick={() => toggleSortOrder('time_to')}
+                    size="small"
+                    sx={{
+                        ...columnStyles.timeTo,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        '&:hover': { backgroundColor: 'transparent' }
+                    }}
+                >
+                    To {arrow('time_to')}
+                </Button>
             </Box>
 
             {sorted.map(track => (
-                <Box key={track.id} display="flex" borderBottom="1px solid #ccc" py={1}>
+                <Box
+                    key={track.id}
+                    display="flex"
+                    alignItems="center"
+                    borderBottom="1px solid"
+                    borderColor="divider"
+                    px={3}
+                    py={1.5}
+                    sx={{
+                        '&:hover': { bgcolor: 'action.hover' },
+                        cursor: 'default',
+                    }}
+                >
                     <Typography sx={columnStyles.id}>{track.id}</Typography>
-                    <Typography sx={columnStyles.username}>{track.user.username}</Typography>
-                    <Typography sx={columnStyles.task}>{track.task.title}</Typography>
-                    <Typography sx={columnStyles.project}>{track.task.project?.title || '—'}</Typography>
-                    <Typography sx={columnStyles.status}>{track.status_display}</Typography>
-                    <Typography sx={columnStyles.time}>{formatDate(track.time_from)}</Typography>
-                    <Typography sx={columnStyles.time}>{formatDate(track.time_to)}</Typography>
+                    <Typography sx={columnStyles.username} title={track.user.username} noWrap>{track.user.username}</Typography>
+                    <Typography sx={columnStyles.task} title={track.task.title} noWrap>{track.task.title}</Typography>
+                    <Typography sx={columnStyles.project} title={track.task.project?.title || '—'} noWrap>{track.task.project?.title || '—'}</Typography>
+                    <Typography sx={columnStyles.status} title={track.status_display} noWrap>{track.status_display}</Typography>
+                    <Typography sx={columnStyles.timeFrom}>{formatDate(track.time_from)}</Typography>
+                    <Typography sx={columnStyles.timeTo}>{formatDate(track.time_to)}</Typography>
                 </Box>
             ))}
         </Container>
     );
+
 }
 
 export default Tracks;

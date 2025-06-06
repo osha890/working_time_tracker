@@ -10,6 +10,7 @@ import {
     Stack,
     Button,
     TextField,
+    Paper,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
@@ -87,10 +88,19 @@ function Projects() {
         setDialogOpen(true);
     };
 
+    const columnStyles = {
+        id: { minWidth: 90, textAlign: 'left', fontWeight: 600, color: '#1976d2' },
+        title: { minWidth: 420, textAlign: 'left', fontWeight: 600 },
+        created_at: { minWidth: 160, textAlign: 'left', color: '#666666' },
+        actions: { width: 110, textAlign: 'right', color: '#666666' },
+    };
+
     return (
-        <Container>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h4">Projects</Typography>
+        <Container sx={{ width: '90%', maxWidth: '1200px', mt: 4 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                <Typography variant="h4" fontWeight={700} color="primary.dark">
+                    Projects
+                </Typography>
                 <AddProjectButton
                     open={dialogOpen}
                     setOpen={setDialogOpen}
@@ -102,97 +112,119 @@ function Projects() {
 
             <Box
                 display="flex"
-                justifyContent="space-between"
                 alignItems="center"
-                sx={{ fontWeight: 'bold', fontSize: '1.2rem', mb: 1, userSelect: 'none' }}
+                fontWeight="bold"
+                fontSize="1.1rem"
+                px={3}
+                py={1.5}
+                bgcolor="grey.100"
+                borderRadius={3}
+                mb={1}
             >
-                <Box
+                <Button
+                    onClick={() => toggleSortOrder('id')}
+                    size="small"
                     sx={{
-                        display: 'flex',
-                        gap: 4,
-                        flexGrow: 1,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
+                        minWidth: 90,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        '&:hover': { backgroundColor: 'transparent' },
+                        ...columnStyles.id,
                     }}
                 >
-                    <Button
-                        onClick={() => toggleSortOrder('id')}
-                        size="small"
-                        sx={{ minWidth: 100, textTransform: 'none', fontSize: '1.2rem' }}
-                    >
-                        ID {arrow('id')}
-                    </Button>
+                    ID {arrow('id')}
+                </Button>
 
-                    <TextField
-                        label="Search by title"
-                        variant="outlined"
-                        size="small"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        sx={{ minWidth: 350 }}
-                    />
+                <TextField
+                    label="Search by title"
+                    variant="outlined"
+                    size="small"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    sx={{
+                        minWidth: 320,
+                        maxWidth: 400,
+                        mx: 2,
+                        '& .MuiOutlinedInput-root': { borderRadius: 2 },
+                        flexGrow: 1,
+                    }}
+                />
 
-                    <Button
-                        onClick={() => toggleSortOrder('created_at')}
-                        size="small"
-                        sx={{ minWidth: 180, textTransform: 'none', fontSize: '1.2rem' }}
-                    >
-                        Created at {arrow('created_at')}
-                    </Button>
-                </Box>
+                <Button
+                    onClick={() => toggleSortOrder('created_at')}
+                    size="small"
+                    sx={{
+                        minWidth: 160,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        '&:hover': { backgroundColor: 'transparent' },
+                        ...columnStyles.created_at,
+                    }}
+                >
+                    Created at {arrow('created_at')}
+                </Button>
 
-                <Box sx={{ width: 100, textAlign: 'right', color: 'text.secondary', fontSize: '1.2rem' }}>
-                    Actions
-                </Box>
+                <Box sx={{ width: 400, textAlign: 'right', fontWeight: 600, mr: 3 }}>Actions</Box>
             </Box>
 
-            {sortedProjects.map((project) => (
-                <Accordion key={project.id}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Box
-                            display="flex"
-                            justifyContent="space-between"
-                            alignItems="center"
-                            width="100%"
-                            sx={{ fontFamily: 'Roboto, sans-serif', fontSize: '1.1rem' }}
-                        >
-                            <Box
-                                component="div"
-                                sx={{
+            <Paper elevation={1} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                {sortedProjects.map((project) => (
+                    <Accordion
+                        key={project.id}
+                        sx={{
+                            '&:before': { display: 'none' },
+                            boxShadow: 'none',
+                            borderBottom: '1px solid',
+                            borderColor: 'divider',
+                            '&.Mui-expanded': { margin: 'auto' },
+                        }}
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            sx={{
+                                px: 3,
+                                py: 1.5,
+                                '&:hover': { bgcolor: 'action.hover' },
+                                cursor: 'pointer',
+                                '& .MuiAccordionSummary-content': {
+                                    margin: 0,
+                                    alignItems: 'center',
+                                    width: '100%',
                                     display: 'flex',
-                                    gap: 4,
-                                    flexGrow: 1,
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
-                            >
-                                <Typography sx={{ minWidth: 100, textAlign: 'left' }}>{project.id}</Typography>
-                                <Typography sx={{ minWidth: 350, textAlign: 'left' }}>{project.title}</Typography>
-                                <Typography sx={{ minWidth: 180, textAlign: 'left' }}>
-                                    {new Date(project.created_at).toLocaleString('en-GB', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                    })}
-                                </Typography>
-                            </Box>
-                            <Stack direction="row" spacing={1} sx={{ ml: 2, width: 100, justifyContent: 'flex-end' }}>
+                                    gap: 2,
+                                },
+                            }}
+                        >
+                            <Typography sx={{ ...columnStyles.id, fontWeight: 500 }}>{project.id}</Typography>
+                            <Typography sx={{ ...columnStyles.title, fontWeight: 500 }} title={project.title} noWrap>
+                                {project.title}
+                            </Typography>
+                            <Typography sx={{ ...columnStyles.created_at, color: 'text.secondary' }} noWrap>
+                                {new Date(project.created_at).toLocaleString('en-GB', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                })}
+                            </Typography>
+                            <Stack direction="row" spacing={1} sx={{ ml: 'auto', width: 110, justifyContent: 'flex-end' }}>
                                 <IconButton
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleEditClick(project);
                                     }}
                                     size="small"
+                                    color="primary"
+                                    sx={{ borderRadius: 2 }}
                                 >
                                     <EditIcon fontSize="small" />
                                 </IconButton>
                                 <IconButton
-                                    color="error"
                                     size="small"
+                                    color="error"
                                     onClick={async (e) => {
                                         e.stopPropagation();
                                         if (window.confirm('Are you sure you want to delete this project?')) {
@@ -204,18 +236,31 @@ function Projects() {
                                             }
                                         }
                                     }}
+                                    sx={{ borderRadius: 2 }}
                                 >
                                     <DeleteIcon fontSize="small" />
                                 </IconButton>
                             </Stack>
-                        </Box>
-                    </AccordionSummary>
+                        </AccordionSummary>
 
-                    <AccordionDetails>
-                        <Typography sx={{ fontSize: '1rem' }}>{project.description}</Typography>
-                    </AccordionDetails>
-                </Accordion>
-            ))}
+                        <AccordionDetails
+                            sx={{
+                                px: 3,
+                                py: 2,
+                                bgcolor: 'grey.50',
+                                borderTop: '1px solid',
+                                borderColor: 'divider',
+                                borderRadius: '0 0 12px 12px',
+                                fontStyle: 'italic',
+                                color: 'text.secondary',
+                                whiteSpace: 'pre-wrap',
+                            }}
+                        >
+                            {project.description || 'No description provided.'}
+                        </AccordionDetails>
+                    </Accordion>
+                ))}
+            </Paper>
         </Container>
     );
 }

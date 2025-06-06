@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Container,
-    Typography,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-    Box,
-    IconButton,
-    Stack,
-    Button,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    Select,
+    Container, Box, Typography, Button, Stack, FormControl, InputLabel, Select, MenuItem,
+    Accordion, AccordionSummary, AccordionDetails, IconButton, Paper, Divider
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
@@ -144,68 +133,65 @@ function Tasks() {
     };
 
     return (
-        <Container>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h4">Tasks</Typography>
-                <Button variant="contained" onClick={handleAddClick}>Add Task</Button>
+        <Container sx={{ width: '90%', maxWidth: '1200px' , mt: 4 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                <Typography variant="h4" fontWeight={700} color="primary.dark">Tasks</Typography>
+                <Button
+                    variant="contained"
+                    onClick={handleAddClick}
+                    sx={{ borderRadius: 2, px: 3, py: 1.25, textTransform: 'none', boxShadow: 3 }}
+                >
+                    Add Task
+                </Button>
             </Box>
 
-            <Stack direction="row" spacing={2} mb={2} alignItems="center">
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                    <InputLabel>Project</InputLabel>
-                    <Select
-                        value={projectFilter}
-                        label="Project"
-                        onChange={(e) => setProjectFilter(e.target.value)}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(tasks, 'project', 'title').map(title => (
-                            <MenuItem key={title} value={title}>{title}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                    <InputLabel>Status</InputLabel>
-                    <Select
-                        value={statusFilter}
-                        label="Status"
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        {getUniqueStatusPairs(tasks).map(({ value, label }) => (
-                            <MenuItem key={value} value={value}>{label}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                    <InputLabel>Reporter</InputLabel>
-                    <Select
-                        value={reporterFilter}
-                        label="Reporter"
-                        onChange={(e) => setReporterFilter(e.target.value)}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(tasks, 'reporter', 'username').map(username => (
-                            <MenuItem key={username} value={username}>{username}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                    <InputLabel>Assignee</InputLabel>
-                    <Select
-                        value={assigneeFilter}
-                        label="Assignee"
-                        onChange={(e) => setAssigneeFilter(e.target.value)}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        {getUniqueValues(tasks, 'assignee', 'username').map(username => (
-                            <MenuItem key={username} value={username}>{username}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={3} alignItems="center">
+                {[{
+                    label: 'Project',
+                    value: projectFilter,
+                    onChange: (e) => setProjectFilter(e.target.value),
+                    options: getUniqueValues(tasks, 'project', 'title')
+                }, {
+                    label: 'Status',
+                    value: statusFilter,
+                    onChange: (e) => setStatusFilter(e.target.value),
+                    options: getUniqueStatusPairs(tasks),
+                    isStatus: true
+                }, {
+                    label: 'Reporter',
+                    value: reporterFilter,
+                    onChange: (e) => setReporterFilter(e.target.value),
+                    options: getUniqueValues(tasks, 'reporter', 'username')
+                }, {
+                    label: 'Assignee',
+                    value: assigneeFilter,
+                    onChange: (e) => setAssigneeFilter(e.target.value),
+                    options: getUniqueValues(tasks, 'assignee', 'username')
+                }].map(({ label, value, onChange, options, isStatus }) => (
+                    <FormControl key={label} size="small" sx={{ minWidth: 140, flex: 1 }}>
+                        <InputLabel>{label}</InputLabel>
+                        <Select
+                            value={value}
+                            label={label}
+                            onChange={onChange}
+                            sx={{
+                                borderRadius: 2,
+                                backgroundColor: 'background.paper',
+                                boxShadow: '0 2px 5px rgb(0 0 0 / 0.05)'
+                            }}
+                        >
+                            <MenuItem value="">All</MenuItem>
+                            {isStatus
+                                ? options.map(({ value, label }) => (
+                                    <MenuItem key={value} value={value}>{label}</MenuItem>
+                                ))
+                                : options.map(option => (
+                                    <MenuItem key={option} value={option}>{option}</MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                ))}
 
                 <Button
                     variant="outlined"
@@ -215,80 +201,131 @@ function Tasks() {
                         setReporterFilter('');
                         setAssigneeFilter('');
                     }}
+                    sx={{
+                        borderRadius: 2,
+                        minWidth: 100,
+                        textTransform: 'none',
+                        color: 'text.secondary',
+                        borderColor: 'divider',
+                        '&:hover': {
+                            borderColor: 'primary.main',
+                            color: 'primary.main'
+                        }
+                    }}
                 >
                     Clear
                 </Button>
             </Stack>
 
-            <Box display="flex" alignItems="center" fontWeight="bold" fontSize="1.1rem" mb={1}>
-                <Button
-                    onClick={() => toggleSortOrder('id')}
-                    size="small"
-                    sx={columnStyles.id}
-                >
-                    ID {arrow('id')}
-                </Button>
-                <Typography sx={columnStyles.title}>Title</Typography>
-                <Typography sx={columnStyles.project}>Project</Typography>
-                <Typography sx={columnStyles.status}>Status</Typography>
-                <Button
-                    onClick={() => toggleSortOrder('created_at')}
-                    size="small"
-                    sx={columnStyles.created_at}
-                >
-                    Created At {arrow('created_at')}
-                </Button>
-                <Box sx={columnStyles.actions}>Actions</Box>
-            </Box>
+            <Paper elevation={1} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                <Box display="flex" alignItems="center" fontWeight="bold" fontSize="1.1rem" px={3} py={1.5} bgcolor="grey.100">
+                    <Button
+                        onClick={() => toggleSortOrder('id')}
+                        size="small"
+                        sx={{
+                            ...columnStyles.id,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            color: 'text.primary',
+                            '&:hover': { backgroundColor: 'transparent' }
+                        }}
+                    >
+                        ID {arrow('id')}
+                    </Button>
+                    <Typography sx={{ ...columnStyles.title, fontWeight: 600 }}>Title</Typography>
+                    <Typography sx={{ ...columnStyles.project, fontWeight: 600 }}>Project</Typography>
+                    <Typography sx={{ ...columnStyles.status, fontWeight: 600 }}>Status</Typography>
+                    <Button
+                        onClick={() => toggleSortOrder('created_at')}
+                        size="small"
+                        sx={{
+                            ...columnStyles.created_at,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            color: 'text.primary',
+                            '&:hover': { backgroundColor: 'transparent' }
+                        }}
+                    >
+                        Created At {arrow('created_at')}
+                    </Button>
+                    <Box sx={columnStyles.actions}>Actions</Box>
+                </Box>
+                <Divider />
 
-            {sortedTasks.map(task => (
-                <Accordion key={task.id}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Box display="flex" alignItems="center" width="100%">
-                            <Typography sx={columnStyles.id}>{task.id}</Typography>
-                            <Typography sx={columnStyles.title} title={task.title}>{task.title}</Typography>
-                            <Typography sx={columnStyles.project} title={task.project?.title}>{task.project?.title}</Typography>
-                            <Typography sx={columnStyles.status}>{task.status_display}</Typography>
-                            <Typography sx={columnStyles.created_at}>
-                                {new Date(task.created_at).toLocaleString('en-GB', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}
-                            </Typography>
-                            <Stack direction="row" spacing={1} sx={{ ml: 'auto', ...columnStyles.actions }}>
-                                <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(task); }} size="small">
-                                    <EditIcon fontSize="small" />
-                                </IconButton>
-                                <IconButton
-                                    color="error"
-                                    size="small"
-                                    onClick={async (e) => {
-                                        e.stopPropagation();
-                                        if (window.confirm('Are you sure you want to delete this task?')) {
-                                            try {
-                                                await deleteTask(task.id);
-                                                setTasks((prev) => prev.filter((t) => t.id !== task.id));
-                                            } catch (error) {
-                                                console.error('Failed to delete task', error);
+                {sortedTasks.map(task => (
+                    <Accordion
+                        key={task.id}
+                        sx={{
+                            '&:before': { display: 'none' },
+                            boxShadow: 'none',
+                            borderBottom: '1px solid',
+                            borderColor: 'divider',
+                            '&.Mui-expanded': { margin: 'auto' }
+                        }}
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            sx={{
+                                px: 3,
+                                py: 1.5,
+                                '&:hover': { bgcolor: 'action.hover' },
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <Box display="flex" alignItems="center" width="100%" gap={2}>
+                                <Typography sx={columnStyles.id} fontWeight={500}>{task.id}</Typography>
+                                <Typography sx={columnStyles.title} title={task.title} noWrap>{task.title}</Typography>
+                                <Typography sx={columnStyles.project} title={task.project?.title} noWrap>{task.project?.title}</Typography>
+                                <Typography sx={columnStyles.status} color="text.secondary" noWrap>{task.status_display}</Typography>
+                                <Typography sx={columnStyles.created_at} color="text.secondary" noWrap>
+                                    {new Date(task.created_at).toLocaleString('en-GB', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })}
+                                </Typography>
+                                <Stack direction="row" spacing={1} sx={{ ml: 'auto', ...columnStyles.actions }}>
+                                    <IconButton
+                                        onClick={(e) => { e.stopPropagation(); handleEditClick(task); }}
+                                        size="small"
+                                        color="primary"
+                                        sx={{ borderRadius: 2 }}
+                                    >
+                                        <EditIcon fontSize="small" />
+                                    </IconButton>
+                                    <IconButton
+                                        color="error"
+                                        size="small"
+                                        onClick={async (e) => {
+                                            e.stopPropagation();
+                                            if (window.confirm('Are you sure you want to delete this task?')) {
+                                                try {
+                                                    await deleteTask(task.id);
+                                                    setTasks((prev) => prev.filter((t) => t.id !== task.id));
+                                                } catch (error) {
+                                                    console.error('Failed to delete task', error);
+                                                }
                                             }
-                                        }
-                                    }}
-                                >
-                                    <DeleteIcon fontSize="small" />
-                                </IconButton>
-                            </Stack>
-                        </Box>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography><strong>Description:</strong> {task.description}</Typography>
-                        <Typography><strong>Reporter:</strong> {task.reporter?.username || '—'}</Typography>
-                        <Typography><strong>Assignee:</strong> {task.assignee?.username || '—'}</Typography>
-                    </AccordionDetails>
-                </Accordion>
-            ))}
+                                        }}
+                                        sx={{ borderRadius: 2 }}
+                                    >
+                                        <DeleteIcon fontSize="small" />
+                                    </IconButton>
+                                </Stack>
+                            </Box>
+                        </AccordionSummary>
+
+                        <AccordionDetails sx={{ px: 3, py: 2, bgcolor: 'grey.50', borderTop: '1px solid', borderColor: 'divider', borderRadius: '0 0 12px 12px' }}>
+                            <Typography paragraph><strong>Description:</strong> {task.description || '—'}</Typography>
+                            <Typography><strong>Reporter:</strong> {task.reporter?.username || '—'}</Typography>
+                            <Typography><strong>Assignee:</strong> {task.assignee?.username || '—'}</Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                ))}
+            </Paper>
+
             <TaskDialog
                 open={dialogOpen}
                 onClose={handleDialogClose}
