@@ -43,7 +43,7 @@ class TaskViewSet(BaseModelViewSet):
     def refuse(self, request, pk=None):
         task = self.get_object()
 
-        if task.assignee is not request.user:
+        if task.assignee != request.user:
             return Response({"detail": "You can not access this task"}, status=status.HTTP_403_FORBIDDEN)
 
         task.assignee = None
