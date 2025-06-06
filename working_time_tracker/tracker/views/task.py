@@ -2,6 +2,7 @@ from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from tracker.models import Task, TaskStatus, Track, UserExtension
@@ -40,7 +41,7 @@ class TaskViewSet(BaseModelViewSet):
         except Track.DoesNotExist:
             pass
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def take(self, request, pk=None):
         task = self.get_object()
         user = request.user
@@ -58,7 +59,7 @@ class TaskViewSet(BaseModelViewSet):
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def refuse(self, request, pk=None):
         task = self.get_object()
         user = request.user
@@ -72,7 +73,7 @@ class TaskViewSet(BaseModelViewSet):
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def change_status(self, request, pk=None):
         task = self.get_object()
         user = request.user
@@ -93,7 +94,7 @@ class TaskViewSet(BaseModelViewSet):
 
         return Response({"detail": "Status changed successfully"}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"])
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def accessible(self, request):
         user_extension = UserExtension.objects.get(user=request.user)
 
@@ -104,13 +105,13 @@ class TaskViewSet(BaseModelViewSet):
         serializer = self.get_serializer(tasks, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=["get"])
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def my(self, request):
         tasks = Task.objects.filter(assignee=request.user)
         serializer = self.get_serializer(tasks, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=["get"])
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def statuses(self, request):
         statuses = [{"key": choice[0], "label": choice[1]} for choice in TaskStatus.choices]
         return Response(statuses)

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from tracker.models import UserExtension
@@ -22,7 +23,7 @@ class UserViewSet(BaseModelViewSet):
         "retrieve": UserDetailedSerializer,
     }
 
-    @action(detail=False, methods=["get"])
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def me(self, request):
         user = request.user
         return Response(
