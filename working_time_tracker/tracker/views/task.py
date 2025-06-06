@@ -24,28 +24,49 @@ class TaskViewSet(BaseModelViewSet):
         "my": TaskListSerializer,
     }
 
+    def open_new_track(self, task, user, new_status):
+        Track.objects.create(
+            user=user,
+            task=task,
+            status=new_status,
+            time_from=timezone.now(),
+        )
+
+    def close_active_track(self, task, user):
+        try:
+            active_track = task.tracks.get(user=user, time_to__isnull=True)
+            active_track.time_to = timezone.now()
+            active_track.save()
+        except Track.DoesNotExist:
+            pass
+
     @action(detail=True, methods=["post"])
     def take(self, request, pk=None):
         task = self.get_object()
+        user = request.user
 
         if task.assignee is not None:
             return Response(
                 {"detail": "This task is already assigned to another user."}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        task.assignee = request.user
-        task.status = TaskStatus.ON_HOLD
+        new_status = TaskStatus.ON_HOLD
+        task.assignee = user
+        task.status = new_status
         task.save()
+        self.open_new_track(task, user, new_status)
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"])
     def refuse(self, request, pk=None):
         task = self.get_object()
+        user = request.user
 
-        if task.assignee != request.user:
+        if task.assignee != user:
             return Response({"detail": "You can not access this task"}, status=status.HTTP_403_FORBIDDEN)
 
+        self.close_active_track(task, user)
         task.assignee = None
         task.save()
         serializer = self.get_serializer(task)
@@ -54,29 +75,18 @@ class TaskViewSet(BaseModelViewSet):
     @action(detail=True, methods=["post"])
     def change_status(self, request, pk=None):
         task = self.get_object()
+        user = request.user
 
-        if task.assignee != request.user:
+        if task.assignee != user:
             return Response({"detail": "You can not access this task"}, status=status.HTTP_403_FORBIDDEN)
 
         new_status = request.data.get("status")
         if new_status not in dict(TaskStatus.choices):
             return Response({"detail": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
 
-        now = timezone.now()
+        self.close_active_track(task, user)
 
-        try:
-            active_track = task.tracks.get(user=request.user, time_to__isnull=True)
-            active_track.time_to = now
-            active_track.save()
-        except Track.DoesNotExist:
-            pass
-
-        Track.objects.create(
-            user=request.user,
-            task=task,
-            status=new_status,
-            time_from=now,
-        )
+        self.open_new_track(task, user, new_status)
 
         task.status = new_status
         task.save()
