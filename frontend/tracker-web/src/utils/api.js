@@ -91,3 +91,7 @@ export const updateUserProject = (userId, projectId) => {
 export const takeTask = (taskId) => {
     return axios.post(`${BASE_URL}/tasks/${taskId}/take/`, {}, getAuthHeaders());
 };
+
+export const refuseTask = (taskId) => {
+    return axios.post(`${BASE_URL}/tasks/${taskId}/refuse/`, {}, getAuthHeaders());
+};

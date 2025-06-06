@@ -14,7 +14,7 @@ import {
     Select,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchMyTasks, fetchStatuses } from '../utils/api';
+import { fetchMyTasks, fetchStatuses, refuseTask } from '../utils/api';
 
 function MyTasks() {
     const [statusFilter, setStatusFilter] = useState('');
@@ -38,7 +38,7 @@ function MyTasks() {
         const loadStatuses = async () => {
             try {
                 const data = await fetchStatuses();
-                setStatuses(data); // ожидается массив объектов { key: string, label: string }
+                setStatuses(data);
             } catch (error) {
                 console.error('Failed to load statuses:', error);
             }
@@ -46,7 +46,6 @@ function MyTasks() {
         loadStatuses();
     }, []);
 
-    // Заглушки: изменения статуса и untake task не функциональны
     const handleStatusChange = (taskId, newStatus) => {
         console.log(`Change status requested for task ${taskId} to ${newStatus} (не функционально)`);
 
@@ -57,9 +56,14 @@ function MyTasks() {
         );
     };
 
-    const handleUntakeTask = (taskId) => {
-        console.log(`Untake task requested for task ${taskId} (не функционально)`);
-        // ничего не делаем
+    const handleRefuseTask = async (taskId) => {
+        try {
+            await refuseTask(taskId);
+            // Удаляем задачу из списка после успешного отказа
+            setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+        } catch (error) {
+            console.error(`Failed to refuse task ${taskId}:`, error);
+        }
     };
 
     const filteredTasks = tasks.filter(task => {
@@ -142,7 +146,7 @@ function MyTasks() {
                                 <Select
                                     value={task.status}
                                     onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                                    onClick={(e) => e.stopPropagation()} // Остановка всплытия клика
+                                    onClick={(e) => e.stopPropagation()}
                                 >
                                     {statuses.map(({ key, label }) => (
                                         <MenuItem key={key} value={key}>{label}</MenuItem>
@@ -155,10 +159,10 @@ function MyTasks() {
                                     size="small"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        handleUntakeTask(task.id);
+                                        handleRefuseTask(task.id);
                                     }}
                                 >
-                                    Untake Task
+                                    Refuse
                                 </Button>
                             </Box>
                         </Box>
