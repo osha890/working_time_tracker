@@ -95,3 +95,9 @@ export const takeTask = (taskId) => {
 export const refuseTask = (taskId) => {
     return axios.post(`${BASE_URL}/tasks/${taskId}/refuse/`, {}, getAuthHeaders());
 };
+
+export const changeStatus = (taskId, status) => {
+    return axios.post(`${BASE_URL}/tasks/${taskId}/change_status/`, {
+        status: status
+    }, getAuthHeaders());
+};

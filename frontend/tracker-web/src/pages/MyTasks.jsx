@@ -14,7 +14,7 @@ import {
     Select,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchMyTasks, fetchStatuses, refuseTask } from '../utils/api';
+import { fetchMyTasks, fetchStatuses, refuseTask, changeStatus } from '../utils/api';
 
 function MyTasks() {
     const [statusFilter, setStatusFilter] = useState('');
@@ -46,20 +46,22 @@ function MyTasks() {
         loadStatuses();
     }, []);
 
-    const handleStatusChange = (taskId, newStatus) => {
-        console.log(`Change status requested for task ${taskId} to ${newStatus} (не функционально)`);
-
-        setTasks(prevTasks =>
-            prevTasks.map(task =>
-                task.id === taskId ? { ...task, status: newStatus } : task
-            )
-        );
+    const handleStatusChange = async (taskId, newStatus) => {
+        try {
+            await changeStatus(taskId, newStatus);
+            setTasks(prevTasks =>
+                prevTasks.map(task =>
+                    task.id === taskId ? { ...task, status: newStatus } : task
+                )
+            );
+        } catch (error) {
+            console.error(`Failed to change status for task ${taskId}:`, error);
+        }
     };
 
     const handleRefuseTask = async (taskId) => {
         try {
             await refuseTask(taskId);
-            // Удаляем задачу из списка после успешного отказа
             setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
         } catch (error) {
             console.error(`Failed to refuse task ${taskId}:`, error);
