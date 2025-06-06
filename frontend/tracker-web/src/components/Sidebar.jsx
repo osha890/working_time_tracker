@@ -14,6 +14,8 @@ import GroupIcon from '@mui/icons-material/Group';
 import { Link } from 'react-router-dom';
 import ListSubheader from '@mui/material/ListSubheader';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import ViewStreamIcon from '@mui/icons-material/ViewStream';
 
 export default function Sidebar({ open, onClose }) {
     const DrawerList = (
@@ -21,13 +23,13 @@ export default function Sidebar({ open, onClose }) {
             <List subheader={<ListSubheader>User navigation</ListSubheader>}>
                 <ListItem disablePadding>
                     <ListItemButton component={Link} to="/project_tasks">
-                        <ListItemIcon><TaskIcon /></ListItemIcon>
+                        <ListItemIcon><ListAltIcon /></ListItemIcon>
                         <ListItemText primary="Project tasks" />
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton component={Link} to="/my_tasks">
-                        <ListItemIcon><TimerIcon /></ListItemIcon>
+                        <ListItemIcon><TaskIcon /></ListItemIcon>
                         <ListItemText primary="My tasks" />
                     </ListItemButton>
                 </ListItem>
@@ -38,7 +40,7 @@ export default function Sidebar({ open, onClose }) {
             <List subheader={<ListSubheader>Admin navigation</ListSubheader>}>
                 <ListItem disablePadding>
                     <ListItemButton component={Link} to="/projects">
-                        <ListItemIcon><ListAltIcon /></ListItemIcon>
+                        <ListItemIcon><ViewStreamIcon /></ListItemIcon>
                         <ListItemText primary="Projects" />
                     </ListItemButton>
                 </ListItem>
@@ -52,6 +54,12 @@ export default function Sidebar({ open, onClose }) {
                     <ListItemButton component={Link} to="/users">
                         <ListItemIcon><GroupIcon /></ListItemIcon>
                         <ListItemText primary="Users" />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton component={Link} to="/tracks">
+                        <ListItemIcon><TimelineIcon /></ListItemIcon>
+                        <ListItemText primary="Tracks" />
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>

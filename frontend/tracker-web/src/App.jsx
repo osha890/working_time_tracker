@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import PrivateRoute from './components/PrivateRoute';
 import ProjectTasks from './pages/ProjectTasks';
 import MyTasks from './pages/MyTasks';
+import Tracks from './pages/Tracks';
 
 
 function AppWrapper() {
@@ -69,6 +70,14 @@ function AppWrapper() {
           element={
             <PrivateRoute>
               <MyTasks />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/tracks"
+          element={
+            <PrivateRoute>
+              <Tracks />
             </PrivateRoute>
           }
         />

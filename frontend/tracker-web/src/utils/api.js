@@ -48,11 +48,18 @@ const deleteData = async (url) => {
 
 
 export const fetchProjects = () => fetchData('projects');
+
 export const fetchTasks = () => fetchData('tasks');
+
 export const fetchUsers = () => fetchData('users');
+
 export const fetchAccessibleTasks = () => fetchData('tasks/accessible');
+
 export const fetchMyTasks = () => fetchData('tasks/my');
+
 export const fetchStatuses = () => fetchData('tasks/statuses');
+
+export const fetchTracks = () => fetchData('tracks');
 
 
 export const postProject = (projectData) => {
