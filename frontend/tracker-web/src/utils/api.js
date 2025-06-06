@@ -16,13 +16,6 @@ const fetchData = async (endpoint) => {
     return response.data;
 };
 
-export const fetchProjects = () => fetchData('projects');
-export const fetchTasks = () => fetchData('tasks');
-export const fetchUsers = () => fetchData('users');
-export const fetchAccessibleTasks = () => fetchData('tasks/accessible');
-export const fetchMyTasks = () => fetchData('tasks/my');
-export const fetchStatuses = () => fetchData('tasks/statuses');
-
 const postData = async (url, data = {}, config = {}) => {
     try {
         const response = await axios.post(url, data, config);
@@ -31,10 +24,6 @@ const postData = async (url, data = {}, config = {}) => {
         console.error('POST request error:', error);
         throw error;
     }
-};
-
-export const postProjects = (projectData) => {
-    return postData(`${BASE_URL}/projects/`, projectData, getAuthHeaders());
 };
 
 const putData = async (url, data = {}, config = {}) => {
@@ -47,10 +36,6 @@ const putData = async (url, data = {}, config = {}) => {
     }
 };
 
-export const updateProject = (id, projectData) => {
-    return putData(`${BASE_URL}/projects/${id}/`, projectData, getAuthHeaders());
-};
-
 const deleteData = async (url, config = {}) => {
     try {
         const response = await axios.delete(url, config);
@@ -61,6 +46,37 @@ const deleteData = async (url, config = {}) => {
     }
 };
 
+
+export const fetchProjects = () => fetchData('projects');
+export const fetchTasks = () => fetchData('tasks');
+export const fetchUsers = () => fetchData('users');
+export const fetchAccessibleTasks = () => fetchData('tasks/accessible');
+export const fetchMyTasks = () => fetchData('tasks/my');
+export const fetchStatuses = () => fetchData('tasks/statuses');
+
+
+export const postProject = (projectData) => {
+    return postData(`${BASE_URL}/projects/`, projectData, getAuthHeaders());
+};
+
+export const postTask = (taskData) => {
+    return postData(`${BASE_URL}/tasks/`, taskData, getAuthHeaders());
+};
+
+
+export const updateProject = (id, projectData) => {
+    return putData(`${BASE_URL}/projects/${id}/`, projectData, getAuthHeaders());
+};
+
+export const updateTask = (id, taskData) => {
+    return putData(`${BASE_URL}/tasks/${id}/`, taskData, getAuthHeaders());
+};
+
+
 export const deleteProject = (id) => {
     return deleteData(`${BASE_URL}/projects/${id}/`, getAuthHeaders());
+};
+
+export const deleteTask = (id) => {
+    return deleteData(`${BASE_URL}/tasks/${id}/`, getAuthHeaders());
 };

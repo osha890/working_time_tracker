@@ -9,7 +9,7 @@ import {
     Box,
     Alert
 } from '@mui/material';
-import { postProjects, updateProject } from '../utils/api';
+import { postProject, updateProject } from '../utils/api';
 
 function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
     const [title, setTitle] = useState('');
@@ -42,7 +42,7 @@ function AddProjectButton({ onProjectAdded, editingProject, open, setOpen }) {
             if (editingProject) {
                 result = await updateProject(editingProject.id, data);
             } else {
-                result = await postProjects(data);
+                result = await postProject(data);
             }
             if (onProjectAdded) onProjectAdded(result);
             handleClose();

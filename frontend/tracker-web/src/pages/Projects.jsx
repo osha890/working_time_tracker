@@ -198,7 +198,6 @@ function Projects() {
                                         if (window.confirm('Are you sure you want to delete this project?')) {
                                             try {
                                                 await deleteProject(project.id);
-                                                // Обновляем список, удаляя удалённый проект из состояния
                                                 setProjects((prev) => prev.filter((p) => p.id !== project.id));
                                             } catch (error) {
                                                 console.error('Failed to delete project', error);

@@ -17,7 +17,8 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchTasks } from '../utils/api';
+import { fetchTasks, postTask, updateTask, deleteTask } from '../utils/api';
+import TaskDialog from '../components/TaskDialog';
 
 const getUniqueValues = (tasks, field, nestedField = null) => {
     const values = tasks.map(task => {
@@ -37,6 +38,9 @@ function Tasks() {
     const [assigneeFilter, setAssigneeFilter] = useState('');
     const [tasks, setTasks] = useState([]);
 
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [editingTask, setEditingTask] = useState(null);
+
     useEffect(() => {
         const loadTasks = async () => {
             try {
@@ -49,6 +53,35 @@ function Tasks() {
 
         loadTasks();
     }, []);
+
+    const handleAddClick = () => {
+        setEditingTask(null);
+        setDialogOpen(true);
+    };
+
+    const handleEditClick = (task) => {
+        setEditingTask(task);
+        setDialogOpen(true);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
+
+    const handleDialogSubmit = async (formData) => {
+        try {
+            if (editingTask) {
+                await updateTask(editingTask.id, formData);
+            } else {
+                await postTask(formData);
+            }
+            const updated = await fetchTasks();
+            setTasks(updated);
+            setDialogOpen(false);
+        } catch (error) {
+            throw error;
+        }
+    };
 
     const getUniqueStatusPairs = (tasks) => {
         const pairs = tasks
@@ -114,7 +147,7 @@ function Tasks() {
         <Container>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h4">Tasks</Typography>
-                <Button variant="contained">Add Task</Button>
+                <Button variant="contained" onClick={handleAddClick}>Add Task</Button>
             </Box>
 
             <Stack direction="row" spacing={2} mb={2} alignItems="center">
@@ -226,10 +259,24 @@ function Tasks() {
                                 })}
                             </Typography>
                             <Stack direction="row" spacing={1} sx={{ ml: 'auto', ...columnStyles.actions }}>
-                                <IconButton onClick={(e) => e.stopPropagation()} size="small">
+                                <IconButton onClick={(e) => { e.stopPropagation(); handleEditClick(task); }} size="small">
                                     <EditIcon fontSize="small" />
                                 </IconButton>
-                                <IconButton color="error" onClick={(e) => e.stopPropagation()} size="small">
+                                <IconButton
+                                    color="error"
+                                    size="small"
+                                    onClick={async (e) => {
+                                        e.stopPropagation();
+                                        if (window.confirm('Are you sure you want to delete this task?')) {
+                                            try {
+                                                await deleteTask(task.id);
+                                                setTasks((prev) => prev.filter((t) => t.id !== task.id));
+                                            } catch (error) {
+                                                console.error('Failed to delete task', error);
+                                            }
+                                        }
+                                    }}
+                                >
                                     <DeleteIcon fontSize="small" />
                                 </IconButton>
                             </Stack>
@@ -242,6 +289,12 @@ function Tasks() {
                     </AccordionDetails>
                 </Accordion>
             ))}
+            <TaskDialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+                onSubmit={handleDialogSubmit}
+                initialData={editingTask}
+            />
         </Container>
     );
 }
