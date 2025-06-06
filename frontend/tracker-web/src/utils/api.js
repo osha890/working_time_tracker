@@ -65,24 +65,29 @@ export const postTask = (taskData) => {
 
 
 export const updateProject = (id, projectData) => {
-    return putData(`${BASE_URL}/projects/${id}/`, projectData, getAuthHeaders());
+    return putData(`${BASE_URL}/projects/${id}/`, projectData);
 };
 
 export const updateTask = (id, taskData) => {
-    return putData(`${BASE_URL}/tasks/${id}/`, taskData, getAuthHeaders());
+    return putData(`${BASE_URL}/tasks/${id}/`, taskData);
 };
 
 
 export const deleteProject = (id) => {
-    return deleteData(`${BASE_URL}/projects/${id}/`, getAuthHeaders());
+    return deleteData(`${BASE_URL}/projects/${id}/`);
 };
 
 export const deleteTask = (id) => {
-    return deleteData(`${BASE_URL}/tasks/${id}/`, getAuthHeaders());
+    return deleteData(`${BASE_URL}/tasks/${id}/`);
 };
+
 
 export const updateUserProject = (userId, projectId) => {
     return axios.patch(`${BASE_URL}/user_extensions/${userId}/`, {
         project: projectId
     }, getAuthHeaders());
+};
+
+export const takeTask = (taskId) => {
+    return axios.post(`${BASE_URL}/tasks/${taskId}/take/`, {}, getAuthHeaders());
 };

@@ -14,7 +14,7 @@ import {
     Select,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchAccessibleTasks } from '../utils/api';
+import { fetchAccessibleTasks, takeTask } from '../utils/api'; // Импортируем takeTask
 
 const getUniqueValues = (tasks, field, nestedField = null) => {
     const values = tasks.map(task => {
@@ -32,16 +32,16 @@ function ProjectTasks() {
     const [reporterFilter, setReporterFilter] = useState('');
     const [tasks, setTasks] = useState([]);
 
-    useEffect(() => {
-        const loadTasks = async () => {
-            try {
-                const data = await fetchAccessibleTasks();
-                setTasks(data);
-            } catch (error) {
-                console.error('Failed to load tasks:', error);
-            }
-        };
+    const loadTasks = async () => {
+        try {
+            const data = await fetchAccessibleTasks();
+            setTasks(data);
+        } catch (error) {
+            console.error('Failed to load tasks:', error);
+        }
+    };
 
+    useEffect(() => {
         loadTasks();
     }, []);
 
@@ -124,7 +124,6 @@ function ProjectTasks() {
                     </Select>
                 </FormControl>
 
-
                 <FormControl size="small" sx={{ minWidth: 120 }}>
                     <InputLabel>Reporter</InputLabel>
                     <Select
@@ -190,9 +189,15 @@ function ProjectTasks() {
                                     <Button
                                         variant="contained"
                                         size="small"
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
-                                            console.log(`Taking task ${task.id}`);
+                                            try {
+                                                await takeTask(task.id);
+                                                console.log(`Task ${task.id} taken`);
+                                                await loadTasks(); // 🔄 Обновляем список задач
+                                            } catch (error) {
+                                                console.error(`Failed to take task ${task.id}`, error);
+                                            }
                                         }}
                                     >
                                         Take Task
