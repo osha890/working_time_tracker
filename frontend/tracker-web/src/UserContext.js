@@ -28,8 +28,12 @@ export const UserProvider = ({ children }) => {
         fetchUser();
     }, []);
 
+    const logoutUser = () => {
+        setUser(null);
+    };
+
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, setUser, logoutUser }}>
             {children}
         </UserContext.Provider>
     );

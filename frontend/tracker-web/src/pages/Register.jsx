@@ -9,6 +9,7 @@ import {
     Alert,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../utils/auth';
 
 function Register() {
     const [username, setUsername] = useState('');
@@ -32,12 +33,8 @@ function Register() {
 
         try {
             await axios.post('http://127.0.0.1:8000/auth/register/', { username, password });
-
-            const response = await axios.post('http://127.0.0.1:8000/auth/token/', { username, password });
-
-            const { access, refresh } = response.data;
-            localStorage.setItem('access_token', access);
-            localStorage.setItem('refresh_token', refresh);
+            
+            await loginUser(username, password);
 
             navigate('/');
         } catch (err) {
