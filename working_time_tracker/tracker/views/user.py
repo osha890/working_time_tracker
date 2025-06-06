@@ -1,5 +1,8 @@
 from django.contrib.auth.models import User
 
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from tracker.models import UserExtension
 from tracker.serializers.user import (
     UserDetailedSerializer,
@@ -18,6 +21,17 @@ class UserViewSet(BaseModelViewSet):
         "list": UserListSerializer,
         "retrieve": UserDetailedSerializer,
     }
+
+    @action(detail=False, methods=["get"])
+    def me(self, request):
+        user = request.user
+        return Response(
+            {
+                "username": user.username,
+                "is_staff": user.is_staff,
+                "id": user.id,
+            }
+        )
 
 
 class UserExtensionViewSet(BaseModelViewSet):
