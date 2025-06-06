@@ -16,9 +16,9 @@ const fetchData = async (endpoint) => {
     return response.data;
 };
 
-const postData = async (url, data = {}, config = {}) => {
+const postData = async (url, data = {}) => {
     try {
-        const response = await axios.post(url, data, config);
+        const response = await axios.post(url, data, getAuthHeaders());
         return response.data;
     } catch (error) {
         console.error('POST request error:', error);
@@ -26,9 +26,9 @@ const postData = async (url, data = {}, config = {}) => {
     }
 };
 
-const putData = async (url, data = {}, config = {}) => {
+const putData = async (url, data = {}) => {
     try {
-        const response = await axios.put(url, data, config);
+        const response = await axios.put(url, data, getAuthHeaders());
         return response.data;
     } catch (error) {
         console.error('PUT request error:', error);
@@ -36,9 +36,9 @@ const putData = async (url, data = {}, config = {}) => {
     }
 };
 
-const deleteData = async (url, config = {}) => {
+const deleteData = async (url) => {
     try {
-        const response = await axios.delete(url, config);
+        const response = await axios.delete(url, getAuthHeaders());
         return response.data;
     } catch (error) {
         console.error('DELETE request error:', error);
@@ -56,7 +56,7 @@ export const fetchStatuses = () => fetchData('tasks/statuses');
 
 
 export const postProject = (projectData) => {
-    return postData(`${BASE_URL}/projects/`, projectData, getAuthHeaders());
+    return postData(`${BASE_URL}/projects/`, projectData);
 };
 
 export const postTask = (taskData) => {
@@ -79,4 +79,10 @@ export const deleteProject = (id) => {
 
 export const deleteTask = (id) => {
     return deleteData(`${BASE_URL}/tasks/${id}/`, getAuthHeaders());
+};
+
+export const updateUserProject = (userId, projectId) => {
+    return axios.patch(`${BASE_URL}/user_extensions/${userId}/`, {
+        project: projectId
+    }, getAuthHeaders());
 };
