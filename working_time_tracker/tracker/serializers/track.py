@@ -31,6 +31,11 @@ class TrackListSerializer(serializers.ModelSerializer):
             "id",
         ]
 
+    def get_fields(self):
+        fields = super().get_fields()
+        fields["status_display"] = serializers.CharField(source="get_status_display", read_only=True)
+        return fields
+
 
 class TrackDetailedSerializer(serializers.ModelSerializer):
     user = UserDetailedSerializer()
@@ -42,3 +47,8 @@ class TrackDetailedSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
         ]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        fields["status_display"] = serializers.CharField(source="get_status_display", read_only=True)
+        return fields

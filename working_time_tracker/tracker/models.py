@@ -26,7 +26,7 @@ class TaskStatus(models.TextChoices):
     TO_DO = "TO_DO", "To Do"
     REJECTED = "REJECTED", "Rejected"
     COMPLETED = "COMPLETED", "Completed"
-    ON_HOLD = "IN_HOLD", "On Hold"
+    ON_HOLD = "ON_HOLD", "On Hold"
     IN_PROGRESS = "IN_PROGRESS", "In Progress"
     IN_REVIEW = "IN_REVIEW", "In Review"
     IN_QA = "IN_QA", "In QA"
