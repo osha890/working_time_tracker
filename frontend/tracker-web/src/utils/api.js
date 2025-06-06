@@ -2,7 +2,12 @@ import axios from 'axios';
 
 const BASE_URL = 'http://127.0.0.1:8000/api';
 
-const getAuthHeaders = () => {
+export const getAuthHeaders = async () => {
+    const isAuth = await isAuthenticated();
+    if (!isAuth) {
+        return {};
+    }
+
     const token = localStorage.getItem('access_token');
     return {
         headers: {
@@ -12,13 +17,13 @@ const getAuthHeaders = () => {
 };
 
 const fetchData = async (endpoint) => {
-    const response = await axios.get(`${BASE_URL}/${endpoint}/`, getAuthHeaders());
+    const response = await axios.get(`${BASE_URL}/${endpoint}/`, await getAuthHeaders());
     return response.data;
 };
 
 const postData = async (url, data = {}) => {
     try {
-        const response = await axios.post(url, data, getAuthHeaders());
+        const response = await axios.post(url, data, await getAuthHeaders());
         return response.data;
     } catch (error) {
         console.error('POST request error:', error);
@@ -28,7 +33,7 @@ const postData = async (url, data = {}) => {
 
 const putData = async (url, data = {}) => {
     try {
-        const response = await axios.put(url, data, getAuthHeaders());
+        const response = await axios.put(url, data, await getAuthHeaders());
         return response.data;
     } catch (error) {
         console.error('PUT request error:', error);
@@ -38,7 +43,7 @@ const putData = async (url, data = {}) => {
 
 const deleteData = async (url) => {
     try {
-        const response = await axios.delete(url, getAuthHeaders());
+        const response = await axios.delete(url, await getAuthHeaders());
         return response.data;
     } catch (error) {
         console.error('DELETE request error:', error);
@@ -66,8 +71,8 @@ export const postProject = (projectData) => {
     return postData(`${BASE_URL}/projects/`, projectData);
 };
 
-export const postTask = (taskData) => {
-    return postData(`${BASE_URL}/tasks/`, taskData, getAuthHeaders());
+export const postTask = async (taskData) => {
+    return postData(`${BASE_URL}/tasks/`, taskData, await getAuthHeaders());
 };
 
 
@@ -89,22 +94,22 @@ export const deleteTask = (id) => {
 };
 
 
-export const updateUserProject = (userId, projectId) => {
+export const updateUserProject = async (userId, projectId) => {
     return axios.patch(`${BASE_URL}/user_extensions/${userId}/`, {
         project: projectId
-    }, getAuthHeaders());
+    }, await getAuthHeaders());
 };
 
-export const takeTask = (taskId) => {
-    return axios.post(`${BASE_URL}/tasks/${taskId}/take/`, {}, getAuthHeaders());
+export const takeTask = async (taskId) => {
+    return axios.post(`${BASE_URL}/tasks/${taskId}/take/`, {}, await getAuthHeaders());
 };
 
-export const refuseTask = (taskId) => {
-    return axios.post(`${BASE_URL}/tasks/${taskId}/refuse/`, {}, getAuthHeaders());
+export const refuseTask = async (taskId) => {
+    return axios.post(`${BASE_URL}/tasks/${taskId}/refuse/`, {}, await getAuthHeaders());
 };
 
-export const changeStatus = (taskId, status) => {
+export const changeStatus = async (taskId, status) => {
     return axios.post(`${BASE_URL}/tasks/${taskId}/change_status/`, {
         status: status
-    }, getAuthHeaders());
+    }, await getAuthHeaders());
 };
