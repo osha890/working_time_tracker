@@ -13,76 +13,39 @@ import MyTasks from './pages/MyTasks';
 import Tracks from './pages/Tracks';
 import { UserProvider } from './UserContext';
 
+const routes = [
+  { path: '/login', element: <Login />, private: false },
+  { path: '/register', element: <Register />, private: false },
+
+  { path: '/', element: <Home />, private: true },
+  { path: '/project_tasks', element: <ProjectTasks />, private: true },
+  { path: '/my_tasks', element: <MyTasks />, private: true },
+
+  { path: '/projects', element: <Projects />, private: true, adminOnly: true },
+  { path: '/tasks', element: <Tasks />, private: true, adminOnly: true },
+  { path: '/users', element: <Users />, private: true, adminOnly: true },
+  { path: '/tracks', element: <Tracks />, private: true, adminOnly: true },
+];
 
 function AppWrapper() {
   const location = useLocation();
-
   const hideHeader = ['/login', '/register'].includes(location.pathname);
 
   return (
     <>
       {!hideHeader && <Header />}
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/project_tasks"
-          element={
-            <PrivateRoute>
-              <ProjectTasks />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/my_tasks"
-          element={
-            <PrivateRoute>
-              <MyTasks />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/projects"
-          element={
-            <PrivateRoute adminOnly={true}>
-              <Projects />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/tasks"
-          element={
-            <PrivateRoute adminOnly={true}>
-              <Tasks />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/users"
-          element={
-            <PrivateRoute adminOnly={true}>
-              <Users />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/tracks"
-          element={
-            <PrivateRoute adminOnly={true}>
-              <Tracks />
-            </PrivateRoute>
-          }
-        />
+        {routes.map(({ path, element, private: isPrivate, adminOnly }, idx) =>
+          isPrivate ? (
+            <Route
+              key={idx}
+              path={path}
+              element={<PrivateRoute adminOnly={adminOnly}>{element}</PrivateRoute>}
+            />
+          ) : (
+            <Route key={idx} path={path} element={element} />
+          )
+        )}
       </Routes>
     </>
   );
