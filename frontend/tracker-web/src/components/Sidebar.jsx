@@ -21,68 +21,45 @@ import { useUser } from '../UserContext';
 export default function Sidebar({ open, onClose }) {
     const { user } = useUser();
 
-    const DrawerList = (
-        <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
-            <List subheader={<ListSubheader>User navigation</ListSubheader>}>
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/project_tasks">
-                        <ListItemIcon><ListAltIcon /></ListItemIcon>
-                        <ListItemText primary="Project tasks" />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/my_tasks">
-                        <ListItemIcon><TaskIcon /></ListItemIcon>
-                        <ListItemText primary="My tasks" />
-                    </ListItemButton>
-                </ListItem>
-            </List>
+    const userNavItems = [
+        { to: "/project_tasks", icon: <ListAltIcon />, text: "Project tasks" },
+        { to: "/my_tasks", icon: <TaskIcon />, text: "My tasks" },
+    ];
 
+    const adminNavItems = [
+        { to: "/projects", icon: <ViewStreamIcon />, text: "Projects" },
+        { to: "/tasks", icon: <TaskIcon />, text: "All tasks" },
+        { to: "/users", icon: <GroupIcon />, text: "Users" },
+        { to: "/tracks", icon: <TimelineIcon />, text: "Tracks" },
+        { to: "/reports", icon: <AssessmentIcon />, text: "Reports" },
+    ];
 
-
-            {user?.is_staff && (
-                <>
-                    <Divider />
-                    <List subheader={<ListSubheader>Admin navigation</ListSubheader>}>
-                        <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/projects">
-                                <ListItemIcon><ViewStreamIcon /></ListItemIcon>
-                                <ListItemText primary="Projects" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/tasks">
-                                <ListItemIcon><TaskIcon /></ListItemIcon>
-                                <ListItemText primary="All tasks" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/users">
-                                <ListItemIcon><GroupIcon /></ListItemIcon>
-                                <ListItemText primary="Users" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/tracks">
-                                <ListItemIcon><TimelineIcon /></ListItemIcon>
-                                <ListItemText primary="Tracks" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon><AssessmentIcon /></ListItemIcon>
-                                <ListItemText primary="Reports" />
-                            </ListItemButton>
-                        </ListItem>
-                    </List>
-                </>
-            )}
-        </Box>
-    );
+    const renderItems = (items) =>
+        items.map(({ to, icon, text }) => (
+            <ListItem disablePadding key={text}>
+                <ListItemButton component={to ? Link : 'div'} to={to || undefined}>
+                    <ListItemIcon>{icon}</ListItemIcon>
+                    <ListItemText primary={text} />
+                </ListItemButton>
+            </ListItem>
+        ));
 
     return (
         <Drawer open={open} onClose={onClose}>
-            {DrawerList}
+            <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
+                <List subheader={<ListSubheader>User navigation</ListSubheader>}>
+                    {renderItems(userNavItems)}
+                </List>
+
+                {user?.is_staff && (
+                    <>
+                        <Divider />
+                        <List subheader={<ListSubheader>Admin navigation</ListSubheader>}>
+                            {renderItems(adminNavItems)}
+                        </List>
+                    </>
+                )}
+            </Box>
         </Drawer>
     );
 }
