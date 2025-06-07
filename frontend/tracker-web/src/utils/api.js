@@ -114,3 +114,8 @@ export const changeStatus = async (taskId, status) => {
         status: status
     }, await getAuthHeaders());
 };
+
+export const fetchReport = async (payload) => {
+    const url = `${BASE_URL}/reports/`;
+    return await postData(url, payload);
+};
