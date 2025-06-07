@@ -3,6 +3,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from tracker.views.project import ProjectViewSet
+from tracker.views.report import ReportView
 from tracker.views.task import TaskViewSet
 from tracker.views.track import TrackViewSet
 from tracker.views.user import UserExtensionViewSet, UserViewSet
@@ -16,4 +17,5 @@ router.register("tracks", TrackViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("reports/", ReportView.as_view()),
 ]
