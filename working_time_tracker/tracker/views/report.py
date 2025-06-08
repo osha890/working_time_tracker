@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
-from django.db.models import DurationField, ExpressionWrapper, F, Sum
+from django.db.models import Case, DurationField, ExpressionWrapper, F, Sum, When
+from django.db.models.functions import Now
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -56,7 +57,7 @@ class ReportView(APIView):
         data = serializer.validated_data
         user = request.user
 
-        filters = {"time_to__isnull": False}
+        filters = {}
 
         def make_filter_from_data(filter_key, data_key):
             if data_key in data:
@@ -79,7 +80,10 @@ class ReportView(APIView):
 
         queryset = Track.objects.filter(**filters)
 
-        duration_expr = ExpressionWrapper(F("time_to") - F("time_from"), output_field=DurationField())
+        duration_expr = ExpressionWrapper(
+            Case(When(time_to__isnull=True, then=Now()), default=F("time_to")) - F("time_from"),
+            output_field=DurationField(),
+        )
         queryset = queryset.annotate(duration=duration_expr)
 
         if aggregate:
