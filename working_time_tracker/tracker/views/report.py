@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db.models import Case, DurationField, ExpressionWrapper, F, Sum, When
 from django.db.models.functions import Now
+from django.http import HttpResponse
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,6 +9,7 @@ from rest_framework.views import APIView
 
 from tracker.models import Task, Track
 from tracker.serializers.report import ReportSerializer
+from tracker.utils import generate_xlsx_report
 
 
 def build_report(track_items, aggregate_total=False):
@@ -92,4 +94,11 @@ class ReportView(APIView):
             track_items = queryset.values("user", "task", "status").annotate(total=Sum("duration"))
 
         report = build_report(track_items, data.get("aggregate_total", False))
+
+        report_format = data.get("report_format")
+        if report_format == "xlsx":
+            xlsx_file = generate_xlsx_report(report)
+            response = HttpResponse(xlsx_file, content_type="application/octet-stream")
+            response["Content-Disposition"] = 'attachment; filename="report.xlsx"'
+            return response
         return Response(report)
