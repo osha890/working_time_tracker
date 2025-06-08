@@ -119,3 +119,31 @@ export const fetchReport = async (payload) => {
     const url = `${BASE_URL}/reports/`;
     return await postData(url, payload);
 };
+
+export const downloadReportXLSX = async (payload, onError = () => { }, onFinally = () => { }) => {
+    try {
+        const headers = await getAuthHeaders();
+
+        const response = await axios.post(`${BASE_URL}/reports/`, payload, {
+            ...headers,
+            responseType: 'blob',
+        });
+
+        const blob = new Blob([response.data], {
+            type: 'application/octet-stream',
+        });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'report.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        console.error('Download error:', error);
+        onError('Error downloading XLSX report');
+    } finally {
+        onFinally();
+    }
+};

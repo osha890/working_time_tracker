@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { fetchStatuses, fetchUsers, fetchReport } from '../utils/api';
+import { fetchStatuses, fetchUsers, fetchReport, downloadReportXLSX } from '../utils/api';
 import { AccountCircle } from '@mui/icons-material';
 import TaskItem from '../components/ReportTaskItem';
 import { useUser } from '../UserContext';
@@ -57,13 +57,14 @@ export default function ReportPage() {
         setDialogOpen(false);
     };
 
-    const handleGenerateReport = async () => {
+    const handleGenerateReport = async (reportFormat = "json") => {
         setLoading(true);
         setError(null);
 
         const payload = {
             statuses: selectedStatuses.map((s) => s.key),
             user_ids: selectedUsers.map((u) => u.id),
+            report_format: reportFormat,
         };
 
         try {
@@ -77,6 +78,26 @@ export default function ReportPage() {
         }
     };
 
+    const handleDownloadXLSX = () => {
+        setLoading(true);
+        setError(null);
+
+        const payload = {
+            statuses: selectedStatuses.map((s) => s.key),
+            user_ids: selectedUsers.map((u) => u.id),
+            report_format: 'xlsx',
+        };
+
+        downloadReportXLSX(
+            payload,
+            (errMsg) => setError(errMsg),
+            () => {
+                setLoading(false);
+                setDialogOpen(false);
+            }
+        );
+    };
+
     const getStatusLabel = (key) => {
         const found = statuses.find((s) => s.key === key);
         return found ? found.label : key;
@@ -85,20 +106,19 @@ export default function ReportPage() {
     function formatDurationFromTimeString(timeStr) {
         if (typeof timeStr !== 'string') return '0s';
 
-        const match = timeStr.match(/^(\d+):(\d+):(\d+(?:\.\d+)?)$/);
+        const match = timeStr.match(/^(?:(\d+)\s+day(?:s)?,\s+)?(\d+):(\d+):(\d+(?:\.\d+)?)/);
         if (!match) return '0s';
 
-        const [, hStr, mStr, sStr] = match;
+        const [, dStr, hStr, mStr, sStr] = match;
+
+        const d = parseInt(dStr || '0', 10);
         const h = parseInt(hStr, 10);
         const m = parseInt(mStr, 10);
         const s = Math.floor(parseFloat(sStr));
 
-        const d = Math.floor(h / 24);
-        const hr = h % 24;
-
         const parts = [];
         if (d > 0) parts.push(`${d}d`);
-        if (hr > 0) parts.push(`${hr}h`);
+        if (h > 0) parts.push(`${h}h`);
         if (m > 0) parts.push(`${m}m`);
         if (s > 0 || parts.length === 0) parts.push(`${s}s`);
 
@@ -177,7 +197,18 @@ export default function ReportPage() {
                     <Button onClick={handleCloseDialog} disabled={loading}>
                         Cancel
                     </Button>
-                    <Button variant="contained" onClick={handleGenerateReport} disabled={loading}>
+                    <Button
+                        variant="outlined"
+                        onClick={handleDownloadXLSX}
+                        disabled={loading}
+                    >
+                        {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate XLSX'}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => handleGenerateReport("json")}
+                        disabled={loading}
+                    >
                         {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate'}
                     </Button>
                 </DialogActions>
