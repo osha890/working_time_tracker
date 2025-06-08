@@ -58,29 +58,31 @@ class ReportView(APIView):
 
         filters = {"time_to__isnull": False}
 
+        def make_filter_from_data(filter_key, data_key):
+            if data_key in data:
+                value = data[data_key]
+                if value:
+                    filters[filter_key] = value
+
         if user.is_staff:
-            if "user_ids" in data:
-                user_ids = data["user_ids"]
-                if user_ids:
-                    filters["user__in"] = user_ids
+            make_filter_from_data("user__in", "user_ids")
         else:
             filters["user"] = user
 
-        if "task_ids" in data:
-            tasks_ids = data["task_ids"]
-            if tasks_ids:
-                filters["task__in"] = tasks_ids
-        if "statuses" in data:
-            statuses = data["statuses"]
-            if statuses:
-                filters["status__in"] = statuses
+        aggregate = False
+
+        make_filter_from_data("task__in", "task_ids")
+        make_filter_from_data("status__in", "statuses")
+
+        if "status__in" not in filters:
+            aggregate = True
 
         queryset = Track.objects.filter(**filters)
 
         duration_expr = ExpressionWrapper(F("time_to") - F("time_from"), output_field=DurationField())
         queryset = queryset.annotate(duration=duration_expr)
 
-        if data.get("aggregate_total", False):
+        if aggregate:
             track_items = queryset.values("user", "task").annotate(total=Sum("duration"))
         else:
             track_items = queryset.values("user", "task", "status").annotate(total=Sum("duration"))
