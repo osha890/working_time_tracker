@@ -7,37 +7,23 @@ import {
     Autocomplete,
     TextField,
     List,
-    ListItem,
-    ListItemText,
     Divider,
-    Chip,
     Stack,
+    Checkbox,
+    Paper,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from '@mui/material';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { fetchStatuses, fetchUsers, fetchReport } from '../utils/api';
+import { AccountCircle } from '@mui/icons-material';
+import TaskItem from '../components/ReportTaskItem';
 
-const BASE_URL = 'http://127.0.0.1:8000/api';; // замените на реальный URL
-
-// fetch функции (можно адаптировать под axios или fetch)
-// async function fetchStatuses() {
-//     const res = await fetch(`${BASE_URL}/statuses/`);
-//     return res.json();
-// }
-
-// async function fetchUsers() {
-//     const res = await fetch(`${BASE_URL}/users/`);
-//     return res.json();
-// }
-
-// async function fetchReport(payload) {
-//     const res = await fetch(`${BASE_URL}/reports/`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(payload),
-//     });
-//     return res.json();
-// }
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export default function ReportPage() {
     const [statuses, setStatuses] = useState([]);
@@ -50,114 +36,186 @@ export default function ReportPage() {
     const [report, setReport] = useState(null);
     const [error, setError] = useState(null);
 
-    // Загрузка данных для фильтров при монтировании
+    const [dialogOpen, setDialogOpen] = useState(false);
+
     useEffect(() => {
         fetchStatuses().then(setStatuses);
         fetchUsers().then(setUsers);
     }, []);
 
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
+        setError(null);
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    };
+
     const handleGenerateReport = async () => {
         setLoading(true);
         setError(null);
 
-        // Формируем тело запроса согласно сериализатору
         const payload = {
             statuses: selectedStatuses.map((s) => s.key),
             user_ids: selectedUsers.map((u) => u.id),
-            aggregate_total: false,  // если нужно, можно сделать UI для этого флага
         };
 
         try {
             const data = await fetchReport(payload);
-            console.log("Report data:", data); // <--- вот тут добавь
             setReport(data);
+            setDialogOpen(false);
         } catch (e) {
-            setError('Ошибка при загрузке отчета');
+            setError('Error loading report');
         } finally {
             setLoading(false);
         }
     };
 
+    const getStatusLabel = (key) => {
+        const found = statuses.find((s) => s.key === key);
+        return found ? found.label : key;
+    };
+
+    function formatDurationFromTimeString(timeStr) {
+        if (typeof timeStr !== 'string') return '0s';
+
+        const match = timeStr.match(/^(\d+):(\d+):(\d+(?:\.\d+)?)$/);
+        if (!match) return '0s';
+
+        const [, hStr, mStr, sStr] = match;
+        const h = parseInt(hStr, 10);
+        const m = parseInt(mStr, 10);
+        const s = Math.floor(parseFloat(sStr));
+
+        const d = Math.floor(h / 24);
+        const hr = h % 24;
+
+        const parts = [];
+        if (d > 0) parts.push(`${d}d`);
+        if (hr > 0) parts.push(`${hr}h`);
+        if (m > 0) parts.push(`${m}m`);
+        if (s > 0 || parts.length === 0) parts.push(`${s}s`);
+
+        return parts.join(' ');
+    }
+
     return (
         <Box p={3}>
-            <Typography variant="h4" mb={2}>Формирование отчета по задачам</Typography>
+            <Typography variant="h4" mb={4} fontWeight="bold" color="primary">
+                Reports
+            </Typography>
 
-            <Stack spacing={2} maxWidth={500} mb={3}>
-                <Autocomplete
-                    multiple
-                    options={statuses}
-                    getOptionLabel={(option) => option.label}
-                    value={selectedStatuses}
-                    onChange={(event, newValue) => setSelectedStatuses(newValue)}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Статусы" placeholder="Выберите статусы" />
-                    )}
-                />
+            <Button variant="contained" onClick={handleOpenDialog}>
+                Generate Report
+            </Button>
 
-                <Autocomplete
-                    multiple
-                    options={users}
-                    getOptionLabel={(option) => option.username}
-                    value={selectedUsers}
-                    onChange={(event, newValue) => setSelectedUsers(newValue)}
-                    renderOption={(props, option) => (
-                        <li {...props} key={option.id}>
-                            {option.username} ({option.extension?.project_title})
-                        </li>
-                    )}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Пользователи" placeholder="Выберите пользователей" />
-                    )}
-                />
+            <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+                <DialogTitle>Report Settings</DialogTitle>
+                <DialogContent dividers>
+                    <Stack spacing={3}>
+                        <Autocomplete
+                            multiple
+                            disableCloseOnSelect
+                            options={statuses}
+                            getOptionLabel={(option) => option.label}
+                            value={selectedStatuses}
+                            onChange={(event, newValue) => setSelectedStatuses(newValue)}
+                            renderOption={(props, option, { selected }) => (
+                                <li {...props} key={option.key}>
+                                    <Checkbox
+                                        icon={icon}
+                                        checkedIcon={checkedIcon}
+                                        sx={{ mr: 1 }}
+                                        checked={selected}
+                                    />
+                                    {option.label}
+                                </li>
+                            )}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Statuses" placeholder="Select statuses" />
+                            )}
+                        />
 
-                <Button variant="contained" onClick={handleGenerateReport} disabled={loading}>
-                    {loading ? <CircularProgress size={24} /> : 'Сформировать отчет'}
-                </Button>
+                        <Autocomplete
+                            multiple
+                            disableCloseOnSelect
+                            options={users}
+                            getOptionLabel={(option) => option.username}
+                            value={selectedUsers}
+                            onChange={(event, newValue) => setSelectedUsers(newValue)}
+                            renderOption={(props, option, { selected }) => (
+                                <li {...props} key={option.id}>
+                                    <Checkbox
+                                        icon={icon}
+                                        checkedIcon={checkedIcon}
+                                        sx={{ mr: 1 }}
+                                        checked={selected}
+                                    />
+                                    {option.username} {option.extension?.project_title && `(${option.extension.project_title})`}
+                                </li>
+                            )}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Users" placeholder="Select users" />
+                            )}
+                        />
 
-                {error && <Typography color="error">{error}</Typography>}
-            </Stack>
+                        {error && (
+                            <Typography color="error" fontWeight="medium" mt={1}>
+                                {error}
+                            </Typography>
+                        )}
+                    </Stack>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} disabled={loading}>
+                        Cancel
+                    </Button>
+                    <Button variant="contained" onClick={handleGenerateReport} disabled={loading}>
+                        {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             {report && (
-                <Box>
+                <Box mt={5}>
                     {report.length === 0 ? (
-                        <Typography>Нет данных для отображения.</Typography>
+                        <Typography variant="body1" color="text.secondary">
+                            No data to display.
+                        </Typography>
                     ) : (
-                        report.map(({ user, tasks }) => (
-                            <Box key={user.id} mb={4}>
-                                <Typography variant="h6">{user.username}</Typography>
-                                <List>
-                                    {tasks.map(({ task, statuses }) => (
-                                        <Box key={task.id} mb={2} sx={{ border: '1px solid #ccc', borderRadius: 1, p: 1 }}>
-                                            <Typography variant="subtitle1">{task.title}</Typography>
-                                            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
-                                                {statuses.map(({ status, total_time }) => {
-                                                    // Найдём label для статуса
-                                                    const label = statusesListLabel(statuses, status);
-                                                    return (
-                                                        <Chip
-                                                            key={status}
-                                                            label={`${label || status}: ${total_time}`}
-                                                            color="primary"
-                                                            size="small"
-                                                        />
-                                                    );
-                                                })}
-                                            </Stack>
-                                        </Box>
-                                    ))}
-                                </List>
-                                <Divider />
-                            </Box>
-                        ))
+                        <List disablePadding>
+                            {report.map(({ user, tasks }) => (
+                                <Paper
+                                    key={user.id}
+                                    elevation={3}
+                                    sx={{ mb: 4, p: 3, borderRadius: 2, backgroundColor: '#f9f9f9' }}
+                                >
+                                    <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                                        <AccountCircle fontSize="large" />
+                                        <Typography variant="h5" fontWeight="bold">
+                                            {user.username} (ID: {user.id})
+                                        </Typography>
+                                    </Stack>
+                                    <Divider sx={{ mb: 3 }} />
+
+                                    <List disablePadding>
+                                        {tasks.map(({ task, statuses }) => (
+                                            <TaskItem
+                                                key={task.id}
+                                                task={task}
+                                                statuses={statuses}
+                                                getStatusLabel={getStatusLabel}
+                                                formatDuration={formatDurationFromTimeString}
+                                            />
+                                        ))}
+                                    </List>
+                                </Paper>
+                            ))}
+                        </List>
                     )}
                 </Box>
             )}
         </Box>
     );
-}
-
-// Вспомогательная функция для отображения label статуса по ключу
-function statusesListLabel(statuses, key) {
-    const found = statuses.find((s) => s.key === key);
-    return found ? found.label : null;
 }
