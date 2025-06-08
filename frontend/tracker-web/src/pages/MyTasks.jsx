@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { fetchMyTasks, fetchStatuses, refuseTask, changeStatus } from '../utils/api';
+import TaskStatusSummary from '../components/TaskStatusSummary';
 
 function MyTasks() {
     const [statusFilter, setStatusFilter] = useState('');
@@ -231,6 +232,7 @@ function MyTasks() {
                             hour: '2-digit',
                             minute: '2-digit'
                         })}</Typography>
+                        <TaskStatusSummary taskId={task.id} />
                     </AccordionDetails>
                 </Accordion>
             ))}

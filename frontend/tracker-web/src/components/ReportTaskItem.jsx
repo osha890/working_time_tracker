@@ -8,27 +8,30 @@ import {
 } from '@mui/material';
 import { Assignment, AccessTime } from '@mui/icons-material';
 
-export default function TaskItem({ task, statuses, getStatusLabel, formatDuration }) {
+export default function TaskItem({ task, statuses, getStatusLabel, formatDuration, compact = false }) {
     return (
         <Paper
-            key={task.id}
+            key={task?.id || Math.random()}
             elevation={1}
             sx={{
                 mb: 2,
                 p: 2,
                 borderRadius: 2,
+                backgroundColor: compact ? '#f5f5f5' : 'inherit',
                 transition: 'background-color 0.2s',
-                '&:hover': {
+                '&:hover': compact ? undefined : {
                     backgroundColor: '#e3f2fd',
                 },
             }}
         >
-            <Stack direction="row" alignItems="center" spacing={1} mb={1}>
-                <Assignment color="action" />
-                <Typography variant="subtitle1" fontWeight="600">
-                    {task.title}
-                </Typography>
-            </Stack>
+            {!compact && task && (
+                <Stack direction="row" alignItems="center" spacing={1} mb={1}>
+                    <Assignment color="action" />
+                    <Typography variant="subtitle1" fontWeight="600">
+                        {task.title}
+                    </Typography>
+                </Stack>
+            )}
 
             <List disablePadding>
                 {statuses.map(({ status, total_time }) => (
