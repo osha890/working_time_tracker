@@ -21,12 +21,12 @@ const routes = [
   { path: '/', element: <Home />, private: true },
   { path: '/project_tasks', element: <ProjectTasks />, private: true },
   { path: '/my_tasks', element: <MyTasks />, private: true },
+  { path: '/reports', element: <Reports />, private: true },
 
   { path: '/projects', element: <Projects />, private: true, adminOnly: true },
   { path: '/tasks', element: <Tasks />, private: true, adminOnly: true },
   { path: '/users', element: <Users />, private: true, adminOnly: true },
   { path: '/tracks', element: <Tracks />, private: true, adminOnly: true },
-  { path: '/reports', element: <Reports />, private: true, adminOnly: true },
 ];
 
 function AppWrapper() {

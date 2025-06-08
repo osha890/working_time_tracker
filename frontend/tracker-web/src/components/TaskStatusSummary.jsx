@@ -4,8 +4,8 @@ import { fetchStatuses, fetchReport } from '../utils/api';
 import TaskItem from './ReportTaskItem';
 
 const TaskStatusSummary = ({ taskId }) => {
-    const [allStatuses, setAllStatuses] = useState([]);       // [{key, label}]
-    const [taskStatuses, setTaskStatuses] = useState([]);     // [{status, total_time}]
+    const [allStatuses, setAllStatuses] = useState([]);
+    const [taskStatuses, setTaskStatuses] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -62,7 +62,7 @@ const TaskStatusSummary = ({ taskId }) => {
         <Box mt={2}>
             {taskStatuses.length > 0 ? (
                 <TaskItem
-                    task={{ id: taskId, title: 'Task' }}  // Можно задать настоящее имя
+                    task={{ id: taskId, title: 'Task' }}
                     statuses={taskStatuses}
                     getStatusLabel={getStatusLabel}
                     formatDuration={formatDurationFromTimeString}

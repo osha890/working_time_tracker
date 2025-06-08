@@ -21,11 +21,14 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { fetchStatuses, fetchUsers, fetchReport } from '../utils/api';
 import { AccountCircle } from '@mui/icons-material';
 import TaskItem from '../components/ReportTaskItem';
+import { useUser } from '../UserContext';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export default function ReportPage() {
+    const { user } = useUser();
+
     const [statuses, setStatuses] = useState([]);
     const [users, setUsers] = useState([]);
 
@@ -40,7 +43,9 @@ export default function ReportPage() {
 
     useEffect(() => {
         fetchStatuses().then(setStatuses);
-        fetchUsers().then(setUsers);
+        if (user?.is_staff) {
+            fetchUsers().then(setUsers);
+        }
     }, []);
 
     const handleOpenDialog = () => {
@@ -135,9 +140,10 @@ export default function ReportPage() {
                             renderInput={(params) => (
                                 <TextField {...params} label="Statuses" placeholder="Select statuses" />
                             )}
+
                         />
 
-                        <Autocomplete
+                        {user?.is_staff && <Autocomplete
                             multiple
                             disableCloseOnSelect
                             options={users}
@@ -158,7 +164,7 @@ export default function ReportPage() {
                             renderInput={(params) => (
                                 <TextField {...params} label="Users" placeholder="Select users" />
                             )}
-                        />
+                        />}
 
                         {error && (
                             <Typography color="error" fontWeight="medium" mt={1}>
