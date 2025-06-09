@@ -12,42 +12,103 @@ from tracker.serializers.report import ReportSerializer
 from tracker.utils import generate_xlsx_report
 
 
-def build_report(track_items, aggregate_total=False):
-    users_dict = {}
+class ReportBuilder:
+    def __init__(self, track_items):
+        self.track_items = track_items
+        self.aggregate_total = False
+        self.users_map = {}
+        self.tasks_map = {}
 
-    user_ids = set([track_item["user"] for track_item in track_items])
-    users = User.objects.filter(id__in=user_ids).values("id", "username")
-    users_map = {u["id"]: u for u in users}
+    def to_aggregate(self, aggregate_total: bool):
+        self.aggregate_total = aggregate_total
+        return self
 
-    task_ids = set([track_item["task"] for track_item in track_items])
-    tasks = Task.objects.filter(id__in=task_ids).values("id", "title")
-    tasks_map = {t["id"]: t for t in tasks}
+    def build(self):
+        self._create_maps()
+        return self._to_list(self._group_data())
 
-    for track_item in track_items:
-        uid = track_item["user"]
-        tid = track_item["task"]
-        status = track_item.get("status")
-        total = track_item["total"]
+    def _create_maps(self):
+        user_ids = set([track_item["user"] for track_item in self.track_items])
+        users = User.objects.filter(id__in=user_ids).values("id", "username")
+        self.users_map = {u["id"]: u for u in users}
 
-        if uid not in users_dict:
-            users_dict[uid] = {"user": users_map.get(uid, {"id": uid, "username": "Unknown"}), "tasks": {}}
-        user_entry = users_dict[uid]
+        task_ids = set([track_item["task"] for track_item in self.track_items])
+        tasks = Task.objects.filter(id__in=task_ids).values("id", "title")
+        self.tasks_map = {t["id"]: t for t in tasks}
 
-        if tid not in user_entry["tasks"]:
-            user_entry["tasks"][tid] = {"task": tasks_map.get(tid, {"id": tid, "title": "Unknown"}), "statuses": []}
-        task_entry = user_entry["tasks"][tid]
+    def _group_data(self):
+        result_dict = {}
+        for track_item in self.track_items:
+            uid = track_item["user"]
+            tid = track_item["task"]
+            status = track_item.get("status")
+            total = track_item["total"]
 
-        if aggregate_total:
-            task_entry["total_time"] = str(total)
+            user_entry = result_dict.setdefault(
+                uid, {"user": self.users_map.get(uid, {"id": uid, "username": "Unknown"}), "tasks": {}}
+            )
+            task_entry = user_entry["tasks"].setdefault(
+                tid, {"task": self.tasks_map.get(tid, {"id": tid, "title": "Unknown"}), "statuses": []}
+            )
+
+            if self.aggregate_total:
+                task_entry["total_time"] = str(total)
+            else:
+                task_entry["statuses"].append({"status": status, "total_time": str(total)})
+
+        return result_dict
+
+    @staticmethod
+    def _to_list(result_dict):
+        result = []
+        for user_data in result_dict.values():
+            user_data["tasks"] = list(user_data["tasks"].values())
+            result.append(user_data)
+        return result
+
+
+class ReportQueryBuilder:
+    def __init__(self, user, data):
+        self.user = user
+        self.data = data
+        self.filters = {}
+        self.aggregate = False
+
+    def create_filters(self):
+        def create_filter_from_data(filter_key, data_key):
+            value = self.data.get(data_key)
+            if value:
+                self.filters[filter_key] = value
+
+        create_filter_from_data("task__in", "task_ids")
+        create_filter_from_data("status__in", "statuses")
+
+        if self.user.is_staff:
+            create_filter_from_data("user__in", "user_ids")
         else:
-            task_entry["statuses"].append({"status": status, "total_time": str(total)})
+            self.filters["user"] = self.user
 
-    result = []
-    for user_data in users_dict.values():
-        user_data["tasks"] = list(user_data["tasks"].values())
-        result.append(user_data)
+        if "status__in" not in self.filters:
+            self.aggregate = True
 
-    return result
+        return self
+
+    def build(self):
+        return self._aggregate_data(self._build_queryset(Track.objects.none()))
+
+    def _build_queryset(self, queryset):
+        queryset = Track.objects.filter(**self.filters)
+        duration_expr = ExpressionWrapper(
+            Case(When(time_to__isnull=True, then=Now()), default=F("time_to")) - F("time_from"),
+            output_field=DurationField(),
+        )
+        queryset = queryset.annotate(duration=duration_expr)
+        return queryset
+
+    def _aggregate_data(self, built_queryset):
+        if self.aggregate:
+            return built_queryset.values("user", "task").annotate(total=Sum("duration"))
+        return built_queryset.values("user", "task", "status").annotate(total=Sum("duration"))
 
 
 class ReportView(APIView):
@@ -59,41 +120,9 @@ class ReportView(APIView):
         data = serializer.validated_data
         user = request.user
 
-        filters = {}
+        report_queryset = ReportQueryBuilder(user, data).create_filters().build()
 
-        def make_filter_from_data(filter_key, data_key):
-            if data_key in data:
-                value = data[data_key]
-                if value:
-                    filters[filter_key] = value
-
-        if user.is_staff:
-            make_filter_from_data("user__in", "user_ids")
-        else:
-            filters["user"] = user
-
-        aggregate = False
-
-        make_filter_from_data("task__in", "task_ids")
-        make_filter_from_data("status__in", "statuses")
-
-        if "status__in" not in filters:
-            aggregate = True
-
-        queryset = Track.objects.filter(**filters)
-
-        duration_expr = ExpressionWrapper(
-            Case(When(time_to__isnull=True, then=Now()), default=F("time_to")) - F("time_from"),
-            output_field=DurationField(),
-        )
-        queryset = queryset.annotate(duration=duration_expr)
-
-        if aggregate:
-            track_items = queryset.values("user", "task").annotate(total=Sum("duration"))
-        else:
-            track_items = queryset.values("user", "task", "status").annotate(total=Sum("duration"))
-
-        report = build_report(track_items, data.get("aggregate_total", False))
+        report = ReportBuilder(report_queryset).to_aggregate(data.get("aggregate_total", False)).build()
 
         report_format = data.get("report_format")
         if report_format == "xlsx":

@@ -8,7 +8,6 @@ def generate_xlsx_report(report_data):
     wb = openpyxl.Workbook()
     ws = wb.active
 
-    # Заголовки
     headers = ["User ID", "Username", "Task ID", "Task Title", "Status", "Total Time"]
     ws.append(headers)
 
