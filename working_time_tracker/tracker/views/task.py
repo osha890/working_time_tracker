@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 
 from rest_framework import status
@@ -41,9 +42,12 @@ class TaskViewSet(BaseModelViewSet):
         user = request.user
 
         new_status = TaskStatus.ON_HOLD
-        task.assignee = user
-        task.status = new_status
-        task.save()
+
+        with transaction.atomic():
+            task.assignee = user
+            task.status = new_status
+            task.save()
+
         TrackSerializer().create(
             {
                 "user": user,
