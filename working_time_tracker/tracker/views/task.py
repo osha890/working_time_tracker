@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from tracker.models import Task, TaskStatus, Track, UserExtension
+from tracker.permissions import IsAssignedToUser, IsUnassigned
 from tracker.serializers.task import (
     TaskDetailedSerializer,
     TaskListSerializer,
@@ -34,15 +35,10 @@ class TaskViewSet(BaseModelViewSet):
         except Track.DoesNotExist:
             pass
 
-    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated, IsUnassigned])
     def take(self, request, pk=None):
         task = self.get_object()
         user = request.user
-
-        if task.assignee is not None:
-            return Response(
-                {"detail": "This task is already assigned to another user."}, status=status.HTTP_400_BAD_REQUEST
-            )
 
         new_status = TaskStatus.ON_HOLD
         task.assignee = user
@@ -59,13 +55,10 @@ class TaskViewSet(BaseModelViewSet):
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated, IsAssignedToUser])
     def refuse(self, request, pk=None):
         task = self.get_object()
         user = request.user
-
-        if task.assignee != user:
-            return Response({"detail": "You can not access this task"}, status=status.HTTP_403_FORBIDDEN)
 
         self.close_active_track(task, user)
         task.assignee = None
@@ -73,13 +66,10 @@ class TaskViewSet(BaseModelViewSet):
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated, IsAssignedToUser])
     def change_status(self, request, pk=None):
         task = self.get_object()
         user = request.user
-
-        if task.assignee != user:
-            return Response({"detail": "You can not access this task"}, status=status.HTTP_403_FORBIDDEN)
 
         new_status = request.data.get("status")
         if new_status not in dict(TaskStatus.choices):
