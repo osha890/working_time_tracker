@@ -36,7 +36,7 @@ class UserViewSet(BaseModelViewSet):
 
 
 class UserExtensionViewSet(BaseModelViewSet):
-    queryset = UserExtension.objects.all()
+    queryset = UserExtension.objects.select_related("project").all()
     serializer_classes = {
         "default": UserExtensionSerializer,
         "list": UserExtensionSerializer,

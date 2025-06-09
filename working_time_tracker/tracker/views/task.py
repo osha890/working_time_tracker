@@ -97,7 +97,7 @@ class TaskViewSet(BaseModelViewSet):
 
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def accessible(self, request):
-        user_extension = UserExtension.objects.get(user=request.user)
+        user_extension = UserExtension.objects.select_related("project").get(user=request.user)
 
         if not user_extension.project:
             return Response([], status=status.HTTP_200_OK)
