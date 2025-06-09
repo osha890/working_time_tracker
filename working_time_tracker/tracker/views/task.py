@@ -11,6 +11,7 @@ from tracker.serializers.task import (
     TaskListSerializer,
     TaskSerializer,
 )
+from tracker.serializers.track import TrackSerializer
 from tracker.views.base import BaseModelViewSet
 
 
@@ -24,14 +25,6 @@ class TaskViewSet(BaseModelViewSet):
         "accessible": TaskListSerializer,
         "my": TaskListSerializer,
     }
-
-    def open_new_track(self, task, user, new_status):
-        Track.objects.create(
-            user=user,
-            task=task,
-            status=new_status,
-            time_from=timezone.now(),
-        )
 
     def close_active_track(self, task, user):
         try:
@@ -55,7 +48,14 @@ class TaskViewSet(BaseModelViewSet):
         task.assignee = user
         task.status = new_status
         task.save()
-        self.open_new_track(task, user, new_status)
+        TrackSerializer().create(
+            {
+                "user": user,
+                "task": task,
+                "status": new_status,
+                "time_from": timezone.now(),
+            }
+        )
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -87,7 +87,14 @@ class TaskViewSet(BaseModelViewSet):
 
         self.close_active_track(task, user)
 
-        self.open_new_track(task, user, new_status)
+        TrackSerializer().create(
+            {
+                "user": user,
+                "task": task,
+                "status": new_status,
+                "time_from": timezone.now(),
+            }
+        )
 
         task.status = new_status
         task.save()
