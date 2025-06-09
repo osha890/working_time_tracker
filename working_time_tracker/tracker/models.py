@@ -32,12 +32,13 @@ class TaskStatus(models.TextChoices):
     IN_REVIEW = "IN_REVIEW", "In Review"
     IN_QA = "IN_QA", "In QA"
 
-
-ACTIVE_STATUSES = {
-    TaskStatus.IN_PROGRESS,
-    TaskStatus.IN_REVIEW,
-    TaskStatus.IN_QA,
-}
+    @staticmethod
+    def get_active_statuses():
+        return {
+            TaskStatus.IN_PROGRESS,
+            TaskStatus.IN_REVIEW,
+            TaskStatus.IN_QA,
+        }
 
 
 class Task(models.Model):
