@@ -23,32 +23,26 @@ class TrackSerializer(serializers.ModelSerializer):
 class TrackListSerializer(serializers.ModelSerializer):
     user = UserListSerializer()
     task = TaskListSerializer()
+    status_display = serializers.CharField(source="get_status_display")
 
     class Meta:
         model = Track
         fields = "__all__"
         read_only_fields = [
             "id",
+            "status_display",
         ]
-
-    def get_fields(self):
-        fields = super().get_fields()
-        fields["status_display"] = serializers.CharField(source="get_status_display", read_only=True)
-        return fields
 
 
 class TrackDetailedSerializer(serializers.ModelSerializer):
     user = UserDetailedSerializer()
     task = TaskDetailedSerializer()
+    status_display = serializers.CharField(source="get_status_display")
 
     class Meta:
         model = Track
         fields = "__all__"
         read_only_fields = [
             "id",
+            "status_display",
         ]
-
-    def get_fields(self):
-        fields = super().get_fields()
-        fields["status_display"] = serializers.CharField(source="get_status_display", read_only=True)
-        return fields
