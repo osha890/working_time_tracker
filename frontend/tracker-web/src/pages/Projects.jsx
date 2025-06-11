@@ -13,19 +13,16 @@ import {
     Paper,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { fetchProjects, deleteProject } from '../utils/api';
 import AddProjectButton from '../components/AddProjectButton';
+import EditProjectButton from '../components/EditProjectButton';
 
 function Projects() {
     const [sortField, setSortField] = useState('title');
     const [sortOrder, setSortOrder] = useState('asc');
     const [searchQuery, setSearchQuery] = useState('');
     const [projects, setProjects] = useState([]);
-
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [editingProject, setEditingProject] = useState(null);
 
     useEffect(() => {
         const loadProjects = async () => {
@@ -41,14 +38,13 @@ function Projects() {
     }, []);
 
     const handleProjectAdded = (newProject) => {
-        if (editingProject) {
-            setProjects((prevProjects) =>
-                prevProjects.map((p) => (p.id === newProject.id ? newProject : p))
-            );
-        } else {
-            setProjects((prevProjects) => [...prevProjects, newProject]);
-        }
-        setEditingProject(null);
+        setProjects((prevProjects) => [...prevProjects, newProject]);
+    };
+
+    const handleProjectUpdated = (updatedProject) => {
+        setProjects((prevProjects) =>
+            prevProjects.map((p) => (p.id === updatedProject.id ? updatedProject : p))
+        );
     };
 
     const toggleSortOrder = (field) => {
@@ -83,11 +79,6 @@ function Projects() {
         return sortOrder === 'asc' ? '↑' : '↓';
     };
 
-    const handleEditClick = (project) => {
-        setEditingProject(project);
-        setDialogOpen(true);
-    };
-
     const columnStyles = {
         id: { minWidth: 90, textAlign: 'left', fontWeight: 600, color: '#1976d2' },
         title: { minWidth: 420, textAlign: 'left', fontWeight: 600 },
@@ -101,13 +92,7 @@ function Projects() {
                 <Typography variant="h4" fontWeight={700} color="primary.dark">
                     Projects
                 </Typography>
-                <AddProjectButton
-                    open={dialogOpen}
-                    setOpen={setDialogOpen}
-                    editingProject={editingProject}
-                    setEditingProject={setEditingProject}
-                    onProjectAdded={handleProjectAdded}
-                />
+                <AddProjectButton onProjectAdded={handleProjectAdded} />
             </Box>
 
             <Box
@@ -211,17 +196,10 @@ function Projects() {
                                 })}
                             </Typography>
                             <Stack direction="row" spacing={1} sx={{ ml: 'auto', width: 110, justifyContent: 'flex-end' }}>
-                                <IconButton
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleEditClick(project);
-                                    }}
-                                    size="small"
-                                    color="primary"
-                                    sx={{ borderRadius: 2 }}
-                                >
-                                    <EditIcon fontSize="small" />
-                                </IconButton>
+                                <EditProjectButton
+                                    project={project}
+                                    onProjectUpdated={handleProjectUpdated}
+                                />
                                 <IconButton
                                     size="small"
                                     color="error"
