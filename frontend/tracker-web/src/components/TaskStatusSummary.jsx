@@ -36,20 +36,20 @@ const TaskStatusSummary = ({ taskId }) => {
 
     function formatDurationFromTimeString(timeStr) {
         if (typeof timeStr !== 'string') return '0s';
-        const match = timeStr.match(/^(\d+):(\d+):(\d+(?:\.\d+)?)$/);
+
+        const match = timeStr.match(/^(?:(\d+)\s+day(?:s)?,\s+)?(\d+):(\d+):(\d+(?:\.\d+)?)/);
         if (!match) return '0s';
 
-        const [, hStr, mStr, sStr] = match;
+        const [, dStr, hStr, mStr, sStr] = match;
+
+        const d = parseInt(dStr || '0', 10);
         const h = parseInt(hStr, 10);
         const m = parseInt(mStr, 10);
         const s = Math.floor(parseFloat(sStr));
 
-        const d = Math.floor(h / 24);
-        const hr = h % 24;
-
         const parts = [];
         if (d > 0) parts.push(`${d}d`);
-        if (hr > 0) parts.push(`${hr}h`);
+        if (h > 0) parts.push(`${h}h`);
         if (m > 0) parts.push(`${m}m`);
         if (s > 0 || parts.length === 0) parts.push(`${s}s`);
 
