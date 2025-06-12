@@ -70,7 +70,6 @@ class Track(models.Model):
     status = models.CharField(
         max_length=20,
         choices=TaskStatus.choices,
-        default=TaskStatus.ON_HOLD,
     )
     time_from = models.DateTimeField()
     time_to = models.DateTimeField(null=True, blank=True)
