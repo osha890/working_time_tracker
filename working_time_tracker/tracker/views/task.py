@@ -34,7 +34,7 @@ class TaskViewSet(BaseModelViewSet):
         task = self.get_object()
         user = request.user
 
-        new_status = TaskStatus.ON_HOLD
+        new_status = TaskStatus.IN_PROGRESS
 
         with transaction.atomic():
             task.assignee = user
