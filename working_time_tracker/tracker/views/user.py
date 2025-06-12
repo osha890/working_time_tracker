@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from tracker.models import UserExtension
 from tracker.serializers.user import (
+    CurrentUserSerializer,
     UserDetailedSerializer,
     UserExtensionDetailedSerializer,
     UserExtensionSerializer,
@@ -25,14 +26,8 @@ class UserViewSet(BaseModelViewSet):
 
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def me(self, request):
-        user = request.user
-        return Response(
-            {
-                "username": user.username,
-                "is_staff": user.is_staff,
-                "id": user.id,
-            }
-        )
+        serializer = CurrentUserSerializer(request.user)
+        return Response(serializer.data)
 
 
 class UserExtensionViewSet(BaseModelViewSet):
