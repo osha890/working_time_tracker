@@ -24,10 +24,10 @@ class ReportBuilder:
         return self
 
     def build(self):
-        self._create_maps()
-        return self._to_list(self._group_data())
+        self.__create_maps()
+        return self.__to_list(self.__group_data())
 
-    def _create_maps(self):
+    def __create_maps(self):
         user_ids = set([track_item["user"] for track_item in self.track_items])
         users = User.objects.filter(id__in=user_ids).values("id", "username")
         self.users_map = {u["id"]: u for u in users}
@@ -36,7 +36,7 @@ class ReportBuilder:
         tasks = Task.objects.filter(id__in=task_ids).values("id", "title")
         self.tasks_map = {t["id"]: t for t in tasks}
 
-    def _group_data(self):
+    def __group_data(self):
         result_dict = {}
         for track_item in self.track_items:
             uid = track_item["user"]
@@ -59,7 +59,7 @@ class ReportBuilder:
         return result_dict
 
     @staticmethod
-    def _to_list(result_dict):
+    def __to_list(result_dict):
         result = []
         for user_data in result_dict.values():
             user_data["tasks"] = list(user_data["tasks"].values())
@@ -94,9 +94,9 @@ class ReportQueryBuilder:
         return self
 
     def build(self):
-        return self._aggregate_data(self._build_queryset(Track.objects.none()))
+        return self.__aggregate_data(self.__build_queryset(Track.objects.none()))
 
-    def _build_queryset(self, queryset):
+    def __build_queryset(self, queryset):
         queryset = Track.objects.filter(**self.filters)
         duration_expr = ExpressionWrapper(
             Case(When(time_to__isnull=True, then=Now()), default=F("time_to")) - F("time_from"),
@@ -105,7 +105,7 @@ class ReportQueryBuilder:
         queryset = queryset.annotate(duration=duration_expr)
         return queryset
 
-    def _aggregate_data(self, built_queryset):
+    def __aggregate_data(self, built_queryset):
         if self.aggregate:
             return built_queryset.values("user", "task").annotate(total=Sum("duration"))
         return built_queryset.values("user", "task", "status").annotate(total=Sum("duration"))
