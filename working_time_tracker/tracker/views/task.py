@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from tracker.models import Task, TaskStatus, Track, UserExtension
+from tracker.models import Task, TaskStatus, UserExtension
 from tracker.permissions import IsAssignedToUser, IsUnassigned
 from tracker.serializers.task import (
     TaskDetailedSerializer,
@@ -14,6 +14,7 @@ from tracker.serializers.task import (
     TaskSerializer,
 )
 from tracker.serializers.track import TrackSerializer
+from tracker.services import close_active_track
 from tracker.views.base import BaseModelViewSet
 
 
@@ -27,14 +28,6 @@ class TaskViewSet(BaseModelViewSet):
         "accessible": TaskListSerializer,
         "my": TaskListSerializer,
     }
-
-    def close_active_track(self, task, user):
-        try:
-            active_track = task.tracks.get(user=user, time_to__isnull=True)
-            active_track.time_to = timezone.now()
-            active_track.save()
-        except Track.DoesNotExist:
-            pass
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated, IsUnassigned])
     def take(self, request, pk=None):
@@ -64,7 +57,7 @@ class TaskViewSet(BaseModelViewSet):
         task = self.get_object()
         user = request.user
 
-        self.close_active_track(task, user)
+        close_active_track(task, user)
         task.assignee = None
         task.save()
         serializer = self.get_serializer(task)
@@ -79,7 +72,7 @@ class TaskViewSet(BaseModelViewSet):
         if new_status not in dict(TaskStatus.choices):
             return Response({"detail": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
 
-        self.close_active_track(task, user)
+        close_active_track(task, user)
 
         TrackSerializer().create(
             {
