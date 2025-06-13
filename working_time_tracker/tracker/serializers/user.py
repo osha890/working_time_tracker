@@ -37,7 +37,7 @@ class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "extension"]
+        fields = ["id", "username", "extension", "is_staff"]
         read_only_fields = ["id", "extension"]
 
 
@@ -46,7 +46,7 @@ class UserDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "extension"]
+        fields = ["id", "username", "extension", "is_staff"]
         read_only_fields = ["id", "extension"]
 
 
