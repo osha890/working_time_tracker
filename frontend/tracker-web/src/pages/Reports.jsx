@@ -41,6 +41,8 @@ export default function ReportPage() {
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
+    const [aggregate, setAggregate] = useState(false);
+
     useEffect(() => {
         fetchStatuses().then(setStatuses);
         if (user?.is_staff) {
@@ -65,6 +67,7 @@ export default function ReportPage() {
             statuses: selectedStatuses.map((s) => s.key),
             user_ids: selectedUsers.map((u) => u.id),
             report_format: reportFormat,
+            aggregate: aggregate,
         };
 
         try {
@@ -86,6 +89,7 @@ export default function ReportPage() {
             statuses: selectedStatuses.map((s) => s.key),
             user_ids: selectedUsers.map((u) => u.id),
             report_format: 'xlsx',
+            aggregate: aggregate,
         };
 
         downloadReportXLSX(
@@ -146,6 +150,7 @@ export default function ReportPage() {
                             getOptionLabel={(option) => option.label}
                             value={selectedStatuses}
                             onChange={(event, newValue) => setSelectedStatuses(newValue)}
+                            disabled={aggregate}
                             renderOption={(props, option, { selected }) => (
                                 <li {...props} key={option.key}>
                                     <Checkbox
@@ -160,8 +165,15 @@ export default function ReportPage() {
                             renderInput={(params) => (
                                 <TextField {...params} label="Statuses" placeholder="Select statuses" />
                             )}
-
                         />
+
+                        <Stack direction="row" alignItems="center">
+                            <Checkbox
+                                checked={aggregate}
+                                onChange={(e) => setAggregate(e.target.checked)}
+                            />
+                            <Typography>Aggregate</Typography>
+                        </Stack>
 
                         {user?.is_staff && <Autocomplete
                             multiple
