@@ -14,3 +14,12 @@ class IsAssignedToUser(BasePermission):
 class IsOwnerOrAdmin(BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user.is_staff or obj.user == request.user
+
+
+class IsAdminOrAssignedToProject(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+
+        if user.is_staff:
+            return True
+        return hasattr(user, "userextension") and user.userextension.project == obj
