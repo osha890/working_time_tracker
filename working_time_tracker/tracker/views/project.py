@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from tracker.models import Project
-from tracker.serializers.project import ProjectSerializer
+from tracker.serializers.project import ProjectDetailedSerializer, ProjectSerializer
 from tracker.views.base import BaseModelViewSet
 
 
@@ -12,8 +12,8 @@ class ProjectViewSet(BaseModelViewSet):
     serializer_classes = {
         "default": ProjectSerializer,
         "list": ProjectSerializer,
-        "retrieve": ProjectSerializer,
-        "my_project": ProjectSerializer,
+        "retrieve": ProjectDetailedSerializer,
+        "my_project": ProjectDetailedSerializer,
     }
 
     @action(detail=False, methods=["get"], url_path="my-project")
