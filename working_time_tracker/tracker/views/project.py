@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from tracker.models import Project
@@ -19,7 +20,7 @@ class ProjectViewSet(BaseModelViewSet):
         "my_project": ProjectDetailedSerializer,
     }
 
-    @action(detail=False, methods=["get"], url_path="my-project")
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def my_project(self, request):
         user = request.user
 
