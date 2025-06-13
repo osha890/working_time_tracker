@@ -39,7 +39,7 @@ function ProjectTasks() {
             const data = await retrieveMyProject();
             setProject(data);
         } catch (error) {
-            console.error('Failed to load project:', error);
+            console.error('Failed to load project:', error.response || error.message || error);
         }
     };
 
