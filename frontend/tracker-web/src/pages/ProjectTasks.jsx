@@ -12,9 +12,10 @@ import {
     FormControl,
     InputLabel,
     Select,
+    Divider,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchAccessibleTasks, takeTask } from '../utils/api';
+import { retrieveMyProject, takeTask } from '../utils/api';
 import { Link } from 'react-router-dom';
 
 const getUniqueValues = (tasks, field, nestedField = null) => {
@@ -31,19 +32,19 @@ function ProjectTasks() {
     const [sortOrder, setSortOrder] = useState('asc');
     const [statusFilter, setStatusFilter] = useState('');
     const [reporterFilter, setReporterFilter] = useState('');
-    const [tasks, setTasks] = useState([]);
+    const [project, setProject] = useState(null);
 
-    const loadTasks = async () => {
+    const loadProject = async () => {
         try {
-            const data = await fetchAccessibleTasks();
-            setTasks(data);
+            const data = await retrieveMyProject();
+            setProject(data);
         } catch (error) {
-            console.error('Failed to load tasks:', error);
+            console.error('Failed to load project:', error);
         }
     };
 
     useEffect(() => {
-        loadTasks();
+        loadProject();
     }, []);
 
     const getUniqueStatusPairs = (tasks) => {
@@ -72,6 +73,10 @@ function ProjectTasks() {
         if (sortField !== field) return '';
         return sortOrder === 'asc' ? '↑' : '↓';
     };
+
+    if (!project) return null;
+
+    const tasks = project.tasks || [];
 
     const filteredTasks = tasks.filter(task => {
         return (
@@ -109,13 +114,19 @@ function ProjectTasks() {
         button: { width: '10%', minWidth: 120, textAlign: 'left', ml: 3 }
     };
 
-    const projectTitle = sortedTasks.length > 0 ? sortedTasks[0].project?.title || 'Project' : 'Project';
-
     return (
         <Container sx={{ width: '90%', maxWidth: 1200, mt: 4 }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h4" fontWeight={700} color="primary.dark">{projectTitle}</Typography>
+            <Box mb={3}>
+                <Typography variant="h4" fontWeight={700} color="primary.dark">{project.title}</Typography>
+                <Typography variant="body1" color="text.secondary" mt={1}>
+                    {project.description || 'No description provided.'}
+                </Typography>
+                <Typography variant="caption" color="text.disabled">
+                    Created at: {new Date(project.created_at).toLocaleString()}
+                </Typography>
             </Box>
+
+            <Divider sx={{ my: 2 }} />
 
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={3} alignItems="center">
                 <FormControl size="small" sx={{ minWidth: 140, flex: 1 }}>
@@ -124,11 +135,7 @@ function ProjectTasks() {
                         value={statusFilter}
                         label="Status"
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        sx={{
-                            borderRadius: 2,
-                            backgroundColor: 'background.paper',
-                            boxShadow: '0 2px 5px rgb(0 0 0 / 0.05)'
-                        }}
+                        sx={{ borderRadius: 2, backgroundColor: 'background.paper', boxShadow: '0 2px 5px rgb(0 0 0 / 0.05)' }}
                     >
                         <MenuItem value="">All</MenuItem>
                         {getUniqueStatusPairs(tasks).map(({ value, label }) => (
@@ -143,11 +150,7 @@ function ProjectTasks() {
                         value={reporterFilter}
                         label="Reporter"
                         onChange={(e) => setReporterFilter(e.target.value)}
-                        sx={{
-                            borderRadius: 2,
-                            backgroundColor: 'background.paper',
-                            boxShadow: '0 2px 5px rgb(0 0 0 / 0.05)'
-                        }}
+                        sx={{ borderRadius: 2, backgroundColor: 'background.paper', boxShadow: '0 2px 5px rgb(0 0 0 / 0.05)' }}
                     >
                         <MenuItem value="">All</MenuItem>
                         {getUniqueValues(tasks, 'reporter', 'username').map(username => (
@@ -268,8 +271,7 @@ function ProjectTasks() {
                                             e.stopPropagation();
                                             try {
                                                 await takeTask(task.id);
-                                                console.log(`Task ${task.id} taken`);
-                                                await loadTasks();
+                                                await loadProject();
                                             } catch (error) {
                                                 console.error(`Failed to take task ${task.id}`, error);
                                             }
