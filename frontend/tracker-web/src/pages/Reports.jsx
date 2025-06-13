@@ -46,8 +46,8 @@ export default function ReportPage() {
 
     useEffect(() => {
         fetchStatuses().then(setStatuses);
-        fetchProjects().then(setProjects);
         if (user?.is_staff) {
+            fetchProjects().then(setProjects);
             fetchUsers().then(setUsers);
         }
     }, []);
@@ -179,52 +179,54 @@ export default function ReportPage() {
                             <Typography>Aggregate</Typography>
                         </Stack>
 
-                        <Autocomplete
-                            multiple
-                            disableCloseOnSelect
-                            options={projects}
-                            getOptionLabel={(option) => option.title}
-                            value={selectedProjects}
-                            onChange={(event, newValue) => setSelectedProjects(newValue)}
-                            renderOption={(props, option, { selected }) => (
-                                <li {...props} key={option.id}>
-                                    <Checkbox
-                                        icon={icon}
-                                        checkedIcon={checkedIcon}
-                                        sx={{ mr: 1 }}
-                                        checked={selected}
-                                    />
-                                    {option.title}
-                                </li>
-                            )}
-                            renderInput={(params) => (
-                                <TextField {...params} label="Projects" placeholder="Select projects" />
-                            )}
-                        />
 
                         {user?.is_staff && (
-                            <Autocomplete
-                                multiple
-                                disableCloseOnSelect
-                                options={users}
-                                getOptionLabel={(option) => option.username}
-                                value={selectedUsers}
-                                onChange={(event, newValue) => setSelectedUsers(newValue)}
-                                renderOption={(props, option, { selected }) => (
-                                    <li {...props} key={option.id}>
-                                        <Checkbox
-                                            icon={icon}
-                                            checkedIcon={checkedIcon}
-                                            sx={{ mr: 1 }}
-                                            checked={selected}
-                                        />
-                                        {option.username} {option.extension?.project_title && `(${option.extension.project_title})`}
-                                    </li>
-                                )}
-                                renderInput={(params) => (
-                                    <TextField {...params} label="Users" placeholder="Select users" />
-                                )}
-                            />
+                            <>
+                                <Autocomplete
+                                    multiple
+                                    disableCloseOnSelect
+                                    options={projects}
+                                    getOptionLabel={(option) => option.title}
+                                    value={selectedProjects}
+                                    onChange={(event, newValue) => setSelectedProjects(newValue)}
+                                    renderOption={(props, option, { selected }) => (
+                                        <li {...props} key={option.id}>
+                                            <Checkbox
+                                                icon={icon}
+                                                checkedIcon={checkedIcon}
+                                                sx={{ mr: 1 }}
+                                                checked={selected}
+                                            />
+                                            {option.title}
+                                        </li>
+                                    )}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Projects" placeholder="Select projects" />
+                                    )}
+                                />
+                                <Autocomplete
+                                    multiple
+                                    disableCloseOnSelect
+                                    options={users}
+                                    getOptionLabel={(option) => option.username}
+                                    value={selectedUsers}
+                                    onChange={(event, newValue) => setSelectedUsers(newValue)}
+                                    renderOption={(props, option, { selected }) => (
+                                        <li {...props} key={option.id}>
+                                            <Checkbox
+                                                icon={icon}
+                                                checkedIcon={checkedIcon}
+                                                sx={{ mr: 1 }}
+                                                checked={selected}
+                                            />
+                                            {option.username} {option.extension?.project_title && `(${option.extension.project_title})`}
+                                        </li>
+                                    )}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Users" placeholder="Select users" />
+                                    )}
+                                />
+                            </>
                         )}
 
                         {error && (
