@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { fetchMyTasks, fetchStatuses, refuseTask, changeStatus } from '../utils/api';
-import TaskStatusSummary from '../components/TaskStatusSummary';
+import { Link } from 'react-router-dom';
 
 function MyTasks() {
     const [statusFilter, setStatusFilter] = useState('');
@@ -192,7 +192,22 @@ function MyTasks() {
                     >
                         <Box display="flex" alignItems="center" width="100%" gap={2}>
                             <Typography sx={columnStyles.id} fontWeight={500}>{task.id}</Typography>
-                            <Typography sx={columnStyles.title} title={task.title} noWrap>{task.title}</Typography>
+                            <Typography
+                                component={Link}
+                                to={`/tasks/${task.id}`}
+                                sx={{
+                                    ...columnStyles.title,
+                                    textDecoration: 'none',
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        textDecoration: 'underline',
+                                    },
+                                }}
+                                title={task.title}
+                                noWrap
+                            >
+                                {task.title}
+                            </Typography>
 
                             <FormControl size="small" sx={columnStyles.status} onClick={e => e.stopPropagation()}>
                                 <Select
@@ -232,7 +247,6 @@ function MyTasks() {
                             hour: '2-digit',
                             minute: '2-digit'
                         })}</Typography>
-                        <TaskStatusSummary taskId={task.id} />
                     </AccordionDetails>
                 </Accordion>
             ))}
