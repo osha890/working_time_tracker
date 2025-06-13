@@ -3,7 +3,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from tracker.models import Project
-from tracker.serializers.project import ProjectDetailedSerializer, ProjectSerializer
+from tracker.serializers.project.project_detailed_serializer import (
+    ProjectDetailedSerializer,
+)
+from tracker.serializers.project.project_serializer import ProjectSerializer
 from tracker.views.base import BaseModelViewSet
 
 
