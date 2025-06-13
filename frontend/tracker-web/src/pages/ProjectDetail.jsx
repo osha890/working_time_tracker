@@ -15,8 +15,10 @@ import {
     Divider,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { retrieveMyProject, takeTask } from '../utils/api';
-import { Link } from 'react-router-dom';
+import { retrieveMyProject, retrieveProject, takeTask } from '../utils/api';
+import { Link, useParams } from 'react-router-dom';
+import { useUser } from '../UserContext';
+
 
 const getUniqueValues = (tasks, field, nestedField = null) => {
     const values = tasks.map(task => {
@@ -27,7 +29,10 @@ const getUniqueValues = (tasks, field, nestedField = null) => {
     return [...new Set(values.filter(Boolean))];
 };
 
-function ProjectTasks() {
+function ProjectDetail() {
+    const { projectId } = useParams();
+    const { user } = useUser();
+
     const [sortField, setSortField] = useState('id');
     const [sortOrder, setSortOrder] = useState('asc');
     const [statusFilter, setStatusFilter] = useState('');
@@ -36,7 +41,9 @@ function ProjectTasks() {
 
     const loadProject = async () => {
         try {
-            const data = await retrieveMyProject();
+            const data = projectId
+                ? await retrieveProject(projectId)
+                : await retrieveMyProject();
             setProject(data);
         } catch (error) {
             console.error('Failed to load project:', error.response || error.message || error);
@@ -122,7 +129,13 @@ function ProjectTasks() {
                     {project.description || 'No description provided.'}
                 </Typography>
                 <Typography variant="caption" color="text.disabled">
-                    Created at: {new Date(project.created_at).toLocaleString()}
+                    Created at: {new Date(project.created_at).toLocaleString('en-GB', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    })}
                 </Typography>
             </Box>
 
@@ -262,7 +275,7 @@ function ProjectTasks() {
                                 })}
                             </Typography>
 
-                            {task.assignee === null && (
+                            {task.assignee === null && user && user.is_staff === false && (
                                 <Box sx={columnStyles.button}>
                                     <Button
                                         variant="contained"
@@ -294,4 +307,4 @@ function ProjectTasks() {
     );
 }
 
-export default ProjectTasks;
+export default ProjectDetail;

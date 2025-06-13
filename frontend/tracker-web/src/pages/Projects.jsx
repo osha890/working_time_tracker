@@ -17,6 +17,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { fetchProjects, deleteProject } from '../utils/api';
 import AddProjectButton from '../components/AddProjectButton';
 import EditProjectButton from '../components/EditProjectButton';
+import { Link } from 'react-router-dom';
+
 
 function Projects() {
     const [sortField, setSortField] = useState('title');
@@ -183,7 +185,22 @@ function Projects() {
                             }}
                         >
                             <Typography sx={{ ...columnStyles.id, fontWeight: 500 }}>{project.id}</Typography>
-                            <Typography sx={{ ...columnStyles.title, fontWeight: 500 }} title={project.title} noWrap>
+                            <Typography
+                                component={Link}
+                                to={`/projects/${project.id}`}
+                                sx={{
+                                    ...columnStyles.title,
+                                    fontWeight: 500,
+                                    textDecoration: 'none',
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        textDecoration: 'underline',
+                                    },
+                                }}
+                                title={project.title}
+                                noWrap
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 {project.title}
                             </Typography>
                             <Typography sx={{ ...columnStyles.created_at, color: 'text.secondary' }} noWrap>
