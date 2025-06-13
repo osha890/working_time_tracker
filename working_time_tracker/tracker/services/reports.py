@@ -127,7 +127,7 @@ class ReportQueryBuilder:
             create_filter_from_data("status__in", "statuses")
 
         if self.user.is_staff:
-            create_filter_from_data("project__in", "projects_id")
+            create_filter_from_data("user__userextension__project__in", "project_ids")
             create_filter_from_data("user__in", "user_ids")
         else:
             self.filters["user"] = self.user
