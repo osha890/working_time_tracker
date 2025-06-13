@@ -8,3 +8,4 @@ class ReportSerializer(serializers.Serializer):
     user_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
     task_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
     report_format = serializers.CharField(required=False)
+    aggregate = serializers.BooleanField(required=False, default=False)

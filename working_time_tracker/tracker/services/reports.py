@@ -45,10 +45,6 @@ class ReportBuilder:
         self.users_map = {}
         self.tasks_map = {}
 
-    def to_aggregate(self, aggregate_total: bool):
-        self.aggregate_total = aggregate_total
-        return self
-
     def build(self):
         self.__create_maps()
         return self.__to_list(self.__group_data())
@@ -107,15 +103,15 @@ class ReportQueryBuilder:
                 self.filters[filter_key] = value
 
         create_filter_from_data("task__in", "task_ids")
-        create_filter_from_data("status__in", "statuses")
+
+        self.aggregate = self.data.get("aggregate", False)
+        if self.aggregate:
+            create_filter_from_data("status__in", "statuses")
 
         if self.user.is_staff:
             create_filter_from_data("user__in", "user_ids")
         else:
             self.filters["user"] = self.user
-
-        if "status__in" not in self.filters:
-            self.aggregate = True
 
         return self
 
