@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAccessibleTasks, fetchTasks } from '../utils/api';
-import { Container, Typography, Box, Button } from '@mui/material';
+import { Container, Typography, Box, Button, Grid, Divider, Paper } from '@mui/material';
 import TaskStatusSummary from '../components/TaskStatusSummary';
 import { useUser } from '../UserContext';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function TaskDetail() {
     const { taskId } = useParams();
@@ -33,29 +34,63 @@ function TaskDetail() {
 
     return (
         <Container sx={{ mt: 4 }}>
-            <Button variant="outlined" onClick={() => navigate(-1)} sx={{ mb: 2 }}>
+            <Button
+                variant="outlined"
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate(-1)}
+                sx={{ mb: 3 }}
+            >
                 Back
             </Button>
 
-            <Typography variant="h4" gutterBottom>
-                Task #{task.id}: {task.title}
-            </Typography>
+            <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
+                <Typography variant="h4" gutterBottom>
+                    Task #{task.id}: {task.title}
+                </Typography>
 
-            <Typography><strong>Project:</strong> {task.project?.title || '—'}</Typography>
-            <Typography><strong>Description:</strong> {task.description || '—'}</Typography>
-            <Typography><strong>Reporter:</strong> {task.reporter?.username || '—'}</Typography>
-            <Typography><strong>Assignee:</strong> {task.assignee?.username || '—'}</Typography>
-            <Typography><strong>Created At:</strong> {new Date(task.created_at).toLocaleString('en-GB', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })}</Typography>
-            {!user.is_staff ?
-                (<Box mt={4}>
+                <Divider sx={{ my: 2 }} />
+
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="subtitle1" color="text.secondary">Project</Typography>
+                        <Typography>{task.project?.title || '—'}</Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="subtitle1" color="text.secondary">Created At</Typography>
+                        <Typography>
+                            {new Date(task.created_at).toLocaleString('en-GB', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Typography variant="subtitle1" color="text.secondary">Description</Typography>
+                        <Typography>{task.description || '—'}</Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="subtitle1" color="text.secondary">Reporter</Typography>
+                        <Typography>{task.reporter?.username || '—'}</Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="subtitle1" color="text.secondary">Assignee</Typography>
+                        <Typography>{task.assignee?.username || '—'}</Typography>
+                    </Grid>
+                </Grid>
+            </Paper>
+
+            {!user.is_staff && (
+                <Box mt={4}>
                     <TaskStatusSummary taskId={task.id} />
-                </Box>) : null}
+                </Box>
+            )}
         </Container>
     );
 }
