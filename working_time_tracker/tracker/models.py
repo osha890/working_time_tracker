@@ -25,12 +25,12 @@ class UserExtension(models.Model):
 
 class TaskStatus(models.TextChoices):
     TO_DO = "TO_DO", "To Do"
-    REJECTED = "REJECTED", "Rejected"
-    COMPLETED = "COMPLETED", "Completed"
-    ON_HOLD = "ON_HOLD", "On Hold"
     IN_PROGRESS = "IN_PROGRESS", "In Progress"
+    ON_HOLD = "ON_HOLD", "On Hold"
     IN_REVIEW = "IN_REVIEW", "In Review"
     IN_QA = "IN_QA", "In QA"
+    REJECTED = "REJECTED", "Rejected"
+    COMPLETED = "COMPLETED", "Completed"
 
     @staticmethod
     def get_active_statuses():
