@@ -18,6 +18,7 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = [
             "id",
+            "reporter",
         ]
 
     def validate(self, data):
@@ -30,6 +31,11 @@ class TaskSerializer(serializers.ModelSerializer):
             raise DRFValidationError(e.messages)
 
         return data
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        validated_data["reporter"] = user
+        return super().create(validated_data)
 
 
 class TaskListSerializer(serializers.ModelSerializer):
@@ -44,6 +50,11 @@ class TaskListSerializer(serializers.ModelSerializer):
             "id",
         ]
 
+    def get_fields(self):
+        fields = super().get_fields()
+        fields["status_display"] = serializers.CharField(source="get_status_display", read_only=True)
+        return fields
+
 
 class TaskDetailedSerializer(serializers.ModelSerializer):
     assignee = UserDetailedSerializer()
@@ -56,3 +67,8 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
         ]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        fields["status_display"] = serializers.CharField(source="get_status_display", read_only=True)
+        return fields
