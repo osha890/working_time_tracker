@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from tracker.serializers.report import ReportSerializer
-from tracker.services import ReportBuilder, ReportQueryBuilder, generate_xlsx_report
+from tracker.services.reports import (
+    ReportBuilder,
+    ReportQueryBuilder,
+    generate_xlsx_report,
+)
 
 
 class ReportView(APIView):
