@@ -8,10 +8,12 @@ from tracker.serializers.project import (
 
 
 class UserExtensionSerializer(serializers.ModelSerializer):
+    project_title = serializers.CharField(source="project.title", allow_null=True)
+
     class Meta:
         model = UserExtension
         fields = "__all__"
-        read_only_fields = ["id", "user"]
+        read_only_fields = ["id", "user", "project_title"]
 
 
 class UserExtensionDetailedSerializer(serializers.ModelSerializer):
@@ -46,3 +48,10 @@ class UserDetailedSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "username", "extension"]
         read_only_fields = ["id", "extension"]
+
+
+class CurrentUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "is_staff"]
+        read_only_fields = ["id", "is_staff"]

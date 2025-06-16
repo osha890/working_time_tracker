@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 
 class Project(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.title
@@ -24,10 +26,19 @@ class UserExtension(models.Model):
 class TaskStatus(models.TextChoices):
     TO_DO = "TO_DO", "To Do"
     IN_PROGRESS = "IN_PROGRESS", "In Progress"
+    ON_HOLD = "ON_HOLD", "On Hold"
     IN_REVIEW = "IN_REVIEW", "In Review"
     IN_QA = "IN_QA", "In QA"
     REJECTED = "REJECTED", "Rejected"
     COMPLETED = "COMPLETED", "Completed"
+
+    @staticmethod
+    def get_active_statuses():
+        return {
+            TaskStatus.IN_PROGRESS,
+            TaskStatus.IN_REVIEW,
+            TaskStatus.IN_QA,
+        }
 
 
 class Task(models.Model):
@@ -41,6 +52,7 @@ class Task(models.Model):
         choices=TaskStatus.choices,
         default=TaskStatus.TO_DO,
     )
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.title
@@ -55,7 +67,10 @@ class Task(models.Model):
 class Track(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tracks")
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="tracks")
-    is_in_progress = models.BooleanField()
+    status = models.CharField(
+        max_length=20,
+        choices=TaskStatus.choices,
+    )
     time_from = models.DateTimeField()
     time_to = models.DateTimeField(null=True, blank=True)
 

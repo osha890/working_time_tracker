@@ -1,5 +1,6 @@
 from typing import Optional
 
+from rest_framework.permissions import IsAdminUser
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
 
@@ -10,6 +11,7 @@ class BaseModelViewSet(ModelViewSet):
         "list": None,
         "retrieve": None,
     }
+    permission_classes = [IsAdminUser]
 
     def get_serializer_class(self):
         serializer_class = self.serializer_classes.get(self.action)
