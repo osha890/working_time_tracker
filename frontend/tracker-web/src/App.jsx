@@ -12,6 +12,7 @@ import ProjectTasks from './pages/ProjectTasks';
 import MyTasks from './pages/MyTasks';
 import Tracks from './pages/Tracks';
 import { UserProvider } from './UserContext';
+import Reports from './pages/Reports';
 
 const routes = [
   { path: '/login', element: <Login />, private: false },
@@ -20,6 +21,7 @@ const routes = [
   { path: '/', element: <Home />, private: true },
   { path: '/project_tasks', element: <ProjectTasks />, private: true },
   { path: '/my_tasks', element: <MyTasks />, private: true },
+  { path: '/reports', element: <Reports />, private: true },
 
   { path: '/projects', element: <Projects />, private: true, adminOnly: true },
   { path: '/tasks', element: <Tasks />, private: true, adminOnly: true },
