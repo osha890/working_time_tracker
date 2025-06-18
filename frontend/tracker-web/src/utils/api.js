@@ -160,9 +160,9 @@ export const retrieveData = async (url) => {
 };
 
 export const retrieveProject = async (projectId) => {
-    return await retrieveData(`${BASE_URL}/projects/${projectId}`);
+    return await retrieveData(`${API_URL}/projects/${projectId}`);
 };
 
 export const retrieveMyProject = async () => {
-    return await retrieveData(`${BASE_URL}/projects/my_project`);
+    return await retrieveData(`${API_URL}/projects/my_project`);
 };
