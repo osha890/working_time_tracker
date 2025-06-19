@@ -217,7 +217,11 @@ const Users = () => {
                                                 ))}
                                             </Select>
                                         </FormControl>
-                                    ) : null }
+                                    ) : (
+                                        <Typography variant="subtitle1" color="text.secondary">
+                                            Admin
+                                        </Typography>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ))}
