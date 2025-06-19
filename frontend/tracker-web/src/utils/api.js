@@ -148,3 +148,21 @@ export const downloadReportXLSX = async (payload, onError = () => { }, onFinally
         onFinally();
     }
 };
+
+export const retrieveData = async (url) => {
+    try {
+        const response = await axios.get(url, await getAuthHeaders());
+        return response.data;
+    } catch (error) {
+        console.error('GET request error:', error);
+        throw error;
+    }
+};
+
+export const retrieveProject = async (projectId) => {
+    return await retrieveData(`${API_URL}/projects/${projectId}`);
+};
+
+export const retrieveMyProject = async () => {
+    return await retrieveData(`${API_URL}/projects/my_project`);
+};
