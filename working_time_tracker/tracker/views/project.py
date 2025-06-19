@@ -24,7 +24,7 @@ class ProjectViewSet(BaseModelViewSet):
     def my_project(self, request):
         user = request.user
 
-        if not hasattr(user, "userextension") or not user.userextension.project:
+        if not hasattr(user, "userextension") or user.userextension.project is None:
             return Response({"detail": "No project"}, status=status.HTTP_404_NOT_FOUND)
 
         project = user.userextension.project
