@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchAccessibleTasks, fetchTasks } from '../utils/api';
+import { fetchAccessibleTasks, fetchTasks, updateTask } from '../utils/api';
 import { Container, Typography, Box, Button, Grid, Divider, Paper } from '@mui/material';
 import TaskStatusSummary from '../components/TaskStatusSummary';
 import { useUser } from '../UserContext';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import TaskDialog from '../components/TaskDialog';
+import EditIcon from '@mui/icons-material/Edit';
 
 function TaskDetail() {
     const { taskId } = useParams();
     const { user } = useUser();
     const navigate = useNavigate();
     const [task, setTask] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     useEffect(() => {
         const loadTask = async () => {
@@ -32,6 +35,35 @@ function TaskDetail() {
 
     if (!task) return <Typography>Loading...</Typography>;
 
+    const handleEditClick = () => {
+        setDialogOpen(true);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
+
+    const handleDialogSubmit = async (formData) => {
+        try {
+            const updatedData = {
+                ...formData,
+                project: formData.project ?? task.project?.id,
+            };
+
+            await updateTask(task.id, updatedData);
+
+            setTask(prev => ({
+                ...prev,
+                ...formData,
+                project: prev.project,
+            }));
+
+            setDialogOpen(false);
+        } catch (error) {
+            console.error('Failed to update task:', error);
+        }
+    };
+
     return (
         <Container sx={{ mt: 4 }}>
             <Button
@@ -44,9 +76,20 @@ function TaskDetail() {
             </Button>
 
             <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
-                <Typography variant="h4" gutterBottom>
-                    Task #{task.id}: {task.title}
-                </Typography>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h4">
+                        Task #{task.id}: {task.title}
+                    </Typography>
+                    {user?.is_staff && (
+                        <Button
+                            variant="contained"
+                            startIcon={<EditIcon />}
+                            onClick={handleEditClick}
+                        >
+                            Edit Task
+                        </Button>
+                    )}
+                </Box>
 
                 <Divider sx={{ my: 2 }} />
 
@@ -85,6 +128,13 @@ function TaskDetail() {
                     </Grid>
                 </Grid>
             </Paper>
+
+            <TaskDialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+                onSubmit={handleDialogSubmit}
+                initialData={task}
+            />
 
             {!user.is_staff && (
                 <Box mt={4}>
