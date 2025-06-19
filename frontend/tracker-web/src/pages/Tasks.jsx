@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { fetchTasks, postTask, updateTask, deleteTask } from '../utils/api';
 import TaskDialog from '../components/TaskDialog';
+import { Link } from 'react-router-dom';
 
 const getUniqueValues = (tasks, field, nestedField = null) => {
     const values = tasks.map(task => {
@@ -133,7 +134,7 @@ function Tasks() {
     };
 
     return (
-        <Container sx={{ width: '90%', maxWidth: '1200px' , mt: 4 }}>
+        <Container sx={{ width: '90%', maxWidth: '1200px', mt: 4 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                 <Typography variant="h4" fontWeight={700} color="primary.dark">Tasks</Typography>
                 <Button
@@ -274,7 +275,23 @@ function Tasks() {
                         >
                             <Box display="flex" alignItems="center" width="100%" gap={2}>
                                 <Typography sx={columnStyles.id} fontWeight={500}>{task.id}</Typography>
-                                <Typography sx={columnStyles.title} title={task.title} noWrap>{task.title}</Typography>
+                                <Typography
+                                    component={Link}
+                                    to={`/tasks/${task.id}`}
+                                    sx={{
+                                        ...columnStyles.title,
+                                        textDecoration: 'none',
+                                        color: 'primary.main',
+                                        '&:hover': {
+                                            textDecoration: 'underline',
+                                        },
+                                    }}
+                                    title={task.title}
+                                    noWrap
+                                >
+                                    {task.title}
+                                </Typography>
+                                {/* <Typography sx={columnStyles.title} title={task.title} noWrap>{task.title}</Typography> */}
                                 <Typography sx={columnStyles.project} title={task.project?.title} noWrap>{task.project?.title}</Typography>
                                 <Typography sx={columnStyles.status} color="text.secondary" noWrap>{task.status_display}</Typography>
                                 <Typography sx={columnStyles.created_at} color="text.secondary" noWrap>
