@@ -75,27 +75,29 @@ function TaskDialog({ open, onClose, onSubmit, initialData = null }) {
                     error={!!errors.description}
                     helperText={errors.description?.[0] || ''}
                 />
-                <FormControl
-                    fullWidth
-                    margin="normal"
-                    error={!!errors.project}
-                >
-                    <InputLabel>Project</InputLabel>
-                    <Select
-                        value={project}
-                        onChange={(e) => setProject(e.target.value)}
-                        label="Project"
+                {!initialData && (
+                    <FormControl
+                        fullWidth
+                        margin="normal"
+                        error={!!errors.project}
                     >
-                        {projects.map((proj) => (
-                            <MenuItem key={proj.id} value={proj.id}>
-                                {proj.title}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    {errors.project && (
-                        <FormHelperText>{errors.project[0]}</FormHelperText>
-                    )}
-                </FormControl>
+                        <InputLabel>Project</InputLabel>
+                        <Select
+                            value={project}
+                            onChange={(e) => setProject(e.target.value)}
+                            label="Project"
+                        >
+                            {projects.map((proj) => (
+                                <MenuItem key={proj.id} value={proj.id}>
+                                    {proj.title}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        {errors.project && (
+                            <FormHelperText>{errors.project[0]}</FormHelperText>
+                        )}
+                    </FormControl>
+                )}
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>

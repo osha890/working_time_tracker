@@ -6,15 +6,15 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from tracker.permissions import IsAssignedToUser, IsUnassigned, IsOwnerOrAdmin
 from tracker.models import Task, TaskStatus, UserExtension
-from tracker.permissions import IsAssignedToUser, IsUnassigned
 from tracker.serializers.task import (
     TaskDetailedSerializer,
     TaskListSerializer,
     TaskSerializer,
 )
 from tracker.serializers.track import TrackSerializer
-from tracker.services import close_active_track
+from tracker.services.tracks import close_active_track
 from tracker.views.base import BaseModelViewSet
 
 
@@ -28,6 +28,7 @@ class TaskViewSet(BaseModelViewSet):
         "accessible": TaskListSerializer,
         "my": TaskListSerializer,
     }
+    permission_classes = [IsOwnerOrAdmin]
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated, IsUnassigned])
     def take(self, request, pk=None):

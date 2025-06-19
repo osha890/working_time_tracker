@@ -117,7 +117,7 @@ export const changeStatus = async (taskId, status) => {
 };
 
 export const fetchReport = async (payload) => {
-    const url = `${BASE_URL}/reports/`;
+    const url = `${API_URL}/reports/`;
     return await postData(url, payload);
 };
 
@@ -125,7 +125,7 @@ export const downloadReportXLSX = async (payload, onError = () => { }, onFinally
     try {
         const headers = await getAuthHeaders();
 
-        const response = await axios.post(`${BASE_URL}/reports/`, payload, {
+        const response = await axios.post(`${API_URL}/reports/`, payload, {
             ...headers,
             responseType: 'blob',
         });
@@ -147,4 +147,22 @@ export const downloadReportXLSX = async (payload, onError = () => { }, onFinally
     } finally {
         onFinally();
     }
+};
+
+export const retrieveData = async (url) => {
+    try {
+        const response = await axios.get(url, await getAuthHeaders());
+        return response.data;
+    } catch (error) {
+        console.error('GET request error:', error);
+        throw error;
+    }
+};
+
+export const retrieveProject = async (projectId) => {
+    return await retrieveData(`${API_URL}/projects/${projectId}`);
+};
+
+export const retrieveMyProject = async () => {
+    return await retrieveData(`${API_URL}/projects/my_project`);
 };

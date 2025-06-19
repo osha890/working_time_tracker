@@ -23,7 +23,7 @@ class ReportView(APIView):
 
         report_queryset = ReportQueryBuilder(user, data).create_filters().build()
 
-        report = ReportBuilder(report_queryset).to_aggregate(data.get("aggregate_total", False)).build()
+        report = ReportBuilder(report_queryset).build()
 
         report_format = data.get("report_format")
         if report_format == "xlsx":

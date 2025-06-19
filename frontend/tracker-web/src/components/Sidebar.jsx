@@ -2,7 +2,6 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -22,7 +21,7 @@ export default function Sidebar({ open, onClose }) {
     const { user } = useUser();
 
     const userNavItems = [
-        { to: "/project_tasks", icon: <ListAltIcon />, text: "Project tasks" },
+        { to: "/project", icon: <ListAltIcon />, text: "Project tasks" },
         { to: "/my_tasks", icon: <TaskIcon />, text: "My tasks" },
         { to: "/reports", icon: <AssessmentIcon />, text: "Reports" },
     ];
@@ -48,18 +47,13 @@ export default function Sidebar({ open, onClose }) {
     return (
         <Drawer open={open} onClose={onClose}>
             <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
-                <List subheader={<ListSubheader>User navigation</ListSubheader>}>
-                    {renderItems(userNavItems)}
+                <List subheader={
+                    <ListSubheader>
+                        {user?.is_staff ? 'Admin navigation' : 'User navigation'}
+                    </ListSubheader>
+                }>
+                    {renderItems(user?.is_staff ? adminNavItems : userNavItems)}
                 </List>
-
-                {user?.is_staff && (
-                    <>
-                        <Divider />
-                        <List subheader={<ListSubheader>Admin navigation</ListSubheader>}>
-                            {renderItems(adminNavItems)}
-                        </List>
-                    </>
-                )}
             </Box>
         </Drawer>
     );

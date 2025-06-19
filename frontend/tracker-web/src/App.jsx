@@ -8,22 +8,25 @@ import Users from './pages/Users';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import PrivateRoute from './components/PrivateRoute';
-import ProjectTasks from './pages/ProjectTasks';
+import ProjectDetail from './pages/ProjectDetail';
 import MyTasks from './pages/MyTasks';
 import Tracks from './pages/Tracks';
 import { UserProvider } from './UserContext';
 import Reports from './pages/Reports';
+import TaskDetail from './pages/TaskDetail';
 
 const routes = [
   { path: '/login', element: <Login />, private: false },
   { path: '/register', element: <Register />, private: false },
 
   { path: '/', element: <Home />, private: true },
-  { path: '/project_tasks', element: <ProjectTasks />, private: true },
+  { path: '/project', element: <ProjectDetail />, private: true },
   { path: '/my_tasks', element: <MyTasks />, private: true },
+  { path: '/tasks/:taskId', element: <TaskDetail />, private: true },
   { path: '/reports', element: <Reports />, private: true },
 
   { path: '/projects', element: <Projects />, private: true, adminOnly: true },
+  { path: '/projects/:projectId', element: <ProjectDetail />, private: true, adminOnly: true },
   { path: '/tasks', element: <Tasks />, private: true, adminOnly: true },
   { path: '/users', element: <Users />, private: true, adminOnly: true },
   { path: '/tracks', element: <Tracks />, private: true, adminOnly: true },

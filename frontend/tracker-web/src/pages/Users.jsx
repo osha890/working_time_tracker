@@ -195,27 +195,33 @@ const Users = () => {
                                     {user.username}
                                 </TableCell>
                                 <TableCell sx={{ pr: 3 }}>
-                                    <FormControl variant="standard" fullWidth>
-                                        <Select
-                                            value={user.extension?.project || ''}
-                                            onChange={(e) => handleProjectChange(user.id, e.target.value)}
-                                            displayEmpty
-                                            sx={{
-                                                backgroundColor: 'grey.50',
-                                                borderRadius: 1,
-                                                px: 1,
-                                                py: '6px',
-                                                '& .MuiSelect-icon': { color: 'text.secondary' },
-                                            }}
-                                        >
-                                            <MenuItem value="">No project</MenuItem>
-                                            {projects.map(project => (
-                                                <MenuItem key={project.id} value={project.id}>
-                                                    {project.title}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
+                                    {!user.is_staff ? (
+                                        <FormControl variant="standard" fullWidth>
+                                            <Select
+                                                value={user.extension?.project || ''}
+                                                onChange={(e) => handleProjectChange(user.id, e.target.value)}
+                                                displayEmpty
+                                                sx={{
+                                                    backgroundColor: 'grey.50',
+                                                    borderRadius: 1,
+                                                    px: 1,
+                                                    py: '6px',
+                                                    '& .MuiSelect-icon': { color: 'text.secondary' },
+                                                }}
+                                            >
+                                                <MenuItem value="">No project</MenuItem>
+                                                {projects.map(project => (
+                                                    <MenuItem key={project.id} value={project.id}>
+                                                        {project.title}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    ) : (
+                                        <Typography variant="subtitle1" color="text.secondary">
+                                            Admin
+                                        </Typography>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ))}

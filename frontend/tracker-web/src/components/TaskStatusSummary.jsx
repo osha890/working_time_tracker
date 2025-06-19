@@ -17,8 +17,25 @@ const TaskStatusSummary = ({ taskId }) => {
                 const statusKeys = statusesFromAPI.map(s => s.key);
                 const report = await fetchReport({ statuses: statusKeys });
 
-                const taskEntry = report[0]?.tasks.find(t => t.task.id === taskId);
-                setTaskStatuses(taskEntry?.statuses || []);
+                const matchingStatuses = [];
+
+                for (const project of report) {
+                    for (const user of project.users) {
+                        const taskEntry = user.tasks.find(t => t.task.id === taskId);
+                        if (taskEntry) {
+                            for (const status of taskEntry.statuses) {
+                                const existing = matchingStatuses.find(s => s.status === status.status);
+                                if (existing) {
+                                    existing.total_time = addDurations(existing.total_time, status.total_time);
+                                } else {
+                                    matchingStatuses.push({ ...status });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                setTaskStatuses(matchingStatuses);
             } catch (error) {
                 console.error('Failed to fetch report data:', error);
             } finally {
@@ -54,6 +71,29 @@ const TaskStatusSummary = ({ taskId }) => {
         if (s > 0 || parts.length === 0) parts.push(`${s}s`);
 
         return parts.join(' ');
+    }
+
+    function addDurations(a, b) {
+        const toSeconds = (str) => {
+            const match = str.match(/^(?:(\d+)\s+day(?:s)?,\s+)?(\d+):(\d+):(\d+(?:\.\d+)?)/);
+            if (!match) return 0;
+            const [, dStr, hStr, mStr, sStr] = match;
+            const d = parseInt(dStr || '0', 10);
+            const h = parseInt(hStr, 10);
+            const m = parseInt(mStr, 10);
+            const s = parseFloat(sStr);
+            return (((d * 24 + h) * 60 + m) * 60) + s;
+        };
+
+        const totalSeconds = toSeconds(a) + toSeconds(b);
+
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = (totalSeconds % 60).toFixed(6);
+
+        const dayPart = days > 0 ? `${days} days, ` : '';
+        return `${dayPart}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${seconds}`;
     }
 
     if (loading) return <CircularProgress size={20} />;

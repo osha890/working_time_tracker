@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from tracker.models import Task
-from tracker.serializers.project import (
+from tracker.serializers.project.project_serializer import (
     ProjectSerializer,
 )
 from tracker.serializers.user import (
