@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAccessibleTasks, fetchTasks, updateTask } from '../utils/api';
-import { Container, Typography, Box, Button, Grid, Divider, Paper } from '@mui/material';
+import { Container, Typography, Box, Button, Grid, Divider, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import TaskStatusSummary from '../components/TaskStatusSummary';
 import { useUser } from '../UserContext';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TaskDialog from '../components/TaskDialog';
 import EditIcon from '@mui/icons-material/Edit';
+import { fetchStatuses, changeStatus } from '../utils/api';
 
 function TaskDetail() {
     const { taskId } = useParams();
@@ -14,6 +15,7 @@ function TaskDetail() {
     const navigate = useNavigate();
     const [task, setTask] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [statuses, setStatuses] = useState([]);
 
     useEffect(() => {
         const loadTask = async () => {
@@ -32,6 +34,18 @@ function TaskDetail() {
         };
         loadTask();
     }, [taskId, user]);
+
+    useEffect(() => {
+        const loadStatuses = async () => {
+            try {
+                const data = await fetchStatuses();
+                setStatuses(data);
+            } catch (error) {
+                console.error('Failed to load statuses:', error);
+            }
+        };
+        loadStatuses();
+    }, []);
 
     if (!task) return <Typography>Loading...</Typography>;
 
@@ -64,6 +78,16 @@ function TaskDetail() {
         }
     };
 
+    const handleStatusChange = async (e) => {
+        const newStatus = e.target.value;
+        try {
+            await changeStatus(task.id, newStatus);
+            setTask(prev => ({ ...prev, status: newStatus }));
+        } catch (error) {
+            console.error('Failed to update status:', error);
+        }
+    };
+
     return (
         <Container sx={{ mt: 4 }}>
             <Button
@@ -80,7 +104,8 @@ function TaskDetail() {
                     <Typography variant="h4">
                         Task #{task.id}: {task.title}
                     </Typography>
-                    {user?.is_staff && (
+
+                    {user?.is_staff ? (
                         <Button
                             variant="contained"
                             startIcon={<EditIcon />}
@@ -88,7 +113,20 @@ function TaskDetail() {
                         >
                             Edit Task
                         </Button>
-                    )}
+                    ) : user?.username === task.assignee?.username ? (
+                        <FormControl size="small" sx={{ minWidth: 160 }}>
+                            <InputLabel>Status</InputLabel>
+                            <Select
+                                value={task.status}
+                                onChange={handleStatusChange}
+                                label="Status"
+                            >
+                                {statuses.map(({ key, label }) => (
+                                    <MenuItem key={key} value={key}>{label}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    ) : null}
                 </Box>
 
                 <Divider sx={{ my: 2 }} />
