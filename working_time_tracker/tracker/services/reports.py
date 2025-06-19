@@ -3,11 +3,37 @@ from io import BytesIO
 from django.contrib.auth.models import User
 from django.db.models import Case, DurationField, ExpressionWrapper, F, Sum, When
 from django.db.models.functions import Now
-
 import openpyxl
 from openpyxl.styles import Font
 
 from tracker.models import Project, Task, Track
+
+
+def get_project_info(project):
+    project_id = project["project"]["id"]
+    project_title = project["project"]["title"]
+    project_users = project["users"]
+    return project_id, project_title, project_users
+
+
+def get_user_info(user):
+    user_id = user["user"]["id"]
+    username = user["user"]["username"]
+    user_tasks = user["tasks"]
+    return user_id, username, user_tasks
+
+
+def get_task_info(task):
+    task_id = task["task"]["id"]
+    task_title = task["task"]["title"]
+    task_statuses = task["statuses"]
+    return task_id, task_title, task_statuses
+
+
+def get_status_info(status):
+    status_label = status["status"]
+    total_time = status["total_time"]
+    return status_label, total_time
 
 
 def generate_xlsx_report(report_data):
@@ -21,19 +47,17 @@ def generate_xlsx_report(report_data):
         for cell in col:
             cell.font = Font(bold=True)
 
-    for entry in report_data:
-        project_id = entry["project"]["id"]
-        project_title = entry["project"]["title"]
-        for user_info in entry["users"]:
-            user_id = user_info["user"]["id"]
-            username = user_info["user"]["username"]
-            for task_info in user_info["tasks"]:
-                task_id = task_info["task"]["id"]
-                task_title = task_info["task"]["title"]
-                for status_info in task_info["statuses"]:
-                    status = status_info["status"]
-                    total_time = status_info["total_time"]
-                    ws.append([project_id, project_title, user_id, username, task_id, task_title, status, total_time])
+    for project in report_data:
+        project_id, project_title, project_users = get_project_info(project)
+        for user in project_users:
+            user_id, username, user_tasks = get_user_info(user)
+            for task in user_tasks:
+                task_id, task_title, task_statuses = get_task_info(task)
+                for status in task_statuses:
+                    status_label, total_time = get_status_info(status)
+                    ws.append(
+                        [project_id, project_title, user_id, username, task_id, task_title, status_label, total_time]
+                    )
 
     memory_object = BytesIO()
     wb.save(memory_object)
