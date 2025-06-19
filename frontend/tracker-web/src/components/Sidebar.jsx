@@ -21,7 +21,7 @@ export default function Sidebar({ open, onClose }) {
     const { user } = useUser();
 
     const userNavItems = [
-        { to: "/project_tasks", icon: <ListAltIcon />, text: "Project tasks" },
+        { to: "/project", icon: <ListAltIcon />, text: "Project tasks" },
         { to: "/my_tasks", icon: <TaskIcon />, text: "My tasks" },
         { to: "/reports", icon: <AssessmentIcon />, text: "Reports" },
     ];

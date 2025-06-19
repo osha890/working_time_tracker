@@ -20,7 +20,7 @@ const routes = [
   { path: '/register', element: <Register />, private: false },
 
   { path: '/', element: <Home />, private: true },
-  { path: '/project_tasks', element: <ProjectDetail />, private: true },
+  { path: '/project', element: <ProjectDetail />, private: true },
   { path: '/my_tasks', element: <MyTasks />, private: true },
   { path: '/tasks/:taskId', element: <TaskDetail />, private: true },
   { path: '/reports', element: <Reports />, private: true },
