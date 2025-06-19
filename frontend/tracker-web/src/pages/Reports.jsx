@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { fetchStatuses, fetchUsers, fetchReport, downloadReportXLSX } from '../utils/api';
+import { fetchStatuses, fetchUsers, fetchProjects, fetchReport, downloadReportXLSX } from '../utils/api';
 import { AccountCircle } from '@mui/icons-material';
 import TaskItem from '../components/ReportTaskItem';
 import { useUser } from '../UserContext';
@@ -31,6 +31,8 @@ export default function ReportPage() {
 
     const [statuses, setStatuses] = useState([]);
     const [users, setUsers] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [selectedProjects, setSelectedProjects] = useState([]);
 
     const [selectedStatuses, setSelectedStatuses] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -40,10 +42,12 @@ export default function ReportPage() {
     const [error, setError] = useState(null);
 
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [aggregate, setAggregate] = useState(false);
 
     useEffect(() => {
         fetchStatuses().then(setStatuses);
         if (user?.is_staff) {
+            fetchProjects().then(setProjects);
             fetchUsers().then(setUsers);
         }
     }, []);
@@ -64,7 +68,9 @@ export default function ReportPage() {
         const payload = {
             statuses: selectedStatuses.map((s) => s.key),
             user_ids: selectedUsers.map((u) => u.id),
+            project_ids: selectedProjects.map((p) => p.id),
             report_format: reportFormat,
+            aggregate: aggregate,
         };
 
         try {
@@ -85,7 +91,9 @@ export default function ReportPage() {
         const payload = {
             statuses: selectedStatuses.map((s) => s.key),
             user_ids: selectedUsers.map((u) => u.id),
+            project_ids: selectedProjects.map((p) => p.id),
             report_format: 'xlsx',
+            aggregate: aggregate,
         };
 
         downloadReportXLSX(
@@ -105,12 +113,10 @@ export default function ReportPage() {
 
     function formatDurationFromTimeString(timeStr) {
         if (typeof timeStr !== 'string') return '0s';
-
         const match = timeStr.match(/^(?:(\d+)\s+day(?:s)?,\s+)?(\d+):(\d+):(\d+(?:\.\d+)?)/);
         if (!match) return '0s';
 
         const [, dStr, hStr, mStr, sStr] = match;
-
         const d = parseInt(dStr || '0', 10);
         const h = parseInt(hStr, 10);
         const m = parseInt(mStr, 10);
@@ -146,6 +152,7 @@ export default function ReportPage() {
                             getOptionLabel={(option) => option.label}
                             value={selectedStatuses}
                             onChange={(event, newValue) => setSelectedStatuses(newValue)}
+                            disabled={aggregate}
                             renderOption={(props, option, { selected }) => (
                                 <li {...props} key={option.key}>
                                     <Checkbox
@@ -160,31 +167,67 @@ export default function ReportPage() {
                             renderInput={(params) => (
                                 <TextField {...params} label="Statuses" placeholder="Select statuses" />
                             )}
-
                         />
 
-                        {user?.is_staff && <Autocomplete
-                            multiple
-                            disableCloseOnSelect
-                            options={users}
-                            getOptionLabel={(option) => option.username}
-                            value={selectedUsers}
-                            onChange={(event, newValue) => setSelectedUsers(newValue)}
-                            renderOption={(props, option, { selected }) => (
-                                <li {...props} key={option.id}>
-                                    <Checkbox
-                                        icon={icon}
-                                        checkedIcon={checkedIcon}
-                                        sx={{ mr: 1 }}
-                                        checked={selected}
-                                    />
-                                    {option.username} {option.extension?.project_title && `(${option.extension.project_title})`}
-                                </li>
-                            )}
-                            renderInput={(params) => (
-                                <TextField {...params} label="Users" placeholder="Select users" />
-                            )}
-                        />}
+
+
+                        <Stack direction="row" alignItems="center">
+                            <Checkbox
+                                checked={aggregate}
+                                onChange={(e) => setAggregate(e.target.checked)}
+                            />
+                            <Typography>Aggregate</Typography>
+                        </Stack>
+
+
+                        {user?.is_staff && (
+                            <>
+                                <Autocomplete
+                                    multiple
+                                    disableCloseOnSelect
+                                    options={projects}
+                                    getOptionLabel={(option) => option.title}
+                                    value={selectedProjects}
+                                    onChange={(event, newValue) => setSelectedProjects(newValue)}
+                                    renderOption={(props, option, { selected }) => (
+                                        <li {...props} key={option.id}>
+                                            <Checkbox
+                                                icon={icon}
+                                                checkedIcon={checkedIcon}
+                                                sx={{ mr: 1 }}
+                                                checked={selected}
+                                            />
+                                            {option.title}
+                                        </li>
+                                    )}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Projects" placeholder="Select projects" />
+                                    )}
+                                />
+                                <Autocomplete
+                                    multiple
+                                    disableCloseOnSelect
+                                    options={users}
+                                    getOptionLabel={(option) => option.username}
+                                    value={selectedUsers}
+                                    onChange={(event, newValue) => setSelectedUsers(newValue)}
+                                    renderOption={(props, option, { selected }) => (
+                                        <li {...props} key={option.id}>
+                                            <Checkbox
+                                                icon={icon}
+                                                checkedIcon={checkedIcon}
+                                                sx={{ mr: 1 }}
+                                                checked={selected}
+                                            />
+                                            {option.username} {option.extension?.project_title && `(${option.extension.project_title})`}
+                                        </li>
+                                    )}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Users" placeholder="Select users" />
+                                    )}
+                                />
+                            </>
+                        )}
 
                         {error && (
                             <Typography color="error" fontWeight="medium" mt={1}>
@@ -222,32 +265,40 @@ export default function ReportPage() {
                         </Typography>
                     ) : (
                         <List disablePadding>
-                            {report.map(({ user, tasks }) => (
-                                <Paper
-                                    key={user.id}
-                                    elevation={3}
-                                    sx={{ mb: 4, p: 3, borderRadius: 2, backgroundColor: '#f9f9f9' }}
-                                >
-                                    <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                                        <AccountCircle fontSize="large" />
-                                        <Typography variant="h5" fontWeight="bold">
-                                            {user.username} (ID: {user.id})
-                                        </Typography>
-                                    </Stack>
-                                    <Divider sx={{ mb: 3 }} />
+                            {report.map(({ project, users }) => (
+                                <Box key={project.id} sx={{ mb: 5 }}>
+                                    <Typography variant="h5" fontWeight="bold" color="primary" mb={2}>
+                                        Project: {project.title} (ID: {project.id})
+                                    </Typography>
 
-                                    <List disablePadding>
-                                        {tasks.map(({ task, statuses }) => (
-                                            <TaskItem
-                                                key={task.id}
-                                                task={task}
-                                                statuses={statuses}
-                                                getStatusLabel={getStatusLabel}
-                                                formatDuration={formatDurationFromTimeString}
-                                            />
-                                        ))}
-                                    </List>
-                                </Paper>
+                                    {users.map(({ user, tasks }) => (
+                                        <Paper
+                                            key={user.id}
+                                            elevation={3}
+                                            sx={{ mb: 4, p: 3, borderRadius: 2, backgroundColor: '#f9f9f9' }}
+                                        >
+                                            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                                                <AccountCircle fontSize="large" />
+                                                <Typography variant="h6" fontWeight="bold">
+                                                    {user.username} (ID: {user.id})
+                                                </Typography>
+                                            </Stack>
+                                            <Divider sx={{ mb: 3 }} />
+
+                                            <List disablePadding>
+                                                {tasks.map(({ task, statuses }) => (
+                                                    <TaskItem
+                                                        key={task.id}
+                                                        task={task}
+                                                        statuses={statuses}
+                                                        getStatusLabel={getStatusLabel}
+                                                        formatDuration={formatDurationFromTimeString}
+                                                    />
+                                                ))}
+                                            </List>
+                                        </Paper>
+                                    ))}
+                                </Box>
                             ))}
                         </List>
                     )}

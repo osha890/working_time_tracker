@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { fetchAccessibleTasks, takeTask } from '../utils/api';
+import { Link } from 'react-router-dom';
 
 const getUniqueValues = (tasks, field, nestedField = null) => {
     const values = tasks.map(task => {
@@ -232,7 +233,16 @@ function ProjectTasks() {
                         <Box display="flex" alignItems="center" width="100%" gap={2}>
                             <Typography sx={columnStyles.id} fontWeight={500}>{task.id}</Typography>
                             <Typography
-                                sx={columnStyles.title}
+                                component={Link}
+                                to={`/tasks/${task.id}`}
+                                sx={{
+                                    ...columnStyles.title,
+                                    textDecoration: 'none',
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        textDecoration: 'underline',
+                                    },
+                                }}
                                 title={task.title}
                                 noWrap
                             >

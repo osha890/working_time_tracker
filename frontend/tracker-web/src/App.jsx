@@ -13,6 +13,7 @@ import MyTasks from './pages/MyTasks';
 import Tracks from './pages/Tracks';
 import { UserProvider } from './UserContext';
 import Reports from './pages/Reports';
+import TaskDetail from './pages/TaskDetail';
 
 const routes = [
   { path: '/login', element: <Login />, private: false },
@@ -21,6 +22,7 @@ const routes = [
   { path: '/', element: <Home />, private: true },
   { path: '/project_tasks', element: <ProjectTasks />, private: true },
   { path: '/my_tasks', element: <MyTasks />, private: true },
+  { path: '/tasks/:taskId', element: <TaskDetail />, private: true },
   { path: '/reports', element: <Reports />, private: true },
 
   { path: '/projects', element: <Projects />, private: true, adminOnly: true },
