@@ -147,7 +147,7 @@ class ReportQueryBuilder:
         create_filter_from_data("task__in", "task_ids")
 
         self.aggregate = self.data.get("aggregate", False)
-        if self.aggregate:
+        if not self.aggregate:
             create_filter_from_data("status__in", "statuses")
 
         if self.user.is_staff:
