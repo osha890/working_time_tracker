@@ -1,0 +1,16 @@
+from tracker.models import Track
+from tracker.serializers.track import (
+    TrackDetailedSerializer,
+    TrackListSerializer,
+    TrackSerializer,
+)
+from tracker.views.base import BaseModelViewSet
+
+
+class TrackViewSet(BaseModelViewSet):
+    queryset = Track.objects.all()
+    serializer_classes = {
+        "default": TrackSerializer,
+        "list": TrackListSerializer,
+        "retrieve": TrackDetailedSerializer,
+    }
